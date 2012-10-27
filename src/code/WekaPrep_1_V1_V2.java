@@ -1,0 +1,251 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package code;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import weka.core.Attribute;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils;
+import weka.core.stemmers.SnowballStemmer;
+import weka.core.tokenizers.WordTokenizer;
+import weka.filters.Filter;
+import weka.filters.supervised.instance.Resample;
+import weka.filters.unsupervised.attribute.NominalToString;
+import weka.filters.unsupervised.attribute.Remove;
+import weka.filters.unsupervised.attribute.Reorder;
+import weka.filters.unsupervised.attribute.StringToWordVector;
+import weka.filters.unsupervised.instance.Randomize;
+import weka.filters.unsupervised.instance.RemovePercentage;
+
+/**
+ *
+ * @author katie
+ */
+public class WekaPrep_1_V1_V2 {
+
+    static class DataConfig {
+
+        private String classAttribute;
+        private ArrayList<String> groupDistinguishers;
+        private Instances train;
+        private Instances test;
+
+        public DataConfig(Instances train, Instances test, String classAttribute, String... groupDistinguishers) {
+            this.train = train;
+            this.test = test;
+            this.classAttribute = classAttribute;
+            this.groupDistinguishers = new ArrayList(Arrays.asList(groupDistinguishers));
+        }
+
+        public DataConfig branch(Instances train, Instances test, String... distinguishers) {
+            DataConfig child = new DataConfig(train, test, this.classAttribute);
+            child.groupDistinguishers.addAll(this.groupDistinguishers);
+            child.groupDistinguishers.addAll(Arrays.asList(distinguishers));
+            return child;
+        }
+
+        @Override
+        public String toString() {
+            String result = "";
+
+            for (int i = 0; i < this.groupDistinguishers.size(); i++) {
+                result += this.groupDistinguishers.get(i);
+                if (i < this.groupDistinguishers.size() - 1) {
+                    result += ".";
+                }
+            }
+
+            return result;
+        }
+        
+        Instances balanceData(Instances instances) throws Exception {
+            Resample resample = new Resample();
+            resample.setBiasToUniformClass(1);
+            resample.setRandomSeed(1);
+            resample.setInputFormat(instances);
+            
+            return Filter.useFilter(instances, resample);
+        }
+
+        public void prepData() throws Exception {
+            Attribute classAttr = train.attribute(classAttribute);
+            if (classAttr != null) {
+                Reorder reorder = new Reorder();
+                int[] attrIndices = new int[train.numAttributes()];
+                for (int i = 0; i < attrIndices.length - 1; i++) {
+                    if (i < classAttr.index()) {
+                        attrIndices[i] = i;
+                    } else {
+                        attrIndices[i] = i + 1;
+                    }
+                }
+                attrIndices[attrIndices.length - 1] = classAttr.index();
+
+                reorder.setAttributeIndicesArray(attrIndices);
+                reorder.setInputFormat(train);
+                train = Filter.useFilter(train, reorder);
+                test = Filter.useFilter(test, reorder);
+
+                //Balance the training set
+                train.setClassIndex(train.numAttributes() - 1);
+                train = balanceData(train);
+                
+                String relation = toString();
+                train.setRelationName(relation + ".train");
+                test.setRelationName(relation + ".test");
+
+            } else {
+                System.err.println("No class attribute " + classAttribute + " in " + toString());
+            }
+        }
+    }
+    static String inputDataRoot = "../1 pos neg vs details/data/";
+    static String outputDataRoot = "../1 pos neg vs details/weka_data/";
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) throws Exception {
+
+        ArrayList<DataConfig> configurations = new ArrayList<DataConfig>();
+        configurations.addAll(getData("set1.aggregated.code.csv", "code", "set1", "code"));
+        configurations.addAll(getData("set1.aggregated.sentiment.csv", "sentiment", "set1", "sentiment"));
+
+        String[] codeList = new String[]{
+            "annoyance", "apprehension", "confusion", "excitement", "frustration", "happiness", "relief", "serenity", "supportive"
+        };
+        for (int i = 0; i < codeList.length; i++) {
+            String code = codeList[i];
+            configurations.addAll(getData("set2.aggregated.bycode." + code + ".csv", code, "set2", code));
+        }
+
+        configurations.addAll(getData("set2.aggregated.bysent.neg.csv", "neg", "set2", "sent", "neg"));
+        configurations.addAll(getData("set2.aggregated.bysent.pos.csv", "pos", "set2", "sent", "pos"));
+
+        for (DataConfig config : configurations) {
+            putData(config);
+        }
+    }
+
+    static void putData(DataConfig config) throws Exception {
+
+        config.prepData();
+
+        String filename = outputDataRoot + config.train.relationName() + ".arff";
+        ConverterUtils.DataSink.write(filename, config.train);
+
+        System.out.println("Saved " + filename);
+
+        filename = outputDataRoot + config.test.relationName() + ".arff";
+        ConverterUtils.DataSink.write(filename, config.test);
+
+        System.out.println("Saved " + filename);
+
+    }
+
+    static ArrayList<DataConfig> getData(String filename, String classAttribute, String... groupDistinguishers) throws Exception {
+        System.out.println("Reading " + filename);
+
+        Instances instances = ConverterUtils.DataSource.read(inputDataRoot + filename);
+        instances = removeAttribute(instances, "participant");
+
+        DataConfig config = new DataConfig(null, null, classAttribute, groupDistinguishers);
+
+        return createDataSets(config, instances, true, true);
+    }
+
+    static ArrayList<DataConfig> createDataSets(DataConfig config, Instances instances, boolean tryStemmed, boolean tryStopped) throws Exception {
+
+        ArrayList<DataConfig> out = new ArrayList<DataConfig>();
+
+        //Shuffle the data before splitting
+        Randomize randomize = new Randomize();
+        randomize.setRandomSeed(42);
+        randomize.setInputFormat(instances);
+        instances = Filter.useFilter(instances, randomize);
+        
+        //Create the training set
+        RemovePercentage split = new RemovePercentage();
+        split.setPercentage(10);
+        split.setInputFormat(instances);
+        config.train = Filter.useFilter(instances, split);
+        
+        //Create the test set
+        split = new RemovePercentage();
+        split.setPercentage(10);
+        split.setInvertSelection(true);
+        split.setInputFormat(instances);
+        config.test = Filter.useFilter(instances, split);
+
+        out.add(toWordBags(config, "message", false, false));
+
+        if (tryStemmed) {
+            out.add(toWordBags(config, "message", true, false));
+        }
+
+        if (tryStopped) {
+            out.add(toWordBags(config, "message", false, true));
+        }
+
+        if (tryStemmed && tryStopped) {
+            out.add(toWordBags(config, "message", true, true));
+        }
+
+        return out;
+    }
+
+    static Instances removeAttribute(Instances instances, String attributeName) throws Exception {
+        Attribute attr = instances.attribute(attributeName);
+        if (attr != null) {
+            Remove remove = new Remove();
+            remove.setAttributeIndices(1 + attr.index() + "");
+            remove.setInputFormat(instances);
+            instances = Filter.useFilter(instances, remove);
+        } else {
+            System.err.println("No attribute " + attributeName + " in " + instances.relationName());
+        }
+        return instances;
+    }
+
+    private static DataConfig toWordBags(DataConfig config, String attributeName, boolean stem, boolean stopwords) throws Exception {
+        Instances train = config.train;
+        Instances test = config.test;
+
+        Attribute attr = train.attribute(attributeName);
+        if (attr != null) {
+            NominalToString stringify = new NominalToString();
+            stringify.setAttributeIndexes(1 + attr.index() + "");
+            stringify.setInputFormat(train);
+            train = Filter.useFilter(train, stringify);
+            test = Filter.useFilter(test, stringify);
+
+            StringToWordVector bagger = new StringToWordVector();
+            bagger.setAttributeIndices(1 + attr.index() + "");
+            bagger.setAttributeNamePrefix("_");
+            bagger.setWordsToKeep(10000);
+            bagger.setTokenizer(new WordTokenizer());
+
+            if (stem) {
+                bagger.setStemmer(new SnowballStemmer());
+            }
+
+            bagger.setUseStoplist(stopwords);
+
+            bagger.setInputFormat(train);
+
+            train = Filter.useFilter(train, bagger);
+            test = Filter.useFilter(test, bagger);
+        } else {
+            System.err.println("No attribute " + attributeName + " in " + train.relationName());
+        }
+
+        String stemKey = stem ? "stemmed" : "unstemmed";
+        String stopKey = stopwords ? "stopped" : "unstopped";
+        DataConfig baggedConfig = config.branch(train, test, stemKey, stopKey);
+
+        return baggedConfig;
+    }
+}

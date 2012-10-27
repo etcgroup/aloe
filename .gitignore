@@ -4,3 +4,12 @@
 *.jar
 *.war
 *.ear
+
+# NB junk #
+nbproject/private/
+
+# Dependencies #
+lib/
+
+# Input/output #
+*.csv
