@@ -28,4 +28,4 @@ work:
 
 Dependencies:
 * weka
-
+* javacsv 2.1 http://sourceforge.net/projects/javacsv/
