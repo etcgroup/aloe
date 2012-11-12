@@ -1,4 +1,4 @@
-aloe
+ALOE 1.0
 ====
 
 Affect Labeller of Expressions
@@ -26,6 +26,10 @@ work:
 	ACM Conference on Computer Supported Cooperative Work, CSCW (2013).
 
 
-Dependencies:
-* weka
-* javacsv 2.1 http://sourceforge.net/projects/javacsv/
+Developing with ALOE
+
+The code is a NetBeans project. When it is opened, it will require adding the
+following dependent libraries (which, if you store in a lib/ folder, will be
+ignored in any commits and automatically picked up as libraries by netbeans):
+* weka 3.6 (http://www.cs.waikato.ac.nz/ml/weka)
+* javacsv 2.1 (http://sourceforge.net/projects/javacsv)

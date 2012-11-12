@@ -2,12 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package data.io;
+
+package etc.aloe.controllers;
 
 /**
  *
- * @author katie
+ * @author kuksenok
  */
-public class CSVSource {
-    
+public class TrainingController {
+
 }

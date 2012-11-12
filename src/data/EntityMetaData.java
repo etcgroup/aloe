@@ -4,6 +4,7 @@
  */
 package data;
 
+import etc.aloe.data.LabeledMessage;
 import data.indexes.ParticipantNames;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.Set;
  *
  * @author Michael Brooks <mjbrooks@uw.edu>
  */
-public class EntityMetaData extends ArrayList<MessageUnit> {
+public class EntityMetaData extends ArrayList<LabeledMessage> {
     private final int entityId;
     private boolean done = false;
     private Set<Integer> distinctParticipants = new HashSet<Integer>();
@@ -29,12 +30,12 @@ public class EntityMetaData extends ArrayList<MessageUnit> {
     }
 
     public void add(Timestamp time, int participantId, String message) {
-        this.add(new MessageUnit(time, participantId, message));
+        this.add(new LabeledMessage(time, participantId, message));
         this.distinctParticipants.add(participantId);
     }
 
     @Override
-    public boolean add(MessageUnit e) {
+    public boolean add(LabeledMessage e) {
         this.distinctParticipants.add(e.getParticipantId());
         return super.add(e);
     }
@@ -57,7 +58,7 @@ public class EntityMetaData extends ArrayList<MessageUnit> {
         if (!done) {
             throw new IllegalStateException("Cannot call getStartTime() before calling done()");
         }
-        MessageUnit first = this.get(0);
+        LabeledMessage first = this.get(0);
         return first.getTime();
     }
     
@@ -66,7 +67,7 @@ public class EntityMetaData extends ArrayList<MessageUnit> {
             throw new IllegalStateException("Cannot call getStopTime() before calling done()");
         }
         
-        MessageUnit last = this.get(this.size() - 1);
+        LabeledMessage last = this.get(this.size() - 1);
         return last.getTime();
     }
     

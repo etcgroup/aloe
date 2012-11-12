@@ -4,6 +4,7 @@
  */
 package data.io;
 
+import etc.aloe.data.LabeledMessage;
 import daisy.io.DB;
 import data.*;
 import java.sql.Timestamp;
@@ -88,7 +89,7 @@ public class WindowDataSource extends ChatPrismDataSource {
                 int messageId = (Integer) row.get(3);
 
                 ArrayList<Rating> ratings = ratingsByMessage.get(messageId);
-                MessageUnit messageUnit = new MessageUnit(time, participantId, message);
+                LabeledMessage messageUnit = new LabeledMessage(time, participantId, message);
 
                 meta.add(messageUnit);
                 //If we could still add more ratings
