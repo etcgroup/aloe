@@ -1,18 +1,18 @@
 package etc.aloe.processes;
 
-import etc.aloe.data.LabeledMessage;
-import etc.aloe.data.Segment;
-import java.util.List;
+import etc.aloe.data.MessageSet;
+import etc.aloe.data.SegmentSet;
 
 /**
- * 
+ * Segments a set of messages.
  */
 public interface Segmentation {
 
     /**
-     * Abstracts segmentation of labeled messages
-     * @param messages
-     * @return
+     * Segments messages.
+     *
+     * @param messages The messages to segment
+     * @return Segmented messages
      */
-    public List<Segment> segment(List<LabeledMessage> messages);
+    public SegmentSet segment(MessageSet messages);
 }

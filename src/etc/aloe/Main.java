@@ -1,10 +1,7 @@
 package etc.aloe;
 
-import etc.aloe.processes.Segmentation;
-import etc.aloe.cscw2013.ThresholdSegmentation;
-import etc.aloe.data.LabeledMessage;
-import etc.aloe.data.Segment;
-import java.util.List;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
 
 /**
  *
@@ -12,22 +9,22 @@ import java.util.List;
  */
 public class Main {
 
-    public static void args(String[] args) {
+    public static void main(String[] args) {
 
+        Aloe aloe = new Aloe();
 
-        // TODO Parse in arguments, specifying input files; parameters; and
-        // state
+        //Parse the command line arguments
+        CmdLineParser parser = new CmdLineParser(aloe);
+        try {
+            parser.parseArgument(args);
+        } catch (CmdLineException e) {
+            System.err.println(e.getMessage());
+            System.err.println("java -jar aloe.jar [options...] arguments...");
+            parser.printUsage(System.err);
+            return;
+        }
 
-
-        // This sets up the components of the abstract pipeline with specific
-        // implementations.
-        Segmentation segmentation = new ThresholdSegmentation(35, true);
-        // CrossValidation
-        //
-
-        // TODO If we are in training mode:
-        List<LabeledMessage> messages = null; // TODO CSV read
-        List<Segment> segments = segmentation.segment(messages);
-
+        //And go!
+        aloe.run();
     }
 }

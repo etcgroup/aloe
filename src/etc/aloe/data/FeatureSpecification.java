@@ -1,9 +1,11 @@
 package etc.aloe.data;
 
-/**
- *
- * @author kuksenok
- */
-public abstract class FeatureSpecification {
+import etc.aloe.processes.Loading;
+import etc.aloe.processes.Saving;
 
+/**
+ * A FeatureSpecification contains information sufficient to know how to extract
+ * features for any single data point.
+ */
+public abstract class FeatureSpecification implements Loading, Saving {
 }

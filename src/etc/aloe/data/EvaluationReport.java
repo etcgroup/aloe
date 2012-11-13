@@ -1,12 +1,11 @@
 package etc.aloe.data;
 
-/**
- *
- * @author kuksenok
- */
-public abstract class EvaluationReport {
+import etc.aloe.processes.Saving;
 
-    public static EvaluationReport aggregate(Collection<EvaluationReport> partialReports){
-        
-    }
+/**
+ * The EvaluationReport contains data about model performance as compared to
+ * a source of truth data.
+ */
+public abstract class EvaluationReport implements Saving {
+
 }
