@@ -7,7 +7,7 @@ import java.util.Random;
  */
 public abstract class RandomProvider {
 
-    private static Random _instance;
+    private static Random _instance = new Random();
 
     public static void setRandom(Random random) {
         _instance = random;
