@@ -15,5 +15,17 @@ public class SegmentSet {
 
     private List<Segment> segments = new ArrayList<Segment>();
 
-    
+    public SegmentSet getTrainingForFold(int foldIndex) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public SegmentSet getTestingForFold(int foldIndex) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public void prepareForCrossValidation(int folds) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+
 }

@@ -11,6 +11,11 @@ public class Main {
 
     public static void main(String[] args) {
 
+        args = new String[] {
+            "-t", "30",
+            "-i", "example.csv"
+        };
+
         Aloe aloe = new Aloe();
 
         //Parse the command line arguments

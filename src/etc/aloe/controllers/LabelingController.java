@@ -29,6 +29,9 @@ public class LabelingController {
     private EvaluationReport evaluationReport;
     private Model model;
     private MessageSet rawMessages;
+    private FeatureExtraction featureExtractionImpl;
+    private Prediction predictionImpl;
+    private Evaluation evaluationImpl;
 
     public void setRawMessageSet(MessageSet messages) {
         this.rawMessages = messages;
@@ -57,18 +60,42 @@ public class LabelingController {
     public void run() {
 
         //First extract features
-        FeatureExtraction extraction = new FeatureExtractionImpl();
+        FeatureExtraction extraction = getFeatureExtractionImpl();
         ExampleSet examples = extraction.extractFeatures(segmentSet, featureSpecification);
 
         //Predict the labels
-        Prediction prediction = new PredictionImpl();
+        Prediction prediction = getPredictionImpl();
         this.labeledMessages = prediction.predict(examples, this.model, rawMessages);
 
         //Evaluate the model on any labeled examples
         ExampleSet labeledExamples = examples.onlyLabeled();
         if (labeledExamples.size() > 0) {
-            Evaluation evaluation = new EvaluationImpl();
+            Evaluation evaluation = getEvaluationImpl();
             this.evaluationReport = evaluation.evaluate(this.model, labeledExamples);
         }
+    }
+
+    public FeatureExtraction getFeatureExtractionImpl() {
+        return this.featureExtractionImpl;
+    }
+
+    public void setFeatureExtractionImpl(FeatureExtraction featureExtractor) {
+        this.featureExtractionImpl = featureExtractor;
+    }
+
+    public Prediction getPredictionImpl() {
+        return this.predictionImpl;
+    }
+
+    public void setPredictionImpl(Prediction prediction) {
+        this.predictionImpl = prediction;
+    }
+
+    public Evaluation getEvaluationImpl() {
+        return this.evaluationImpl;
+    }
+
+    public void setEvaluationImpl(Evaluation evaluation) {
+        this.evaluationImpl = evaluation;
     }
 }

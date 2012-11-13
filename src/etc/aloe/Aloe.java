@@ -3,8 +3,13 @@ package etc.aloe;
 import etc.aloe.controllers.CrossValidationController;
 import etc.aloe.controllers.LabelingController;
 import etc.aloe.controllers.TrainingController;
+import etc.aloe.cscw2013.EvaluationImpl;
+import etc.aloe.cscw2013.FeatureExtractionImpl;
+import etc.aloe.cscw2013.FeatureGenerationImpl;
 import etc.aloe.cscw2013.FeatureSpecificationImpl;
+import etc.aloe.cscw2013.PredictionImpl;
 import etc.aloe.cscw2013.ThresholdSegmentation;
+import etc.aloe.cscw2013.TrainingImpl;
 import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.MessageSet;
@@ -15,6 +20,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.kohsuke.args4j.Argument;
@@ -45,6 +51,8 @@ public class Aloe {
     private File modelFile;
     @Option(name = "-f", usage = "feature specification file")
     private File featureSpecificationFile;
+    @Option(name = "-d", usage = "date format string")
+    private String dateFormatString = "yyyy-MM-dd'T'HH:mm:ss";
     /**
      * Any remaining arguments to the program
      */
@@ -60,26 +68,34 @@ public class Aloe {
 
         // This sets up the components of the abstract pipeline with specific
         // implementations.
-        Segmentation segmentation = new ThresholdSegmentation(this.segmentationThresholdSeconds, segmentationByParticipant);
-        CrossValidationController crossValidation = new CrossValidationController(this.crossValidationFolds);
-        TrainingController training = new TrainingController();
+
+        CrossValidationController crossValidationController = new CrossValidationController(this.crossValidationFolds);
+        crossValidationController.setFeatureGenerationImpl(new FeatureGenerationImpl());
+        crossValidationController.setFeatureExtractionImpl(new FeatureExtractionImpl());
+        crossValidationController.setTrainingImpl(new TrainingImpl());
+        crossValidationController.setEvaluationImpl(new EvaluationImpl());
+
+        TrainingController trainingController = new TrainingController();
+        trainingController.setFeatureExtractionImpl(new FeatureExtractionImpl());
+        trainingController.setTrainingImpl(new TrainingImpl());
 
         //Get and preprocess the data
         MessageSet messages = this.loadMessages();
+        Segmentation segmentation = new ThresholdSegmentation(this.segmentationThresholdSeconds, segmentationByParticipant);
         SegmentSet segments = segmentation.segment(messages);
 
         //Run cross validation
-        crossValidation.setSegmentSet(segments);
-        crossValidation.run();
+        crossValidationController.setSegmentSet(segments);
+        crossValidationController.run();
 
         //Run the full training
-        training.setSegmentSet(segments);
-        training.run();
+        trainingController.setSegmentSet(segments);
+        trainingController.run();
 
         //Get the fruits
-        EvaluationReport evalReport = crossValidation.getEvaluationReport();
-        FeatureSpecification spec = training.getFeatureSpecification();
-        Model model = training.getModel();
+        EvaluationReport evalReport = crossValidationController.getEvaluationReport();
+        FeatureSpecification spec = trainingController.getFeatureSpecification();
+        Model model = trainingController.getModel();
 
         //Save the fruits
         saveEvaluationReport(evalReport);
@@ -89,7 +105,10 @@ public class Aloe {
 
     private void runTestingMode() {
         Segmentation segmentation = new ThresholdSegmentation(this.segmentationThresholdSeconds, segmentationByParticipant);
-        LabelingController labeling = new LabelingController();
+        LabelingController labelingController = new LabelingController();
+        labelingController.setFeatureExtractionImpl(new FeatureExtractionImpl());
+        labelingController.setEvaluationImpl(new EvaluationImpl());
+        labelingController.setPredictionImpl(new PredictionImpl());
 
         MessageSet messages = this.loadMessages();
         FeatureSpecification spec = this.loadFeatureSpecification();
@@ -97,13 +116,13 @@ public class Aloe {
 
         SegmentSet segments = segmentation.segment(messages);
 
-        labeling.setModel(model);
-        labeling.setSegmentSet(segments);
-        labeling.setFeatureSpecification(spec);
-        labeling.run();
+        labelingController.setModel(model);
+        labelingController.setSegmentSet(segments);
+        labelingController.setFeatureSpecification(spec);
+        labelingController.run();
 
-        MessageSet labeledMessages = labeling.getLabeledMessages();
-        EvaluationReport evalReport = labeling.getEvaluationReport();
+        MessageSet labeledMessages = labelingController.getLabeledMessages();
+        EvaluationReport evalReport = labelingController.getEvaluationReport();
 
         saveEvaluationReport(evalReport);
         saveMessages(labeledMessages);
@@ -111,6 +130,7 @@ public class Aloe {
 
     private MessageSet loadMessages() {
         MessageSet messages = new MessageSet();
+        messages.setDateFormat(new SimpleDateFormat(dateFormatString));
 
         try {
             messages.load(this.inputCSVFile);

@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * Stores messages with id, participant, timestamp, and (optionally) labels.
  */
-public abstract class Message implements Comparable<Message> {
+public class Message implements Comparable<Message> {
 
     public final int id;
     public final Date timestamp;

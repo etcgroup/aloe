@@ -22,6 +22,8 @@ public class TrainingController {
     private SegmentSet segmentSet;
     private FeatureSpecification featureSpecification;
     private Model model;
+    private FeatureExtraction featureExtractionImpl;
+    private Training trainingImpl;
 
     public void setSegmentSet(SegmentSet segments) {
         this.segmentSet = segments;
@@ -38,11 +40,27 @@ public class TrainingController {
     public void run() {
 
         //Extract features
-        FeatureExtraction extraction = new FeatureExtractionImpl();
+        FeatureExtraction extraction = getFeatureExtractionImpl();
         ExampleSet examples = extraction.extractFeatures(segmentSet, featureSpecification);
 
         //Train the model
-        Training training = new TrainingImpl();
+        Training training = getTrainingImpl();
         this.model = training.train(examples);
+    }
+
+    public FeatureExtraction getFeatureExtractionImpl() {
+        return this.featureExtractionImpl;
+    }
+
+    public void setFeatureExtractionImpl(FeatureExtraction featureExtractor) {
+        this.featureExtractionImpl = featureExtractor;
+    }
+
+    public Training getTrainingImpl() {
+        return this.trainingImpl;
+    }
+
+    public void setTrainingImpl(Training training) {
+        this.trainingImpl = training;
     }
 }
