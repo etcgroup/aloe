@@ -25,8 +25,8 @@ public class ResolutionImpl implements SegmentResolution {
                 }
             }
         }
-        
-        if (!labelSetBySomeone) {
+
+        if (labelSetBySomeone) {
             return false;
         } else {
             return null;
