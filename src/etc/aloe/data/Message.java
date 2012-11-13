@@ -6,17 +6,18 @@ import java.util.Date;
 /**
  * Stores messages with id, participant, timestamp, and (optionally) labels.
  */
-public class Message implements Comparable<Message> {
+public class Message implements Comparable<Message>, LabelableItem {
 
     public final int id;
     public final Date timestamp;
     public final String participant;
     public final String message;
-    public final Boolean trueLabel;
+    public Boolean trueLabel;
     public Boolean predictedLabel = null;
 
     /**
      * Construct a new un-labeled message.
+     *
      * @param id
      * @param timestamp
      * @param participant
@@ -32,6 +33,7 @@ public class Message implements Comparable<Message> {
 
     /**
      * Construct a new message. Leave trueLabel null if unlabeled.
+     *
      * @param id
      * @param timestamp
      * @param participant
@@ -64,22 +66,32 @@ public class Message implements Comparable<Message> {
         return participant;
     }
 
-    public boolean getTrueLabel() {
+    @Override
+    public Boolean getTrueLabel() {
         return trueLabel;
     }
 
+    @Override
+    public void setTrueLabel(Boolean truth) {
+        this.trueLabel = truth;
+    }
+
+    @Override
     public boolean hasTrueLabel() {
         return trueLabel != null;
     }
 
-    public boolean getPredictedLabel() {
+    @Override
+    public Boolean getPredictedLabel() {
         return predictedLabel;
     }
 
+    @Override
     public void setPredictedLabel(Boolean prediction) {
         this.predictedLabel = prediction;
     }
 
+    @Override
     public boolean hasPredictedLabel() {
         return predictedLabel != null;
     }

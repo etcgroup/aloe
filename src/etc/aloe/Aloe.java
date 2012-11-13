@@ -3,17 +3,21 @@ package etc.aloe;
 import etc.aloe.controllers.CrossValidationController;
 import etc.aloe.controllers.LabelingController;
 import etc.aloe.controllers.TrainingController;
+import etc.aloe.cscw2013.CrossValidationPrepImpl;
+import etc.aloe.cscw2013.CrossValidationSplitImpl;
 import etc.aloe.cscw2013.EvaluationImpl;
 import etc.aloe.cscw2013.FeatureExtractionImpl;
 import etc.aloe.cscw2013.FeatureGenerationImpl;
 import etc.aloe.cscw2013.FeatureSpecificationImpl;
 import etc.aloe.cscw2013.PredictionImpl;
+import etc.aloe.cscw2013.ResolutionImpl;
 import etc.aloe.cscw2013.ThresholdSegmentation;
 import etc.aloe.cscw2013.TrainingImpl;
 import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.MessageSet;
 import etc.aloe.data.Model;
+import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.Segmentation;
 import java.io.File;
@@ -23,6 +27,7 @@ import java.io.InvalidObjectException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -53,6 +58,8 @@ public class Aloe {
     private File featureSpecificationFile;
     @Option(name = "-d", usage = "date format string")
     private String dateFormatString = "yyyy-MM-dd'T'HH:mm:ss";
+    @Option(name = "-r", usage = "random seed")
+    private Integer randomSeed = null;
     /**
      * Any remaining arguments to the program
      */
@@ -60,6 +67,12 @@ public class Aloe {
     private List<String> arguments = new ArrayList<String>();
 
     void run() {
+        if (randomSeed != null) {
+            RandomProvider.setRandom(new Random(randomSeed));
+        } else {
+            RandomProvider.setRandom(new Random());
+        }
+
         runTrainingMode();
         runTestingMode();
     }
@@ -70,6 +83,8 @@ public class Aloe {
         // implementations.
 
         CrossValidationController crossValidationController = new CrossValidationController(this.crossValidationFolds);
+        crossValidationController.setCrossValidationPrepImpl(new CrossValidationPrepImpl<Segment>());
+        crossValidationController.setCrossValidationSplitImpl(new CrossValidationSplitImpl<Segment>());
         crossValidationController.setFeatureGenerationImpl(new FeatureGenerationImpl());
         crossValidationController.setFeatureExtractionImpl(new FeatureExtractionImpl());
         crossValidationController.setTrainingImpl(new TrainingImpl());
@@ -82,6 +97,7 @@ public class Aloe {
         //Get and preprocess the data
         MessageSet messages = this.loadMessages();
         Segmentation segmentation = new ThresholdSegmentation(this.segmentationThresholdSeconds, segmentationByParticipant);
+        segmentation.setSegmentResolution(new ResolutionImpl());
         SegmentSet segments = segmentation.segment(messages);
 
         //Run cross validation

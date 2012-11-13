@@ -4,8 +4,6 @@
  */
 package etc.aloe.controllers;
 
-import etc.aloe.cscw2013.FeatureExtractionImpl;
-import etc.aloe.cscw2013.TrainingImpl;
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.Model;

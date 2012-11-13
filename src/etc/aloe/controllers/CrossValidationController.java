@@ -1,20 +1,17 @@
 package etc.aloe.controllers;
 
-import etc.aloe.cscw2013.EvaluationImpl;
-import etc.aloe.cscw2013.FeatureExtractionImpl;
-import etc.aloe.cscw2013.FeatureGenerationImpl;
-import etc.aloe.cscw2013.TrainingImpl;
 import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.Model;
+import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
+import etc.aloe.processes.CrossValidationPrep;
+import etc.aloe.processes.CrossValidationSplit;
 import etc.aloe.processes.Evaluation;
 import etc.aloe.processes.FeatureExtraction;
 import etc.aloe.processes.FeatureGeneration;
 import etc.aloe.processes.Training;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class that performs cross validation and produces results.
@@ -28,6 +25,8 @@ public class CrossValidationController {
     private FeatureExtraction featureExtractionImpl;
     private Training trainingImpl;
     private Evaluation evaluationImpl;
+    private CrossValidationPrep<Segment> crossValidationPrepImpl;
+    private CrossValidationSplit<Segment> crossValidationSplitImpl;
 
     public EvaluationReport getEvaluationReport() {
         return evaluationReport;
@@ -43,14 +42,20 @@ public class CrossValidationController {
 
     public void run() {
 
-        segmentSet.prepareForCrossValidation(this.folds);
+        //Prepare for cross validation
+        CrossValidationPrep<Segment> validationPrep = this.getCrossValidationPrepImpl();
+        validationPrep.randomize(segmentSet.getSegments());
+        segmentSet.setSegments(validationPrep.stratify(segmentSet.getSegments(), folds));
 
         evaluationReport = new EvaluationReport();
-
         for (int foldIndex = 0; foldIndex < this.folds; foldIndex++) {
 
-            SegmentSet trainingSegments = segmentSet.getTrainingForFold(foldIndex);
-            SegmentSet testingSegments = segmentSet.getTestingForFold(foldIndex);
+            //Split the data
+            CrossValidationSplit split = this.getCrossValidationSplitImpl();
+            SegmentSet trainingSegments = new SegmentSet();
+            trainingSegments.setSegments(split.getTrainingForFold(segmentSet.getSegments(), foldIndex, this.folds));
+            SegmentSet testingSegments = new SegmentSet();
+            testingSegments.setSegments(split.getTestingForFold(segmentSet.getSegments(), foldIndex, this.folds));
 
             FeatureGeneration generation = getFeatureGenerationImpl();
             FeatureSpecification spec = generation.generateFeatures(segmentSet);
@@ -100,5 +105,21 @@ public class CrossValidationController {
 
     public void setEvaluationImpl(Evaluation evaluation) {
         this.evaluationImpl = evaluation;
+    }
+
+    public CrossValidationPrep<Segment> getCrossValidationPrepImpl() {
+        return this.crossValidationPrepImpl;
+    }
+
+    public void setCrossValidationPrepImpl(CrossValidationPrep<Segment> crossValidationPrep) {
+        this.crossValidationPrepImpl = crossValidationPrep;
+    }
+
+    public CrossValidationSplit<Segment> getCrossValidationSplitImpl() {
+        return this.crossValidationSplitImpl;
+    }
+
+    public void setCrossValidationSplitImpl(CrossValidationSplit<Segment> crossValidationSplit) {
+        this.crossValidationSplitImpl = crossValidationSplit;
     }
 }

@@ -15,4 +15,10 @@ public interface Segmentation {
      * @return Segmented messages
      */
     public SegmentSet segment(MessageSet messages);
+
+    /**
+     * Set the segment resolution strategy that will be used.
+     * @param resolution
+     */
+    public void setSegmentResolution(SegmentResolution resolution);
 }

@@ -134,7 +134,7 @@ public class MessageSet implements Loading, Saving {
                 this.add(message);
             }
 
-            System.out.println("Message set loaded " + this.size() + " messages.");
+            System.out.println("Loaded " + this.size() + " messages into message set.");
 
         } catch (IOException ex) {
             throw new InvalidObjectException(ex.getMessage());

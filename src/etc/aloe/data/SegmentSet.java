@@ -6,6 +6,7 @@ package etc.aloe.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import weka.core.Instances;
 
 /**
  *
@@ -15,17 +16,29 @@ public class SegmentSet {
 
     private List<Segment> segments = new ArrayList<Segment>();
 
-    public SegmentSet getTrainingForFold(int foldIndex) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    /**
+     * Add a segment to the set.
+     *
+     * @param segment
+     */
+    public void add(Segment segment) {
+        this.segments.add(segment);
     }
 
-    public SegmentSet getTestingForFold(int foldIndex) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    /**
+     * Get the size of the segment set.
+     *
+     * @return
+     */
+    public int size() {
+        return this.segments.size();
     }
 
-    public void prepareForCrossValidation(int folds) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public List<Segment> getSegments() {
+        return segments;
     }
 
-
+    public void setSegments(List<Segment> segments) {
+        this.segments = segments;
+    }
 }
