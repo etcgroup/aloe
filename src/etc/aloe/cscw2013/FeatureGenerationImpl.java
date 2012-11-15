@@ -16,7 +16,8 @@ public class FeatureGenerationImpl implements FeatureGeneration {
 
     @Override
     public FeatureSpecification generateFeatures(SegmentSet segments) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //TODO: fill me in!
+        return new FeatureSpecificationImpl();
     }
 
 }
