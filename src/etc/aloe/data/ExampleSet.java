@@ -13,7 +13,7 @@ import weka.filters.unsupervised.instance.RemoveWithValues;
  */
 public class ExampleSet {
 
-    Instances instances;
+    private Instances instances;
 
     public ExampleSet(Instances instances) {
         this.instances = instances;
@@ -52,5 +52,9 @@ public class ExampleSet {
 
     Instance get(int i) {
         return instances.get(i);
+    }
+
+    Instances getInstances() {
+        return instances;
     }
 }
