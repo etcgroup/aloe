@@ -50,11 +50,11 @@ public class ExampleSet {
         }
     }
 
-    Instance get(int i) {
+    public Instance get(int i) {
         return instances.get(i);
     }
 
-    Instances getInstances() {
+    public Instances getInstances() {
         return instances;
     }
 }
