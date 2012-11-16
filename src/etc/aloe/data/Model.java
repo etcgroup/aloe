@@ -55,13 +55,11 @@ public class Model implements Saving, Loading {
     public List<Boolean> getPredictedLabels(ExampleSet examples) {
         List<Boolean> results = new ArrayList<Boolean>();
 
-        Attribute classAttr = examples.getInstances().classAttribute();
-
         for (int i = 0; i < examples.size(); i++) {
             try {
                 double classValue = classifier.classifyInstance(examples.get(i));
-                String classValueStr = classAttr.value((int) classValue);
-                results.add(Boolean.parseBoolean(classValueStr));
+                Boolean label = examples.getClassLabel(classValue);
+                results.add(label);
             } catch (Exception ex) {
                 System.err.println("Classification error on instance " + i);
             }
