@@ -7,7 +7,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InvalidObjectException;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -89,8 +91,8 @@ public class MessageSet implements Loading, Saving {
     }
 
     @Override
-    public boolean load(File source) throws FileNotFoundException, InvalidObjectException {
-        CsvReader csvReader = new CsvReader(new FileInputStream(source), Charset.forName("UTF-8"));
+    public boolean load(InputStream source) throws FileNotFoundException, InvalidObjectException {
+        CsvReader csvReader = new CsvReader(source, Charset.forName("UTF-8"));
 
         try {
             validateCSVHeaders(csvReader);
@@ -144,7 +146,7 @@ public class MessageSet implements Loading, Saving {
     }
 
     @Override
-    public boolean save(File destination) throws IOException {
+    public boolean save(OutputStream destination) throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

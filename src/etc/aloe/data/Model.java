@@ -5,7 +5,9 @@ import etc.aloe.processes.Saving;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InvalidObjectException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +22,7 @@ public class Model implements Saving, Loading {
     Classifier classifier;
 
     public Model() {
-        
+
     }
 
     public Model(Classifier classifier) {
@@ -28,7 +30,7 @@ public class Model implements Saving, Loading {
     }
 
     @Override
-    public boolean save(File destination) throws IOException {
+    public boolean save(OutputStream destination) throws IOException {
         PrintStream writer = new PrintStream(destination);
         writer.println("nothing to do here");
         //TODO: fill me in!
@@ -37,7 +39,7 @@ public class Model implements Saving, Loading {
     }
 
     @Override
-    public boolean load(File source) throws FileNotFoundException, InvalidObjectException {
+    public boolean load(InputStream source) throws FileNotFoundException, InvalidObjectException {
         //TODO: fill me in!
         return true;
     }

@@ -21,11 +21,17 @@ import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.Segmentation;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InvalidObjectException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.Option;
@@ -72,7 +78,6 @@ public class Aloe {
     private File inputModelFile;
     @Option(name = "-f", usage = "use an existing feature specification file")
     private File inputFeatureSpecFile;
-
     @Option(name = "-t", usage = "segmentation threshold in seconds (default 30)")
     private int segmentationThresholdSeconds = 30;
     @Option(name = "-k", usage = "number of cross-validation folds (default 10)")
@@ -179,12 +184,18 @@ public class Aloe {
         messages.setDateFormat(new SimpleDateFormat(dateFormatString));
 
         try {
-            messages.load(this.inputCSVFile);
+            InputStream inputCSV = new FileInputStream(inputCSVFile);
+            messages.load(inputCSV);
+            inputCSV.close();
         } catch (FileNotFoundException e) {
             System.err.println("Input CSV file " + this.inputCSVFile + " not found.");
             System.exit(1);
         } catch (InvalidObjectException e) {
             System.err.println("Incorrect format in input CSV file " + this.inputCSVFile);
+            System.err.println("\t" + e.getMessage());
+            System.exit(1);
+        } catch (IOException e) {
+            System.err.println("File read error for " + this.inputCSVFile);
             System.err.println("\t" + e.getMessage());
             System.exit(1);
         }
@@ -195,12 +206,18 @@ public class Aloe {
     private Model loadModel() {
         Model model = new Model();
         try {
-            model.load(this.inputModelFile);
+            InputStream inputModel = new FileInputStream(inputModelFile);
+            model.load(inputModel);
+            inputModel.close();
         } catch (FileNotFoundException e) {
             System.err.println("Model file " + this.inputModelFile + " not found.");
             System.exit(1);
         } catch (InvalidObjectException e) {
             System.err.println("Incorrect format in model file " + this.inputModelFile);
+            System.err.println("\t" + e.getMessage());
+            System.exit(1);
+        } catch (IOException e) {
+            System.err.println("File read error for " + this.inputModelFile);
             System.err.println("\t" + e.getMessage());
             System.exit(1);
         }
@@ -211,12 +228,18 @@ public class Aloe {
         FeatureSpecification spec = new FeatureSpecificationImpl();
 
         try {
-            spec.load(this.inputFeatureSpecFile);
+            InputStream inputFeatureSpec = new FileInputStream(inputFeatureSpecFile);
+            spec.load(inputFeatureSpec);
+            inputFeatureSpec.close();
         } catch (FileNotFoundException e) {
             System.err.println("Feature specification file " + this.inputFeatureSpecFile + " not found.");
             System.exit(1);
         } catch (InvalidObjectException e) {
             System.err.println("Incorrect format for feature specification file " + this.inputFeatureSpecFile);
+            System.err.println("\t" + e.getMessage());
+            System.exit(1);
+        } catch (IOException e) {
+            System.err.println("File read error for " + this.inputFeatureSpecFile);
             System.err.println("\t" + e.getMessage());
             System.exit(1);
         }
@@ -226,7 +249,9 @@ public class Aloe {
 
     private void saveMessages(MessageSet messages) {
         try {
-            messages.save(this.outputCSVFile);
+            OutputStream outputCSV = new FileOutputStream(outputCSVFile);
+            messages.save(outputCSV);
+            outputCSV.close();
         } catch (IOException e) {
             System.err.println("Error saving messages to " + this.outputCSVFile);
             System.err.println("\t" + e.getMessage());
@@ -235,7 +260,9 @@ public class Aloe {
 
     private void saveEvaluationReport(EvaluationReport evalReport) {
         try {
-            evalReport.save(this.outputEvaluationReportFile);
+            OutputStream outputEval = new FileOutputStream(outputEvaluationReportFile);
+            evalReport.save(outputEval);
+            outputEval.close();
         } catch (IOException e) {
             System.err.println("Error saving evaluation report to " + this.outputEvaluationReportFile);
             System.err.println("\t" + e.getMessage());
@@ -244,7 +271,9 @@ public class Aloe {
 
     private void saveFeatureSpecification(FeatureSpecification spec) {
         try {
-            spec.save(this.outputFeatureSpecFile);
+            OutputStream outputFeatureSpec = new FileOutputStream(outputFeatureSpecFile);
+            spec.save(outputFeatureSpec);
+            outputFeatureSpec.close();
         } catch (IOException e) {
             System.err.println("Error saving feature spec to " + this.outputFeatureSpecFile);
             System.err.println("\t" + e.getMessage());
@@ -253,7 +282,9 @@ public class Aloe {
 
     private void saveModel(Model model) {
         try {
-            model.save(this.outputModelFile);
+            OutputStream outputModel = new FileOutputStream(outputModelFile);
+            model.save(outputModel);
+            outputModel.close();
         } catch (IOException e) {
             System.err.println("Error saving model to " + this.outputModelFile);
             System.err.println("\t" + e.getMessage());
