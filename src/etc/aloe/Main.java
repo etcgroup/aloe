@@ -11,25 +11,26 @@ public class Main {
 
     public static void main(String[] args) {
 
-        args = new String[] {
-            "-t", "30",
-            "-i", "example.csv"
-        };
-
         Aloe aloe = new Aloe();
 
         //Parse the command line arguments
         CmdLineParser parser = new CmdLineParser(aloe);
+
         try {
             parser.parseArgument(args);
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());
-            System.err.println("java -jar aloe.jar [options...] arguments...");
+            aloe.printUsage();
             parser.printUsage(System.err);
             return;
         }
 
         //And go!
-        aloe.run();
+        try {
+            aloe.run();
+        } catch (CmdLineException e) {
+            aloe.printUsage();
+            parser.printUsage(System.err);
+        }
     }
 }
