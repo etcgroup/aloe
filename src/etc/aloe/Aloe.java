@@ -72,11 +72,12 @@ public class Aloe {
     private File inputModelFile;
     @Option(name = "-f", usage = "use an existing feature specification file")
     private File inputFeatureSpecFile;
+
     @Option(name = "-t", usage = "segmentation threshold in seconds (default 30)")
     private int segmentationThresholdSeconds = 30;
     @Option(name = "-k", usage = "number of cross-validation folds (default 10)")
     private int crossValidationFolds = 10;
-    @Option(name = "-d", usage = "date format string")
+    @Option(name = "-d", usage = "date format string (default 'yyyy-MM-dd'T'HH:mm:ss')")
     private String dateFormatString = "yyyy-MM-dd'T'HH:mm:ss";
 
     @Option(name = "-r", usage = "random seed")
