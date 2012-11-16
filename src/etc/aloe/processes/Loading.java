@@ -1,7 +1,7 @@
 package etc.aloe.processes;
 
-import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.InvalidObjectException;
 
 /**
@@ -12,10 +12,10 @@ public interface Loading {
     /**
      * Loads the object from a file.
      *
-     * @param source The file to load.
+     * @param source The source to load from.
      * @return True if loading was successful
      * @throws FileNotFoundException
      * @throws InvalidObjectException
      */
-    public boolean load(File source) throws FileNotFoundException, InvalidObjectException;
+    public boolean load(InputStream source) throws FileNotFoundException, InvalidObjectException;
 }
