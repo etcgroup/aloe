@@ -46,8 +46,8 @@ public class StringToDictionaryVectorTest {
         Instances inputFormat = null;
         StringToDictionaryVector instance = new StringToDictionaryVector();
         Instances expResult = null;
-        Instances result = instance.determineOutputFormat(inputFormat);
-        assertEquals(expResult, result);
+//        Instances result = instance.determineOutputFormat(inputFormat);
+//        assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -61,8 +61,8 @@ public class StringToDictionaryVectorTest {
         Instances instances = null;
         StringToDictionaryVector instance = new StringToDictionaryVector();
         Instances expResult = null;
-        Instances result = instance.process(instances);
-        assertEquals(expResult, result);
+//        Instances result = instance.process(instances);
+//        assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
