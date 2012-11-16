@@ -14,3 +14,4 @@ lib/
 # Input/output #
 *.csv
 /build/
+/dist/
