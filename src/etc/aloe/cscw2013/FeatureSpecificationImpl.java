@@ -7,12 +7,17 @@ import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
+import weka.filters.Filter;
 
 /**
  * Implementation of a feature specification. Contains data about bag of words
  * features, emoticon features, and other configuration.
  */
 public class FeatureSpecificationImpl extends FeatureSpecification {
+
+    List<Filter> filters = new ArrayList<Filter>();
 
     @Override
     public boolean load(InputStream source) throws FileNotFoundException, InvalidObjectException {
@@ -26,5 +31,9 @@ public class FeatureSpecificationImpl extends FeatureSpecification {
         writer.println("nothing to do here");
         //TODO: fill me in!
         return true;
+    }
+
+    void addFilter(Filter filter) {
+        this.filters.add(filter);
     }
 }
