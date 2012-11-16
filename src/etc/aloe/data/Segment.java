@@ -7,7 +7,7 @@ import java.util.List;
  * Stores a list of LabeledMessages, associated with an unique ID for the
  * segment (auto-increment, zero-index)
  */
-public class Segment implements LabelableItem{
+public class Segment implements LabelableItem {
 
     private static int ID_COUNTER = 0;
     private int id;
@@ -19,6 +19,24 @@ public class Segment implements LabelableItem{
         messages = new ArrayList<Message>();
         id = ID_COUNTER;
         ID_COUNTER++;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String concatMessages() {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (Message item : getMessages()) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append(" ");
+            }
+            sb.append(item.getMessage());
+        }
+        return sb.toString();
     }
 
     public void add(Message message) {
