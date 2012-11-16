@@ -34,7 +34,6 @@ public class Model implements Saving, Loading {
         PrintStream writer = new PrintStream(destination);
         writer.println("nothing to do here");
         //TODO: fill me in!
-        writer.close();
         return true;
     }
 
