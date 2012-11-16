@@ -96,11 +96,11 @@ public class Aloe {
                 runTestingMode();
             } else {
                 //We're in an invalid mode
-                throw new CmdLineException("Model file provided without feature spec file.");
+                throw new CmdLineException("Model file provided without feature spec file!");
             }
         } else if (inputFeatureSpecFile != null) {
             //We're in an invalid mode
-            throw new CmdLineException("Feature spec file provided without model file.");
+            throw new CmdLineException("Feature spec file provided without model file!");
         } else {
             runTrainingMode();
         }

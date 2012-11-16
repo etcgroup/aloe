@@ -29,6 +29,7 @@ public class Main {
         try {
             aloe.run();
         } catch (CmdLineException e) {
+            System.err.println(e.getMessage());
             aloe.printUsage();
             parser.printUsage(System.err);
         }
