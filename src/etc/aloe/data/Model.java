@@ -2,7 +2,6 @@ package etc.aloe.data;
 
 import etc.aloe.processes.Loading;
 import etc.aloe.processes.Saving;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +11,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import weka.classifiers.Classifier;
-import weka.core.Attribute;
 
 /**
  * A Model has the ability to learn from examples and label unlabeled examples.

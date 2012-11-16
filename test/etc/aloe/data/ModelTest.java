@@ -6,7 +6,6 @@ package etc.aloe.data;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -19,7 +18,6 @@ import weka.classifiers.trees.J48;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
-import weka.core.Utils;
 
 /**
  *

@@ -1,11 +1,8 @@
 package etc.aloe.data;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.Utils;
 import weka.filters.Filter;
 import weka.filters.unsupervised.instance.RemoveWithValues;
 

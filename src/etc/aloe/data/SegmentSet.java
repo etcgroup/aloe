@@ -4,10 +4,8 @@
  */
 package etc.aloe.data;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -57,7 +55,7 @@ public class SegmentSet {
 
         Instances instances = new Instances("BasicExamples", attributes, 0);
         instances.setClassIndex(2);
-        
+
         Attribute idAttr = instances.attribute("*id");
         Attribute messageAttr = instances.attribute("message");
         Attribute labelAttr = instances.attribute("label");
