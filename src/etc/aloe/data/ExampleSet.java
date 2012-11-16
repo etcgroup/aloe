@@ -2,8 +2,10 @@ package etc.aloe.data;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.Utils;
 import weka.filters.Filter;
 import weka.filters.unsupervised.instance.RemoveWithValues;
 
@@ -56,5 +58,35 @@ public class ExampleSet {
 
     public Instances getInstances() {
         return instances;
+    }
+
+    /**
+     * Gets the actual label of the given example. If the example is unlabeled,
+     * returns null;
+     *
+     * @param i
+     * @return
+     */
+    public Boolean getTrueLabel(int i) {
+        Instance instance = instances.get(i);
+        return getClassLabel(instance.classValue());
+    }
+
+    /**
+     * Converts a double class value into a boolean given the string labels for
+     * the class attribute in this data set. Returns null if the class value is
+     * weka missing.
+     *
+     * @param classValue
+     * @return
+     */
+    Boolean getClassLabel(double classValue) {
+        if (Double.isNaN(classValue)) {
+            return null;
+        }
+
+        Attribute classAttr = instances.classAttribute();
+        String classValueStr = classAttr.value((int) classValue);
+        return Boolean.parseBoolean(classValueStr);
     }
 }

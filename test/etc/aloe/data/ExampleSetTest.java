@@ -57,11 +57,11 @@ public class ExampleSetTest {
         this.instances.add(new DenseInstance(1.0, new double[]{4.0, 1.0}));
         this.instances.add(new DenseInstance(1.0, new double[]{5.0, 1.0}));
         this.instances.add(new DenseInstance(1.0, new double[]{6.0, 1.0}));
-        this.instances.add(new DenseInstance(1.0, new double[]{7.0, 1.0}));
-        this.instances.add(new DenseInstance(1.0, new double[]{8.0, 1.0}));
+        this.instances.add(new DenseInstance(1.0, new double[]{7.0, 0.0}));
+        this.instances.add(new DenseInstance(1.0, new double[]{8.0, 0.0}));
         this.instances.add(new DenseInstance(1.0, new double[]{9.0, Utils.missingValue()}));
-        this.instances.add(new DenseInstance(1.0, new double[]{10.0, 1.0}));
-        this.instances.add(new DenseInstance(1.0, new double[]{11.0, 1.0}));
+        this.instances.add(new DenseInstance(1.0, new double[]{10.0, 0.0}));
+        this.instances.add(new DenseInstance(1.0, new double[]{11.0, 0.0}));
         this.instances.add(new DenseInstance(1.0, new double[]{12.0, Utils.missingValue()}));
 
         numMissingClass = 3;
@@ -128,5 +128,44 @@ public class ExampleSetTest {
         } catch (IndexOutOfBoundsException e) {
             assertTrue("Throws out of bounds exception on out of range indices", true);
         }
+    }
+
+    /**
+     * Test of getInstances method, of class ExampleSet.
+     */
+    @Test
+    public void testGetInstances() {
+        System.out.println("getInstances");
+        ExampleSet instance = new ExampleSet(instances);
+        Instances result = instance.getInstances();
+        assertEquals(instances, result);
+    }
+
+    /**
+     * Test of getTrueLabel method, of class ExampleSet.
+     */
+    @Test
+    public void testGetTrueLabel() {
+        System.out.println("getTrueLabel");
+        int i = 0;
+        ExampleSet instance = new ExampleSet(instances);
+
+        assertEquals(true, instance.getTrueLabel(0));
+        assertEquals(false, instance.getTrueLabel(6));
+        assertEquals(null, instance.getTrueLabel(11));
+    }
+
+    /**
+     * Test of getClassLabel method, of class ExampleSet.
+     */
+    @Test
+    public void testGetClassLabel() {
+        System.out.println("getClassLabel");
+
+        ExampleSet instance = new ExampleSet(instances);
+        
+        assertEquals(true, instance.getClassLabel(1.0));
+        assertEquals(false, instance.getClassLabel(0.0));
+        assertEquals(null, instance.getClassLabel(Utils.missingValue()));
     }
 }
