@@ -9,6 +9,11 @@ import weka.filters.unsupervised.instance.RemoveWithValues;
 /**
  * ExampleSet contains information about data points that have features
  * extracted. These data points are ready for labeling by a model.
+ *
+ * Instances in an ExampleSet always have at least these attributes:
+ * 'message' - which contains the message text.
+ * '*id' - which is a unique integer identifying the message.
+ * 'label' - the ground truth label for the instance (0 or 1)
  */
 public class ExampleSet {
 
