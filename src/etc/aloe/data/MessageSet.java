@@ -158,7 +158,11 @@ public class MessageSet implements Loading, Saving {
         this.dateFormat = dateFormat;
     }
 
-    private int size() {
+    public int size() {
         return this.messages.size();
+    }
+
+    public Message get(int i) {
+        return this.messages.get(i);
     }
 }
