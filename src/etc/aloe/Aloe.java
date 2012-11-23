@@ -9,7 +9,7 @@ import etc.aloe.cscw2013.EvaluationImpl;
 import etc.aloe.cscw2013.FeatureExtractionImpl;
 import etc.aloe.cscw2013.FeatureGenerationImpl;
 import etc.aloe.cscw2013.FeatureSpecificationImpl;
-import etc.aloe.cscw2013.PredictionImpl;
+import etc.aloe.cscw2013.LabelMappingImpl;
 import etc.aloe.cscw2013.ResolutionImpl;
 import etc.aloe.cscw2013.ThresholdSegmentation;
 import etc.aloe.cscw2013.TrainingImpl;
@@ -159,7 +159,7 @@ public class Aloe {
         LabelingController labelingController = new LabelingController();
         labelingController.setFeatureExtractionImpl(new FeatureExtractionImpl());
         labelingController.setEvaluationImpl(new EvaluationImpl());
-        labelingController.setPredictionImpl(new PredictionImpl());
+        labelingController.setPredictionImpl(new LabelMappingImpl());
 
         MessageSet messages = this.loadMessages();
         FeatureSpecification spec = this.loadFeatureSpecification();
@@ -172,11 +172,10 @@ public class Aloe {
         labelingController.setFeatureSpecification(spec);
         labelingController.run();
 
-        MessageSet labeledMessages = labelingController.getLabeledMessages();
         EvaluationReport evalReport = labelingController.getEvaluationReport();
 
         saveEvaluationReport(evalReport);
-        saveMessages(labeledMessages);
+        saveMessages(messages);
     }
 
     private MessageSet loadMessages() {

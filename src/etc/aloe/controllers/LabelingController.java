@@ -7,12 +7,12 @@ package etc.aloe.controllers;
 import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
-import etc.aloe.data.MessageSet;
 import etc.aloe.data.Model;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.Evaluation;
 import etc.aloe.processes.FeatureExtraction;
-import etc.aloe.processes.Prediction;
+import etc.aloe.processes.LabelMapping;
+import java.util.List;
 
 /**
  *
@@ -22,17 +22,11 @@ public class LabelingController {
 
     private SegmentSet segmentSet;
     private FeatureSpecification featureSpecification;
-    private MessageSet labeledMessages;
     private EvaluationReport evaluationReport;
     private Model model;
-    private MessageSet rawMessages;
     private FeatureExtraction featureExtractionImpl;
-    private Prediction predictionImpl;
+    private LabelMapping predictionImpl;
     private Evaluation evaluationImpl;
-
-    public void setRawMessageSet(MessageSet messages) {
-        this.rawMessages = messages;
-    }
 
     public void setSegmentSet(SegmentSet segments) {
         this.segmentSet = segments;
@@ -46,10 +40,6 @@ public class LabelingController {
         this.model = model;
     }
 
-    public MessageSet getLabeledMessages() {
-        return labeledMessages;
-    }
-
     public EvaluationReport getEvaluationReport() {
         return this.evaluationReport;
     }
@@ -61,8 +51,11 @@ public class LabelingController {
         ExampleSet examples = extraction.extractFeatures(segmentSet, featureSpecification);
 
         //Predict the labels
-        Prediction prediction = getPredictionImpl();
-        this.labeledMessages = prediction.predict(examples, this.model, rawMessages);
+        List<Boolean> predictedLabels = this.model.getPredictedLabels(examples);
+
+        //Map back onto messages
+        LabelMapping prediction = getPredictionImpl();
+        prediction.map(predictedLabels, segmentSet);
 
         //Evaluate the model on any labeled examples
         ExampleSet labeledExamples = examples.onlyLabeled();
@@ -80,11 +73,11 @@ public class LabelingController {
         this.featureExtractionImpl = featureExtractor;
     }
 
-    public Prediction getPredictionImpl() {
+    public LabelMapping getPredictionImpl() {
         return this.predictionImpl;
     }
 
-    public void setPredictionImpl(Prediction prediction) {
+    public void setPredictionImpl(LabelMapping prediction) {
         this.predictionImpl = prediction;
     }
 

@@ -1,25 +1,24 @@
 package etc.aloe.processes;
 
-import etc.aloe.data.ExampleSet;
 import etc.aloe.data.MessageSet;
-import etc.aloe.data.Model;
+import etc.aloe.data.SegmentSet;
+import java.util.List;
 
 /**
- * Prediction generates labeled messages given un-classified example data.
+ * LabelMapping maps predicted labels onto un-classified messages, producing labeled messages.
  */
-public interface Prediction {
+public interface LabelMapping {
 
     /**
-     * Generates a MessageSet with predicted labels based on the provided
-     * examples and model.
+     * Modifies the message set with predicted labels based on the provided
+     * labels and segments.
      *
      * The predictions are superimposed over the raw messages to produce the
      * output.
      *
-     * @param examples Segmented, feature-extracted examples.
-     * @param model The trained model.
-     * @param rawMessages The unsegmented messages.
+     * @param predictedLabels Labels produced by a model
+     * @param segments The unlabeled segments, whose messages will receive the new labels.
      * @return
      */
-    MessageSet predict(ExampleSet examples, Model model, MessageSet rawMessages);
+    void map(List<Boolean> predictedLabels, SegmentSet segments);
 }
