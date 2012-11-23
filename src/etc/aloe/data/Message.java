@@ -8,12 +8,12 @@ import java.util.Date;
  */
 public class Message implements Comparable<Message>, LabelableItem {
 
-    public final int id;
-    public final Date timestamp;
-    public final String participant;
-    public final String message;
-    public Boolean trueLabel;
-    public Boolean predictedLabel = null;
+    private final int id;
+    private final Date timestamp;
+    private final String participant;
+    private final String message;
+    private Boolean trueLabel;
+    private Boolean predictedLabel = null;
 
     /**
      * Construct a new un-labeled message.
@@ -52,6 +52,10 @@ public class Message implements Comparable<Message>, LabelableItem {
         this.participant = participant;
         this.message = message;
         this.trueLabel = trueLabel;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getMessage() {
