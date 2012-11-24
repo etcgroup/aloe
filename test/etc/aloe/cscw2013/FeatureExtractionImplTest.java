@@ -120,9 +120,9 @@ public class FeatureExtractionImplTest {
         assertEquals(2, instances.size());
 
         //The base attributes are present
-        assertNotNull(instances.attribute("message"));
-        assertNotNull(instances.attribute("label"));
-        Attribute idAttr = instances.attribute("*id");
+        assertNotNull(instances.attribute(ExampleSet.MESSAGE_ATTR_NAME));
+        assertNotNull(instances.attribute(ExampleSet.LABEL_ATTR_NAME));
+        Attribute idAttr = instances.attribute(ExampleSet.ID_ATTR_NAME);
         assertNotNull(idAttr);
 
         //The correct segments remain

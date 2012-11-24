@@ -117,9 +117,9 @@ public class SegmentSetTest {
         assertEquals(segments.size(), examples.size());
 
         Instances instances = examples.getInstances();
-        assertEquals("*id", instances.attribute(0).name());
-        assertEquals("message", instances.attribute(1).name());
-        assertEquals("label", instances.classAttribute().name());
+        assertEquals(ExampleSet.ID_ATTR_NAME, instances.attribute(0).name());
+        assertEquals(ExampleSet.MESSAGE_ATTR_NAME, instances.attribute(1).name());
+        assertEquals(ExampleSet.LABEL_ATTR_NAME, instances.classAttribute().name());
 
         assertEquals(seg0.getId(), instances.get(0).value(0), 0);
         assertEquals(seg0.concatMessages(), instances.get(0).stringValue(1));

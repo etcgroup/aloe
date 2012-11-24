@@ -49,16 +49,16 @@ public class SegmentSet {
     public ExampleSet getBasicExamples() {
         ArrayList<Attribute> attributes = new ArrayList<Attribute>();
 
-        attributes.add(new Attribute("*id"));
-        attributes.add(new Attribute("message", (List<String>)null));
-        attributes.add(new Attribute("label", Arrays.asList(new String[]{"false", "true"})));
+        attributes.add(new Attribute(ExampleSet.ID_ATTR_NAME));
+        attributes.add(new Attribute(ExampleSet.MESSAGE_ATTR_NAME, (List<String>) null));
+        attributes.add(new Attribute(ExampleSet.LABEL_ATTR_NAME, Arrays.asList(new String[]{"false", "true"})));
 
         Instances instances = new Instances("BasicExamples", attributes, 0);
         instances.setClassIndex(2);
 
-        Attribute idAttr = instances.attribute("*id");
-        Attribute messageAttr = instances.attribute("message");
-        Attribute labelAttr = instances.attribute("label");
+        Attribute idAttr = instances.attribute(ExampleSet.ID_ATTR_NAME);
+        Attribute messageAttr = instances.attribute(ExampleSet.MESSAGE_ATTR_NAME);
+        Attribute labelAttr = instances.attribute(ExampleSet.LABEL_ATTR_NAME);
 
         for (int i = 0; i < size(); i++) {
             Segment segment = get(i);
