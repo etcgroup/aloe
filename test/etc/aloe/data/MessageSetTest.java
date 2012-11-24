@@ -5,6 +5,7 @@
 package etc.aloe.data;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
@@ -106,14 +107,14 @@ public class MessageSetTest {
      * labels.
      */
     @Test
-    public void testLoad_withTruth() throws Exception {
-        System.out.println("load_withTruth");
+    public void testLoad_withLabels() throws Exception {
+        System.out.println("load_withLabels");
         String exampleData =
-                "\"id\",\"time\",\"participant\",\"message\",\"truth\"\n"
-                + "1,\"2005-01-04T00:07:47\",\"BERT\",\"15 hrs 59 min to 12deg twilight (at 16:07 UTC)\",true\n"
-                + "2,\"2005-01-04T00:07:48\",\"Ray\",\"hi bert\",false\n"
-                + "3,\"2005-01-04T00:07:48\",\"BERT\",\"ray, why did you create me?\"\n"
-                + "4,\"2005-01-04T00:07:50\",\"BERT\",\"(sunrise at 16:48 UTC)\",\n"
+                "\"id\",\"time\",\"participant\",\"message\",truth,predicted,segment\n"
+                + "1,\"2005-01-04T00:07:47\",\"BERT\",\"15 hrs 59 min to 12deg twilight (at 16:07 UTC)\",true,false,3\n"
+                + "2,\"2005-01-04T00:07:48\",\"Ray\",\"hi bert\",false,true,5\n"
+                + "3,\"2005-01-04T00:07:48\",\"BERT\",\"ray, why did you create me?\",,,\n"
+                + "4,\"2005-01-04T00:07:50\",\"BERT\",\"(sunrise at 16:48 UTC)\",,false,\n"
                 + "5,\"2005-01-04T00:07:55\",\"Ray\",\"To make you suffer\",true\n";
 
         InputStream source = new ByteArrayInputStream(exampleData.getBytes());
@@ -132,10 +133,24 @@ public class MessageSetTest {
         assertEquals("To make you suffer", messages.get(4).getMessage());
 
         assertEquals(true, messages.get(0).getTrueLabel());
+        assertEquals(false, messages.get(0).getPredictedLabel());
+        assertEquals(3, messages.get(0).getSegmentId());
+
         assertEquals(false, messages.get(1).getTrueLabel());
+        assertEquals(true, messages.get(1).getPredictedLabel());
+        assertEquals(5, messages.get(1).getSegmentId());
+
         assertEquals(null, messages.get(2).getTrueLabel());
+        assertEquals(null, messages.get(2).getPredictedLabel());
+        assertEquals(-1, messages.get(2).getSegmentId());
+
         assertEquals(null, messages.get(3).getTrueLabel());
+        assertEquals(false, messages.get(3).getPredictedLabel());
+        assertEquals(-1, messages.get(3).getSegmentId());
+
         assertEquals(true, messages.get(4).getTrueLabel());
+        assertEquals(null, messages.get(4).getPredictedLabel());
+        assertEquals(-1, messages.get(4).getSegmentId());
     }
 
     /**
@@ -144,13 +159,43 @@ public class MessageSetTest {
     @Test
     public void testSave() throws Exception {
         System.out.println("save");
-        OutputStream destination = null;
-        MessageSet instance = new MessageSet();
-//        boolean expResult = false;
-//        boolean result = instance.save(destination);
-//        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
+        String dateFormatString = "yyyy-MM-dd'T'HH:mm:ss";
+        DateFormat dateFormat = new SimpleDateFormat(dateFormatString);
+
+        MessageSet messages = new MessageSet();
+        messages.setDateFormat(dateFormat);
+        messages.add(new Message(1, new Date(), "Alice", "hello", true, true));
+        messages.add(new Message(2, new Date(), "Bob", "goodbye", false, false, 2));
+        messages.add(new Message(3, new Date(), "Alice", "cow", null, true));
+        messages.add(new Message(4, new Date(), "Bob", "time", false, null, 4));
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        messages.save(out);
+        out.close();
+
+        byte[] bytes = out.toByteArray();
+        assertTrue(bytes.length > 0);
+
+        String foo = new String(bytes);
+        System.err.println(foo);
+        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+        MessageSet readMessages = new MessageSet();
+        readMessages.setDateFormat(dateFormat);
+        readMessages.load(in);
+        in.close();
+
+        assertEquals(messages.size(), readMessages.size());
+
+        for (int i = 0; i < messages.size(); i++) {
+            assertEquals(messages.get(i).getId(), readMessages.get(i).getId());
+            assertEquals(messages.get(i).getParticipant(), readMessages.get(i).getParticipant());
+            assertEquals(messages.get(i).getMessage(), readMessages.get(i).getMessage());
+            assertEquals(messages.get(i).getTimestamp().toString(), readMessages.get(i).getTimestamp().toString());
+            assertEquals(messages.get(i).getTrueLabel(), readMessages.get(i).getTrueLabel());
+            assertEquals(messages.get(i).getPredictedLabel(), readMessages.get(i).getPredictedLabel());
+            assertEquals(messages.get(i).getSegmentId(), readMessages.get(i).getSegmentId());
+        }
     }
 
     /**
