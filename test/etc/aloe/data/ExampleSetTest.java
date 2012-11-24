@@ -163,9 +163,39 @@ public class ExampleSetTest {
         System.out.println("getClassLabel");
 
         ExampleSet instance = new ExampleSet(instances);
-        
+
         assertEquals(true, instance.getClassLabel(1.0));
         assertEquals(false, instance.getClassLabel(0.0));
         assertEquals(null, instance.getClassLabel(Utils.missingValue()));
+    }
+
+    /**
+     * Test of copy method, of class ExampleSet.
+     */
+    @Test
+    public void testCopy() {
+        System.out.println("copy");
+
+        ExampleSet original = new ExampleSet(instances);
+        ExampleSet result = original.copy();
+
+        assertNotSame(original, result);
+        assertTrue(original.getInstances().equalHeaders(result.getInstances()));
+        assertEquals(original.size(), result.size());
+    }
+
+    /**
+     * Test of setInstances method, of class ExampleSet.
+     */
+    @Test
+    public void testSetInstances() {
+        System.out.println("setInstances");
+
+        ExampleSet examples = new ExampleSet(instances);
+        assertEquals(instances, examples.getInstances());
+
+        Instances other = new Instances("Other", new ArrayList<Attribute>(), 4);
+        examples.setInstances(other);
+        assertEquals(other, examples.getInstances());
     }
 }

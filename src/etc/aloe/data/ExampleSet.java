@@ -20,11 +20,15 @@ public class ExampleSet {
     public final static String ID_ATTR_NAME = "*id";
     public final static String MESSAGE_ATTR_NAME = "message";
     public final static String LABEL_ATTR_NAME = "label";
-    
+
     private Instances instances;
 
     public ExampleSet(Instances instances) {
         this.instances = instances;
+    }
+
+    public ExampleSet copy() {
+        return new ExampleSet(new Instances(instances));
     }
 
     /**
@@ -94,5 +98,9 @@ public class ExampleSet {
         Attribute classAttr = instances.classAttribute();
         String classValueStr = classAttr.value((int) classValue);
         return Boolean.parseBoolean(classValueStr);
+    }
+
+    public void setInstances(Instances instances) {
+        this.instances = instances;
     }
 }
