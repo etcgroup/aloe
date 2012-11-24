@@ -1,6 +1,5 @@
 package etc.aloe.data;
 
-import java.text.ParseException;
 import java.util.Date;
 
 /**
@@ -28,7 +27,7 @@ public class Message implements Comparable<Message>, LabelableItem {
             Date timestamp,
             String participant,
             String message) {
-        this(id, timestamp, participant, message, null);
+        this(id, timestamp, participant, message, null, null);
     }
 
     /**
@@ -46,12 +45,33 @@ public class Message implements Comparable<Message>, LabelableItem {
             String participant,
             String message,
             Boolean trueLabel) {
+        this(id, timestamp, participant, message, trueLabel, null);
+    }
+
+    /**
+     * Construct a new message. Leave trueLabel and predictedLabel null if unlabeled.
+     *
+     * @param id
+     * @param timestamp
+     * @param participant
+     * @param message
+     * @param trueLabel
+     * @param predictedLabel
+     */
+    public Message(
+            int id,
+            Date timestamp,
+            String participant,
+            String message,
+            Boolean trueLabel,
+            Boolean predictedLabel) {
 
         this.id = id;
         this.timestamp = timestamp;
         this.participant = participant;
         this.message = message;
         this.trueLabel = trueLabel;
+        this.predictedLabel = predictedLabel;
     }
 
     public int getId() {
