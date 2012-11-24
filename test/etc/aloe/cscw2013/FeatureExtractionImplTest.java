@@ -114,7 +114,7 @@ public class FeatureExtractionImplTest {
         //3 base attrs + 1
         assertEquals(4, instances.numAttributes());
         //Contains the added attribute in the right place
-        assertEquals(attrName, instances.attribute(3).name());
+        assertEquals(attrName, instances.attribute(basicInstances.numAttributes()).name());
 
         // the middle 2 segments were removed
         assertEquals(2, instances.size());
