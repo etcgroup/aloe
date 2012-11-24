@@ -2,7 +2,6 @@ package etc.aloe.cscw2013;
 
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
-import etc.aloe.data.SegmentSet;
 import etc.aloe.filters.PronounRegexFilter;
 import etc.aloe.processes.FeatureGeneration;
 
@@ -13,7 +12,7 @@ import etc.aloe.processes.FeatureGeneration;
 public class FeatureGenerationImpl implements FeatureGeneration {
 
     @Override
-    public FeatureSpecification generateFeatures(SegmentSet segments) {
+    public FeatureSpecification generateFeatures(ExampleSet basicExamples) {
 
         FeatureSpecification spec = new FeatureSpecification();
 

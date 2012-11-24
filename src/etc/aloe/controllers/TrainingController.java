@@ -4,11 +4,13 @@
  */
 package etc.aloe.controllers;
 
+import etc.aloe.cscw2013.FeatureGenerationImpl;
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.Model;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.FeatureExtraction;
+import etc.aloe.processes.FeatureGeneration;
 import etc.aloe.processes.Training;
 
 /**
@@ -22,6 +24,7 @@ public class TrainingController {
     private Model model;
     private FeatureExtraction featureExtractionImpl;
     private Training trainingImpl;
+    private FeatureGeneration featureGenerationImpl;
 
     public void setSegmentSet(SegmentSet segments) {
         this.segmentSet = segments;
@@ -37,9 +40,15 @@ public class TrainingController {
 
     public void run() {
 
+        ExampleSet basicExamples = segmentSet.getBasicExamples();
+
+        //Generate the features
+        FeatureGeneration generation = getFeatureGenerationImpl();
+        this.featureSpecification = generation.generateFeatures(basicExamples);
+
         //Extract features
         FeatureExtraction extraction = getFeatureExtractionImpl();
-        ExampleSet examples = extraction.extractFeatures(segmentSet.getBasicExamples(), featureSpecification);
+        ExampleSet examples = extraction.extractFeatures(basicExamples, this.featureSpecification);
 
         //Train the model
         Training training = getTrainingImpl();
@@ -60,5 +69,13 @@ public class TrainingController {
 
     public void setTrainingImpl(Training training) {
         this.trainingImpl = training;
+    }
+
+    public void setFeatureGenerationImpl(FeatureGeneration featureGenerationImpl) {
+        this.featureGenerationImpl = featureGenerationImpl;
+    }
+
+    public FeatureGeneration getFeatureGenerationImpl() {
+        return this.featureGenerationImpl;
     }
 }

@@ -123,6 +123,7 @@ public class Aloe {
         crossValidationController.setEvaluationImpl(new EvaluationImpl());
 
         TrainingController trainingController = new TrainingController();
+        trainingController.setFeatureGenerationImpl(new FeatureGenerationImpl());
         trainingController.setFeatureExtractionImpl(new FeatureExtractionImpl());
         trainingController.setTrainingImpl(new TrainingImpl());
 

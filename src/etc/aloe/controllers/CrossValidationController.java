@@ -57,12 +57,15 @@ public class CrossValidationController {
             SegmentSet testingSegments = new SegmentSet();
             testingSegments.setSegments(split.getTestingForFold(segmentSet.getSegments(), foldIndex, this.folds));
 
+            ExampleSet basicTrainingExamples = trainingSegments.getBasicExamples();
+            ExampleSet basicTestingExamples = trainingSegments.getBasicExamples();
+
             FeatureGeneration generation = getFeatureGenerationImpl();
-            FeatureSpecification spec = generation.generateFeatures(segmentSet);
+            FeatureSpecification spec = generation.generateFeatures(basicTrainingExamples);
 
             FeatureExtraction extraction = getFeatureExtractionImpl();
-            ExampleSet trainingSet = extraction.extractFeatures(trainingSegments.getBasicExamples(), spec);
-            ExampleSet testingSet = extraction.extractFeatures(testingSegments.getBasicExamples(), spec);
+            ExampleSet trainingSet = extraction.extractFeatures(basicTrainingExamples, spec);
+            ExampleSet testingSet = extraction.extractFeatures(basicTestingExamples, spec);
 
             Training training = getTrainingImpl();
             Model model = training.train(trainingSet);
