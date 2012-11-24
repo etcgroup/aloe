@@ -8,7 +8,6 @@ import etc.aloe.cscw2013.CrossValidationSplitImpl;
 import etc.aloe.cscw2013.EvaluationImpl;
 import etc.aloe.cscw2013.FeatureExtractionImpl;
 import etc.aloe.cscw2013.FeatureGenerationImpl;
-import etc.aloe.cscw2013.FeatureSpecificationImpl;
 import etc.aloe.cscw2013.LabelMappingImpl;
 import etc.aloe.cscw2013.ResolutionImpl;
 import etc.aloe.cscw2013.ThresholdSegmentation;
@@ -30,8 +29,6 @@ import java.io.InvalidObjectException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.Option;
@@ -224,7 +221,7 @@ public class Aloe {
     }
 
     private FeatureSpecification loadFeatureSpecification() {
-        FeatureSpecification spec = new FeatureSpecificationImpl();
+        FeatureSpecification spec = new FeatureSpecification();
 
         try {
             InputStream inputFeatureSpec = new FileInputStream(inputFeatureSpecFile);
