@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package etc.aloe.cscw2013;
+package etc.aloe.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,9 +27,9 @@ import weka.filters.unsupervised.instance.Randomize;
  *
  * @author michael
  */
-public class FeatureSpecificationImplTest {
+public class FeatureSpecificationTest {
 
-    public FeatureSpecificationImplTest() {
+    public FeatureSpecificationTest() {
     }
 
     @BeforeClass
@@ -49,7 +49,7 @@ public class FeatureSpecificationImplTest {
     }
 
     /**
-     * Test of load method, of class FeatureSpecificationImpl.
+     * Test of load method, of class FeatureSpecification.
      */
     @Test
     public void testLoad() throws Exception {
@@ -67,7 +67,7 @@ public class FeatureSpecificationImplTest {
         byte[] serializedBytes = out.toByteArray();
 
         ByteArrayInputStream input = new ByteArrayInputStream(serializedBytes);
-        FeatureSpecificationImpl instance = new FeatureSpecificationImpl();
+        FeatureSpecification instance = new FeatureSpecification();
         assertTrue(instance.load(input));
         input.close();
 
@@ -79,7 +79,7 @@ public class FeatureSpecificationImplTest {
     }
 
     /**
-     * Test of save method, of class FeatureSpecificationImpl.
+     * Test of save method, of class FeatureSpecification.
      */
     @Test
     public void testSave() throws Exception {
@@ -88,7 +88,7 @@ public class FeatureSpecificationImplTest {
         Randomize filter = new Randomize();
         filter.setRandomSeed(455);
 
-        FeatureSpecificationImpl instance = new FeatureSpecificationImpl();
+        FeatureSpecification instance = new FeatureSpecification();
         instance.addFilter(filter);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -116,7 +116,7 @@ public class FeatureSpecificationImplTest {
     }
 
     /**
-     * Test of addFilter method, of class FeatureSpecificationImpl.
+     * Test of addFilter method, of class FeatureSpecification.
      */
     @Test
     public void testAddFilter() {
@@ -124,7 +124,7 @@ public class FeatureSpecificationImplTest {
 
         Randomize filter = new Randomize();
 
-        FeatureSpecificationImpl instance = new FeatureSpecificationImpl();
+        FeatureSpecification instance = new FeatureSpecification();
         instance.addFilter(filter);
 
         assertEquals(filter, instance.getFilters().get(0));
