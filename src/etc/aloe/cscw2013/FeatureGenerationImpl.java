@@ -15,8 +15,8 @@ public class FeatureGenerationImpl implements FeatureGeneration {
 
     @Override
     public FeatureSpecification generateFeatures(SegmentSet segments) {
-        
-        FeatureSpecificationImpl spec = new FeatureSpecificationImpl();
+
+        FeatureSpecification spec = new FeatureSpecification();
 
         //TODO: fill me in!
         spec.addFilter(new PronounRegexFilter(MESSAGE_ATTR_NAME));

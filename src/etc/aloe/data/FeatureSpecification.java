@@ -41,11 +41,11 @@ public class FeatureSpecification implements Loading, Saving {
         return true;
     }
 
-    void addFilter(Filter filter) {
+    public void addFilter(Filter filter) {
         this.filters.add(filter);
     }
 
-    List<Filter> getFilters() {
+    public List<Filter> getFilters() {
         return filters;
     }
 
