@@ -109,7 +109,7 @@ public class MessageSet implements Loading, Saving {
 
                 int id = -1;
                 try {
-                    Integer.parseInt(idText);
+                    id = Integer.parseInt(idText);
                 } catch (NumberFormatException e) {
                     throw new InvalidObjectException("Invalid value '" + idText + "' for '" + ID_COLUMN_NAME + "' on line " + lineNumber);
                 }
