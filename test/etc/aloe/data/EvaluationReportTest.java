@@ -4,6 +4,7 @@
  */
 package etc.aloe.data;
 
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -43,13 +44,25 @@ public class EvaluationReportTest {
     @Test
     public void testSave() throws Exception {
         System.out.println("save");
-        OutputStream destination = null;
-        EvaluationReport instance = new EvaluationReport();
-        boolean expResult = false;
-//        boolean result = instance.save(destination);
-//        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
+        EvaluationReport eval = new EvaluationReport();
+        eval.setTrueNegativeCount(2);
+        eval.setTruePositiveCount(1);
+        eval.setFalseNegativeCount(3);
+        eval.setFalsePositiveCount(4);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        assertTrue(eval.save(out));
+        out.close();
+
+        String nl = System.getProperty("line.separator");
+        String expectedReport = "TP: 1" + nl
+                + "FP: 4" + nl
+                + "TN: 2" + nl
+                + "FN: 3" + nl;
+
+        String report = out.toString();
+        assertEquals(expectedReport, report);
     }
 
     /**
@@ -59,10 +72,10 @@ public class EvaluationReportTest {
     public void testAddPartial() {
         System.out.println("addPartial");
         EvaluationReport partial = new EvaluationReport();
-        partial.trueNegativeCount = 1;
-        partial.truePositiveCount = 2;
-        partial.falseNegativeCount = 3;
-        partial.falsePositiveCount = 4;
+        partial.setTrueNegativeCount(1);
+        partial.setTruePositiveCount(2);
+        partial.setFalseNegativeCount(3);
+        partial.setFalsePositiveCount(4);
 
         EvaluationReport instance = new EvaluationReport();
         instance.addPartial(partial);

@@ -14,19 +14,19 @@ public class EvaluationReport implements Saving {
     /**
      * The number of examples with a positive prediction that was correct.
      */
-    int truePositiveCount;
+    private int truePositiveCount;
     /**
      * The number of examples with a negative prediction that was correct.
      */
-    int trueNegativeCount;
+    private int trueNegativeCount;
     /**
      * The number of examples with a positive prediction that was incorrect.
      */
-    int falsePositiveCount;
+    private int falsePositiveCount;
     /**
      * The number of examples with a negative prediction that was incorrect.
      */
-    int falseNegativeCount;
+    private int falseNegativeCount;
 
     public int getTruePositiveCount() {
         return truePositiveCount;
@@ -44,7 +44,23 @@ public class EvaluationReport implements Saving {
         return falseNegativeCount;
     }
 
-    
+    public void setTruePositiveCount(int truePositiveCount) {
+        this.truePositiveCount = truePositiveCount;
+    }
+
+    public void setTrueNegativeCount(int trueNegativeCount) {
+        this.trueNegativeCount = trueNegativeCount;
+    }
+
+    public void setFalsePositiveCount(int falsePositiveCount) {
+        this.falsePositiveCount = falsePositiveCount;
+    }
+
+    public void setFalseNegativeCount(int falseNegativeCount) {
+        this.falseNegativeCount = falseNegativeCount;
+    }
+
+
 
     @Override
     public boolean save(OutputStream destination) throws IOException {
