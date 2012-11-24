@@ -39,7 +39,7 @@ public class TrainingController {
 
         //Extract features
         FeatureExtraction extraction = getFeatureExtractionImpl();
-        ExampleSet examples = extraction.extractFeatures(segmentSet, featureSpecification);
+        ExampleSet examples = extraction.extractFeatures(segmentSet.getBasicExamples(), featureSpecification);
 
         //Train the model
         Training training = getTrainingImpl();

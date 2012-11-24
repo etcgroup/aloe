@@ -61,8 +61,8 @@ public class CrossValidationController {
             FeatureSpecification spec = generation.generateFeatures(segmentSet);
 
             FeatureExtraction extraction = getFeatureExtractionImpl();
-            ExampleSet trainingSet = extraction.extractFeatures(trainingSegments, spec);
-            ExampleSet testingSet = extraction.extractFeatures(testingSegments, spec);
+            ExampleSet trainingSet = extraction.extractFeatures(trainingSegments.getBasicExamples(), spec);
+            ExampleSet testingSet = extraction.extractFeatures(testingSegments.getBasicExamples(), spec);
 
             Training training = getTrainingImpl();
             Model model = training.train(trainingSet);

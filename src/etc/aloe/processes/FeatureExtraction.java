@@ -14,9 +14,9 @@ public interface FeatureExtraction {
      *
      * Exactly one example will be created in the example set for every segment.
      *
-     * @param segments The messages to extract features for.
+     * @param ExampleSet The basic examples created from segments.
      * @param spec The features to extract.
-     * @return A set of examples with features extracted.
+     * @return A set of examples with features extracted, or null on failure.
      */
-    ExampleSet extractFeatures(SegmentSet segments, FeatureSpecification spec);
+    ExampleSet extractFeatures(ExampleSet basicExamples, FeatureSpecification spec);
 }

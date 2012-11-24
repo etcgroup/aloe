@@ -48,7 +48,7 @@ public class LabelingController {
 
         //First extract features
         FeatureExtraction extraction = getFeatureExtractionImpl();
-        ExampleSet examples = extraction.extractFeatures(segmentSet, featureSpecification);
+        ExampleSet examples = extraction.extractFeatures(segmentSet.getBasicExamples(), featureSpecification);
 
         //Predict the labels
         List<Boolean> predictedLabels = this.model.getPredictedLabels(examples);
