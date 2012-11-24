@@ -31,8 +31,10 @@ public class ThresholdSegmentation implements Segmentation {
             Segment segment = new Segment();
 
             segment.add(message);
-            segment.setTrueLabel(this.resolution.resolveLabel(segment));
-
+            if (this.resolution != null) {
+                segment.setTrueLabel(this.resolution.resolveLabel(segment));
+            }
+            
             segments.add(segment);
         }
 
