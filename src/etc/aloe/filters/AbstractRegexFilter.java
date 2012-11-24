@@ -16,6 +16,11 @@ public abstract class AbstractRegexFilter extends SimpleStreamFilter
 
     private boolean countRegexLengths = false;
 
+    /**
+     * Set to true to add features for the length of the regex match.
+     * Defaults to false.
+     * @param countRegexLengths
+     */
     public void setCountRegexLengths(boolean countRegexLengths) {
         this.countRegexLengths = countRegexLengths;
     }
