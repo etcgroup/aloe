@@ -1,12 +1,12 @@
 package etc.aloe.cscw2013;
 
 import etc.aloe.data.FeatureSpecification;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import weka.filters.Filter;
@@ -17,23 +17,33 @@ import weka.filters.Filter;
  */
 public class FeatureSpecificationImpl extends FeatureSpecification {
 
-    List<Filter> filters = new ArrayList<Filter>();
+    private List<Filter> filters = new ArrayList<Filter>();
 
     @Override
-    public boolean load(InputStream source) throws FileNotFoundException, InvalidObjectException {
-        //TODO: fill me in!
-        return true;
+    public boolean load(InputStream source) throws InvalidObjectException {
+        try {
+            ObjectInputStream in = new ObjectInputStream(source);
+            filters = (List<Filter>) in.readObject();
+            return true;
+        } catch (ClassNotFoundException e) {
+            throw new InvalidObjectException(e.getMessage());
+        } catch (IOException e) {
+            throw new InvalidObjectException(e.getMessage());
+        }
     }
 
     @Override
     public boolean save(OutputStream destination) throws IOException {
-        PrintStream writer = new PrintStream(destination);
-        writer.println("nothing to do here");
-        //TODO: fill me in!
+        ObjectOutputStream out = new ObjectOutputStream(destination);
+        out.writeObject(filters);
         return true;
     }
 
     void addFilter(Filter filter) {
         this.filters.add(filter);
+    }
+
+    List<Filter> getFilters() {
+        return filters;
     }
 }
