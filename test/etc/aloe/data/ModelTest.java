@@ -96,15 +96,15 @@ public class ModelTest {
         Model model = new Model(classifier);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        model.save(out);
+        assertTrue(model.save(out));
         out.close();
-        String serializedStr = out.toString();
+        byte[] serializedStr = out.toByteArray();
 
         //It wrote something
-        assertTrue(serializedStr.length() > 0);
+        assertTrue(serializedStr.length > 0);
 
         //It wrote a J48 classifier
-        ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(serializedStr.getBytes()));
+        ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(serializedStr));
         try {
             J48 serialized = (J48) in.readObject();
             in.close();
@@ -129,9 +129,9 @@ public class ModelTest {
         ObjectOutputStream serializer = new ObjectOutputStream(out);
         serializer.writeObject(serializedClassifier);
         out.close();
-        String serializedStr = out.toString();
+        byte[] serializedStr = out.toByteArray();
 
-        ByteArrayInputStream in = new ByteArrayInputStream(serializedStr.getBytes());
+        ByteArrayInputStream in = new ByteArrayInputStream(serializedStr);
         Model model = new Model();
         assertTrue(model.load(in));
         in.close();
