@@ -17,5 +17,5 @@ public interface Loading {
      * @throws FileNotFoundException
      * @throws InvalidObjectException
      */
-    public boolean load(InputStream source) throws FileNotFoundException, InvalidObjectException;
+    public boolean load(InputStream source) throws InvalidObjectException;
 }

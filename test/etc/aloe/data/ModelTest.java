@@ -4,7 +4,12 @@
  */
 package etc.aloe.data;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -85,13 +90,30 @@ public class ModelTest {
     @Test
     public void testSave() throws Exception {
         System.out.println("save");
-        File destination = null;
-        Model instance = new Model();
-        boolean expResult = false;
-//        boolean result = instance.save(destination);
-//        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
+        J48 classifier = new J48();
+        classifier.setNumFolds(456);
+        Model model = new Model(classifier);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        model.save(out);
+        out.close();
+        String serializedStr = out.toString();
+
+        //It wrote something
+        assertTrue(serializedStr.length() > 0);
+
+        //It wrote a J48 classifier
+        ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(serializedStr.getBytes()));
+        try {
+            J48 serialized = (J48) in.readObject();
+            in.close();
+            assertEquals(classifier.getNumFolds(), serialized.getNumFolds());
+        } catch (ClassNotFoundException e) {
+            assertTrue(e.getMessage(), false);
+        } catch (IOException e) {
+            assertTrue(e.getMessage(), false);
+        }
     }
 
     /**
@@ -100,13 +122,24 @@ public class ModelTest {
     @Test
     public void testLoad() throws Exception {
         System.out.println("load");
-        File source = null;
-        Model instance = new Model();
-        boolean expResult = false;
-//        boolean result = instance.load(source);
-//        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
+        J48 serializedClassifier = new J48();
+        serializedClassifier.setNumFolds(456);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream serializer = new ObjectOutputStream(out);
+        serializer.writeObject(serializedClassifier);
+        out.close();
+        String serializedStr = out.toString();
+
+        ByteArrayInputStream in = new ByteArrayInputStream(serializedStr.getBytes());
+        Model model = new Model();
+        assertTrue(model.load(in));
+        in.close();
+
+        Classifier classifier = model.getClassifier();
+        assertTrue(classifier instanceof J48);
+        J48 j48 = (J48) classifier;
+        assertEquals(serializedClassifier.getNumFolds(), j48.getNumFolds());
     }
 
     /**

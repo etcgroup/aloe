@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -17,10 +19,9 @@ import weka.classifiers.Classifier;
  */
 public class Model implements Saving, Loading {
 
-    Classifier classifier;
+    private Classifier classifier;
 
     public Model() {
-
     }
 
     public Model(Classifier classifier) {
@@ -29,16 +30,22 @@ public class Model implements Saving, Loading {
 
     @Override
     public boolean save(OutputStream destination) throws IOException {
-        PrintStream writer = new PrintStream(destination);
-        writer.println("nothing to do here");
-        //TODO: fill me in!
+        ObjectOutputStream out = new ObjectOutputStream(destination);
+        out.writeObject(classifier);
         return true;
     }
 
     @Override
-    public boolean load(InputStream source) throws FileNotFoundException, InvalidObjectException {
-        //TODO: fill me in!
-        return true;
+    public boolean load(InputStream source) throws InvalidObjectException {
+        try {
+            ObjectInputStream in = new ObjectInputStream(source);
+            this.classifier = (Classifier) in.readObject();
+            return true;
+        } catch (IOException e) {
+            throw new InvalidObjectException(e.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new InvalidObjectException(e.getMessage());
+        }
     }
 
     /**
@@ -64,5 +71,9 @@ public class Model implements Saving, Loading {
         }
 
         return results;
+    }
+
+    Classifier getClassifier() {
+        return classifier;
     }
 }
