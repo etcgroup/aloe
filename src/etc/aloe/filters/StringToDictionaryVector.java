@@ -15,7 +15,7 @@ public class StringToDictionaryVector extends SimpleBatchFilter {
 
     private int stringAttributeIndex = -1;
     private String stringAttribute;
-    private File dictionaryFile;
+    List<String> termList;
     /**
      * Contains the number of documents (instances) in the input format from
      * which the dictionary is created. It is used in IDF transform.
@@ -256,12 +256,12 @@ public class StringToDictionaryVector extends SimpleBatchFilter {
         stringAttribute = name;
     }
 
-    public File getDictionaryFile() {
-        return dictionaryFile;
+    public List<String> getTermList() {
+        return termList;
     }
 
-    public void setDictionaryFile(File file) {
-        this.dictionaryFile = file;
+    public void setTermList(List<String> termList) {
+        this.termList = termList;
     }
 
     /**
@@ -371,26 +371,6 @@ public class StringToDictionaryVector extends SimpleBatchFilter {
         if (!m_doNotOperateOnPerClassBasis && (classInd != -1)) {
             values = instances.attribute(classInd).numValues();
         }
-
-        //Read in the dictionary file
-        HashSet<String> termSet = new HashSet<String>();
-        try {
-            Scanner dict = new Scanner(getDictionaryFile());
-            while (dict.hasNextLine()) {
-                String line = dict.nextLine();
-                if (!line.startsWith("### ")) {
-                    line = line.trim();
-                    if (!line.isEmpty()) {
-                        termSet.add(line);
-                    }
-                }
-            }
-        } catch (FileNotFoundException e) {
-            System.err.println("File " + getDictionaryFile() + " could not be opened.");
-            System.exit(1);
-        }
-
-        ArrayList<String> termList = new ArrayList<String>(termSet);
 
         HashMap<String, Integer> termIndices = new HashMap<String, Integer>();
         for (int i = 0; i < termList.size(); i++) {
@@ -757,6 +737,25 @@ public class StringToDictionaryVector extends SimpleBatchFilter {
         }
     }
 
+    public static List<String> readDictionaryFile(File file) throws FileNotFoundException {
+        //Read in the dictionary file
+        HashSet<String> termSet = new HashSet<String>();
+
+        Scanner dict = new Scanner(file);
+        while (dict.hasNextLine()) {
+            String line = dict.nextLine();
+            if (!line.startsWith("### ")) {
+                line = line.trim();
+                if (!line.isEmpty()) {
+                    termSet.add(line);
+                }
+            }
+        }
+
+        ArrayList<String> termList = new ArrayList<String>(termSet);
+        return termList;
+    }
+
     public static void main(String[] args) {
 
         //Create a test dataset
@@ -796,7 +795,8 @@ public class StringToDictionaryVector extends SimpleBatchFilter {
         try {
             String dictionaryName = "emoticons.txt";
             StringToDictionaryVector filter = new StringToDictionaryVector();
-            filter.setDictionaryFile(new File(dictionaryName));
+            List<String> termList = StringToDictionaryVector.readDictionaryFile(new File(dictionaryName));
+            filter.setTermList(termList);
             filter.setMinTermFreq(1);
             filter.setTFTransform(true);
             filter.setIDFTransform(true);
