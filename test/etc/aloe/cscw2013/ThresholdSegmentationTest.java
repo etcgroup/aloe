@@ -75,17 +75,17 @@ public class ThresholdSegmentationTest {
         Segment seg3 = segments.get(3);
         Segment seg4 = segments.get(4);
 
-        assertEquals(1, seg0.getMessages().size());
-        assertEquals(2, seg1.getMessages().size());
-        assertEquals(2, seg2.getMessages().size());
-        assertEquals(1, seg3.getMessages().size());
-        assertEquals(2, seg4.getMessages().size());
+        assertEquals(1, seg0.getMessages().size()); //Alice
+        assertEquals(1, seg1.getMessages().size()); //Alice
+        assertEquals(2, seg2.getMessages().size()); //Alice, Alice
+        assertEquals(2, seg3.getMessages().size()); //Bob, Bob
+        assertEquals(2, seg4.getMessages().size()); //Bob, Bob
 
         assertEquals(messages.get(0), seg0.getMessages().get(0));
-        assertEquals(messages.get(1), seg1.getMessages().get(0));
-        assertEquals(messages.get(3), seg2.getMessages().get(0));
-        assertEquals(messages.get(5), seg3.getMessages().get(0));
-        assertEquals(messages.get(6), seg4.getMessages().get(0));
+        assertEquals(messages.get(5), seg1.getMessages().get(0));
+        assertEquals(messages.get(6), seg2.getMessages().get(0));
+        assertEquals(messages.get(1), seg3.getMessages().get(0));
+        assertEquals(messages.get(3), seg4.getMessages().get(0));
     }
 
     /**
