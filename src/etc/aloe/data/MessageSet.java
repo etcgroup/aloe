@@ -91,7 +91,7 @@ public class MessageSet implements Loading, Saving {
     }
 
     @Override
-    public boolean load(InputStream source) throws FileNotFoundException, InvalidObjectException {
+    public boolean load(InputStream source) throws InvalidObjectException {
         CsvReader csvReader = new CsvReader(source, Charset.forName("UTF-8"));
 
         try {
