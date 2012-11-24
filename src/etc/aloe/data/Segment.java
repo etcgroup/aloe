@@ -41,6 +41,7 @@ public class Segment implements LabelableItem {
 
     public void add(Message message) {
         messages.add(message);
+        message.setSegmentId(this.id);
     }
 
     public List<Message> getMessages() {

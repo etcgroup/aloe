@@ -13,6 +13,7 @@ public class Message implements Comparable<Message>, LabelableItem {
     private final String message;
     private Boolean trueLabel;
     private Boolean predictedLabel = null;
+    private int segmentId = -1;
 
     /**
      * Construct a new un-labeled message.
@@ -27,7 +28,7 @@ public class Message implements Comparable<Message>, LabelableItem {
             Date timestamp,
             String participant,
             String message) {
-        this(id, timestamp, participant, message, null, null);
+        this(id, timestamp, participant, message, null, null, -1);
     }
 
     /**
@@ -45,11 +46,12 @@ public class Message implements Comparable<Message>, LabelableItem {
             String participant,
             String message,
             Boolean trueLabel) {
-        this(id, timestamp, participant, message, trueLabel, null);
+        this(id, timestamp, participant, message, trueLabel, null, -1);
     }
 
     /**
-     * Construct a new message. Leave trueLabel and predictedLabel null if unlabeled.
+     * Construct a new message. Leave trueLabel and predictedLabel null if
+     * unlabeled.
      *
      * @param id
      * @param timestamp
@@ -65,6 +67,29 @@ public class Message implements Comparable<Message>, LabelableItem {
             String message,
             Boolean trueLabel,
             Boolean predictedLabel) {
+        this(id, timestamp, participant, message, trueLabel, predictedLabel, -1);
+    }
+
+    /**
+     * Construct a new message. Leave trueLabel and predictedLabel null if
+     * unlabeled. Leave segmentId -1 if not segmented.
+     *
+     * @param id
+     * @param timestamp
+     * @param participant
+     * @param message
+     * @param trueLabel
+     * @param predictedLabel
+     * @param segmentId
+     */
+    public Message(
+            int id,
+            Date timestamp,
+            String participant,
+            String message,
+            Boolean trueLabel,
+            Boolean predictedLabel,
+            int segmentId) {
 
         this.id = id;
         this.timestamp = timestamp;
@@ -72,6 +97,7 @@ public class Message implements Comparable<Message>, LabelableItem {
         this.message = message;
         this.trueLabel = trueLabel;
         this.predictedLabel = predictedLabel;
+        this.segmentId = segmentId;
     }
 
     public int getId() {
@@ -123,5 +149,17 @@ public class Message implements Comparable<Message>, LabelableItem {
     @Override
     public int compareTo(Message o) {
         return getTimestamp().compareTo(o.getTimestamp());
+    }
+
+    public int getSegmentId() {
+        return segmentId;
+    }
+
+    public boolean hasSegmentId() {
+        return segmentId != -1;
+    }
+
+    public void setSegmentId(int segId) {
+        this.segmentId = segId;
     }
 }

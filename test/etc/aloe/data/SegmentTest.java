@@ -77,11 +77,11 @@ public class SegmentTest {
         Message message = new Message(0, new Date(), "Alice", "hello");
         Segment instance = new Segment();
 
-        List<Message> messages = instance.getMessages();
         instance.add(message);
-        messages = instance.getMessages();
+        List<Message> messages = instance.getMessages();
         assertEquals(1, messages.size());
         assertEquals(message, messages.get(0));
+        assertEquals(instance.getId(), messages.get(0).getSegmentId());
     }
 
     /**
