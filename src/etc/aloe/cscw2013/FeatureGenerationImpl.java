@@ -10,11 +10,14 @@ import etc.aloe.filters.SpecialRegexFilter;
 import etc.aloe.filters.SpellingRegexFilter;
 import etc.aloe.filters.StringToDictionaryVector;
 import etc.aloe.processes.FeatureGeneration;
-import java.io.File;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.regex.Pattern;
+import weka.core.Attribute;
 import weka.core.Instances;
 import weka.core.SelectedTag;
 import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.RemoveByName;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 
 /**
@@ -47,11 +50,19 @@ public class FeatureGenerationImpl implements FeatureGeneration {
             spec.addFilter(getSpellingFilter(examples));
 
             spec.addFilter(getEmoticonsFilter(examples));
+            spec.addFilter(getBagOfWordsFilter(examples));
+            Filter finalFilter = getRemoveIDFilter(examples);
+            spec.addFilter(finalFilter);
 
-            Filter bagOfWordsFilter = getBagOfWordsFilter(examples);
-            int numAttrs = bagOfWordsFilter.getOutputFormat().numAttributes();
+            Instances output = finalFilter.getOutputFormat();
+            int numAttrs = output.numAttributes();
             System.out.println("generated " + (numAttrs - 1) + " features.");
-            spec.addFilter(bagOfWordsFilter);
+            Enumeration attrs = output.enumerateAttributes();
+            while (attrs.hasMoreElements()) {
+                Attribute attr = (Attribute) attrs.nextElement();
+                System.out.print(attr.name() + ", ");
+            }
+            System.out.println();
         } catch (Exception e) {
             System.err.println("Error generating features.");
             System.err.println("\t" + e.getMessage());
@@ -107,9 +118,9 @@ public class FeatureGenerationImpl implements FeatureGeneration {
         filter.setAttributeNamePrefix(EMOTICON_FEATURE_PREFIX);
         filter.setTermList(emoticonDictionary);
         filter.setStringAttribute(ExampleSet.MESSAGE_ATTR_NAME);
-        filter.setWordsToKeep(10000);//don't want this to limit things
+        filter.setWordsToKeep(100);
 
-        filter.setMinTermFreq(10);
+        //filter.setMinTermFreq(10);
         filter.setDoNotOperateOnPerClassBasis(true);
         filter.setOutputWordCounts(true);
 
@@ -139,6 +150,17 @@ public class FeatureGenerationImpl implements FeatureGeneration {
         filter.setNormalizeDocLength(new SelectedTag(StringToWordVector.FILTER_NORMALIZE_ALL, StringToWordVector.TAGS_FILTER));
 
         filter.setOutputWordCounts(true);
+
+        filter.setInputFormat(examples.getInstances());
+        Instances filtered = Filter.useFilter(examples.getInstances(), filter);
+        examples.setInstances(filtered);
+
+        return filter;
+    }
+
+    private Filter getRemoveIDFilter(ExampleSet examples) throws Exception {
+        RemoveByName filter = new RemoveByName();
+        filter.setExpression(Pattern.quote(ExampleSet.ID_ATTR_NAME));
 
         filter.setInputFormat(examples.getInstances());
         Instances filtered = Filter.useFilter(examples.getInstances(), filter);
