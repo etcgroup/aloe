@@ -18,6 +18,7 @@ import etc.aloe.data.MessageSet;
 import etc.aloe.data.Model;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
+import etc.aloe.filters.StringToDictionaryVector;
 import etc.aloe.processes.Segmentation;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,6 +29,7 @@ import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Random;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
@@ -55,6 +57,7 @@ public class Aloe {
     private boolean segmentationByParticipant = true;
     @Argument(index = 0, usage = "input CSV file containing messages", required = true, metaVar = "INPUT_CSV")
     private File inputCSVFile;
+    private List<String> termList;
 
     @Argument(index = 1, usage = "output directory (contents may be overwritten)", required = true, metaVar = "OUTPUT_DIR")
     private void setOutputDir(File dir) {
@@ -81,6 +84,8 @@ public class Aloe {
     private int crossValidationFolds = 10;
     @Option(name = "-d", usage = "date format string (default 'yyyy-MM-dd'T'HH:mm:ss')")
     private String dateFormatString = "yyyy-MM-dd'T'HH:mm:ss";
+    @Option(name = "-e", usage = "emoticon dictionary file (default emoticons.txt)")
+    private File emoticonFile = new File("emoticons.txt");
 
     @Option(name = "-r", usage = "random seed")
     void setRandomSeed(int randomSeed) {
@@ -111,19 +116,21 @@ public class Aloe {
 
     private void runTrainingMode() {
 
+        termList = loadTermList();
+
         // This sets up the components of the abstract pipeline with specific
         // implementations.
 
         CrossValidationController crossValidationController = new CrossValidationController(this.crossValidationFolds);
         crossValidationController.setCrossValidationPrepImpl(new CrossValidationPrepImpl<Segment>());
         crossValidationController.setCrossValidationSplitImpl(new CrossValidationSplitImpl<Segment>());
-        crossValidationController.setFeatureGenerationImpl(new FeatureGenerationImpl());
+        crossValidationController.setFeatureGenerationImpl(new FeatureGenerationImpl(termList));
         crossValidationController.setFeatureExtractionImpl(new FeatureExtractionImpl());
         crossValidationController.setTrainingImpl(new TrainingImpl());
         crossValidationController.setEvaluationImpl(new EvaluationImpl());
 
         TrainingController trainingController = new TrainingController();
-        trainingController.setFeatureGenerationImpl(new FeatureGenerationImpl());
+        trainingController.setFeatureGenerationImpl(new FeatureGenerationImpl(termList));
         trainingController.setFeatureExtractionImpl(new FeatureExtractionImpl());
         trainingController.setTrainingImpl(new TrainingImpl());
 
@@ -286,5 +293,16 @@ public class Aloe {
             System.err.println("Error saving model to " + this.outputModelFile);
             System.err.println("\t" + e.getMessage());
         }
+    }
+
+    private List<String> loadTermList() {
+        try {
+            return StringToDictionaryVector.readDictionaryFile(emoticonFile);
+        } catch (FileNotFoundException ex) {
+            System.err.println("Unable to read emoticon dictionary file " + emoticonFile);
+            System.err.println("\t" + ex.getMessage());
+            System.exit(1);
+        }
+        return null;
     }
 }
