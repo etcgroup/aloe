@@ -38,6 +38,8 @@ public class FeatureGenerationImpl implements FeatureGeneration {
         ExampleSet examples = basicExamples.copy();
         FeatureSpecification spec = new FeatureSpecification();
 
+        System.out.print("Configuring features over " + examples.size() + " examples... ");
+
         try {
             spec.addFilter(getPronounsFilter(examples));
             spec.addFilter(getPunctuationFilter(examples));
@@ -45,7 +47,11 @@ public class FeatureGenerationImpl implements FeatureGeneration {
             spec.addFilter(getSpellingFilter(examples));
 
             spec.addFilter(getEmoticonsFilter(examples));
-            spec.addFilter(getBagOfWordsFilter(examples));
+
+            Filter bagOfWordsFilter = getBagOfWordsFilter(examples);
+            int numAttrs = bagOfWordsFilter.getOutputFormat().numAttributes();
+            System.out.println("generated " + (numAttrs - 1) + " features.");
+            spec.addFilter(bagOfWordsFilter);
         } catch (Exception e) {
             System.err.println("Error generating features.");
             System.err.println("\t" + e.getMessage());

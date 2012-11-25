@@ -8,6 +8,7 @@ import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.Model;
 import java.util.ArrayList;
+import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -102,7 +103,8 @@ public class EvaluationImplTest {
 
         ExampleSet examples = new ExampleSet(testInstances);
         EvaluationImpl instance = new EvaluationImpl();
-        EvaluationReport result = instance.evaluate(model, examples);
+        List<Boolean> predictedLabels = model.getPredictedLabels(examples);
+        EvaluationReport result = instance.evaluate(predictedLabels, examples);
 
         assertEquals(2, result.getTruePositiveCount());
         assertEquals(1, result.getFalsePositiveCount());

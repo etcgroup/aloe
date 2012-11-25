@@ -99,6 +99,7 @@ public class MessageSet implements Loading, Saving {
             validateCSVHeaders(csvReader);
 
             int lineNumber = 1;
+            int numLabeled = 0;
             while (csvReader.readRecord()) {
                 lineNumber++;
 
@@ -127,8 +128,10 @@ public class MessageSet implements Loading, Saving {
                 Boolean truth = null;
                 if (truthText.equals("1") || truthText.equals("true")) {
                     truth = true;
+                    numLabeled++;
                 } else if (truthText.equals("0") || truthText.equals("false")) {
                     truth = false;
+                    numLabeled++;
                 } else if (truthText.equals("")) {
                     truth = null;
                 } else {
@@ -161,7 +164,7 @@ public class MessageSet implements Loading, Saving {
                 this.add(message);
             }
 
-            System.out.println("Loaded " + this.size() + " messages into message set.");
+            System.out.println("Loaded " + this.size() + " raw messages (" + numLabeled + " labeled).");
 
         } catch (IOException ex) {
             throw new InvalidObjectException(ex.getMessage());

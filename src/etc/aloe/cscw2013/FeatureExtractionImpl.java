@@ -16,6 +16,8 @@ public class FeatureExtractionImpl implements FeatureExtraction {
     public ExampleSet extractFeatures(ExampleSet basicExamples, FeatureSpecification spec) {
         ExampleSet examples = basicExamples;
 
+        System.out.print("Extracting features for " + examples.size() + " examples... ");
+
         for (Filter filter : spec.getFilters()) {
             try {
                 Instances instances = Filter.useFilter(examples.getInstances(), filter);
@@ -26,7 +28,7 @@ public class FeatureExtractionImpl implements FeatureExtraction {
                 return null;
             }
         }
-
+        System.out.println("done.");
         return examples;
     }
 }

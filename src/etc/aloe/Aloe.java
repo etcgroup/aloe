@@ -115,7 +115,7 @@ public class Aloe {
     }
 
     private void runTrainingMode() {
-
+        System.out.println("== Preparation ==");
         termList = loadTermList();
 
         // This sets up the components of the abstract pipeline with specific
@@ -153,6 +153,8 @@ public class Aloe {
         FeatureSpecification spec = trainingController.getFeatureSpecification();
         Model model = trainingController.getModel();
 
+        System.out.println("== Saving Output ==");
+
         //Save the fruits
         saveEvaluationReport(evalReport);
         saveFeatureSpecification(spec);
@@ -160,9 +162,11 @@ public class Aloe {
     }
 
     private void runTestingMode() {
+        System.out.println("== Preparation ==");
+
         Segmentation segmentation = new ThresholdSegmentation(this.segmentationThresholdSeconds, segmentationByParticipant);
         segmentation.setSegmentResolution(new ResolutionImpl());
-        
+
         LabelingController labelingController = new LabelingController();
         labelingController.setFeatureExtractionImpl(new FeatureExtractionImpl());
         labelingController.setEvaluationImpl(new EvaluationImpl());
@@ -181,6 +185,8 @@ public class Aloe {
 
         EvaluationReport evalReport = labelingController.getEvaluationReport();
 
+        System.out.println("== Saving Output ==");
+        
         saveEvaluationReport(evalReport);
         saveMessages(messages);
     }
@@ -190,6 +196,7 @@ public class Aloe {
         messages.setDateFormat(new SimpleDateFormat(dateFormatString));
 
         try {
+            System.out.println("Reading messages from " + inputCSVFile);
             InputStream inputCSV = new FileInputStream(inputCSVFile);
             messages.load(inputCSV);
             inputCSV.close();
@@ -212,6 +219,7 @@ public class Aloe {
     private Model loadModel() {
         Model model = new Model();
         try {
+            System.out.println("Reading model from " + inputModelFile);
             InputStream inputModel = new FileInputStream(inputModelFile);
             model.load(inputModel);
             inputModel.close();
@@ -234,6 +242,7 @@ public class Aloe {
         FeatureSpecification spec = new FeatureSpecification();
 
         try {
+            System.out.println("Reading feature spec from " + inputFeatureSpecFile);
             InputStream inputFeatureSpec = new FileInputStream(inputFeatureSpecFile);
             spec.load(inputFeatureSpec);
             inputFeatureSpec.close();
@@ -271,8 +280,6 @@ public class Aloe {
             evalReport.save(outputEval);
             outputEval.close();
             System.out.println("Saved evaluation to " + this.outputEvaluationReportFile);
-            System.out.println("Evaluation:");
-            System.out.println(evalReport.toString());
         } catch (IOException e) {
             System.err.println("Error saving evaluation report to " + this.outputEvaluationReportFile);
             System.err.println("\t" + e.getMessage());

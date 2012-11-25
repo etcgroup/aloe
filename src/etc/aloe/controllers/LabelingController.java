@@ -46,6 +46,8 @@ public class LabelingController {
 
     public void run() {
 
+        System.out.println("== Labeling and Testing ==");
+
         //First extract features
         FeatureExtraction extraction = getFeatureExtractionImpl();
         ExampleSet examples = extraction.extractFeatures(segmentSet.getBasicExamples(), featureSpecification);
@@ -57,10 +59,13 @@ public class LabelingController {
         LabelMapping mapping = getMappingImpl();
         mapping.map(predictedLabels, segmentSet);
 
-        //Evaluate the model on any labeled examples
-        ExampleSet labeledExamples = examples.onlyLabeled();
+        //Evaluate the model on labeled examples
         Evaluation evaluation = getEvaluationImpl();
-        this.evaluationReport = evaluation.evaluate(this.model, labeledExamples);
+        this.evaluationReport = evaluation.evaluate(predictedLabels, examples);
+
+        System.out.println("Testing Report:");
+        System.out.println(evaluationReport);
+        System.out.println("---------");
     }
 
     public FeatureExtraction getFeatureExtractionImpl() {

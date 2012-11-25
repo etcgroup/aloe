@@ -60,6 +60,7 @@ public class Model implements Saving, Loading {
     public List<Boolean> getPredictedLabels(ExampleSet examples) {
         List<Boolean> results = new ArrayList<Boolean>();
 
+        System.out.println("Classifying " + examples.size() + " instances.");
         for (int i = 0; i < examples.size(); i++) {
             try {
                 double classValue = classifier.classifyInstance(examples.get(i));

@@ -53,7 +53,7 @@ public class ThresholdSegmentation implements Segmentation {
 
     @Override
     public SegmentSet segment(MessageSet messageSet) {
-
+System.out.println("Segmenting with " + thresholdSeconds + " second threshold," + (byParticipant ? "" : " not") + " separating by participant.");
         List<Message> messages = sortByTime(messageSet.getMessages());
         if (byParticipant) {
             messages = sortByParticipant(messages);
@@ -65,6 +65,7 @@ public class ThresholdSegmentation implements Segmentation {
         long lastTime = 0;
         String lastParticipant = null;
 
+        int numLabeled = 0;
         for (Message message : messages) {
             long msgSeconds = message.getTimestamp().getTime() / 1000;
             long diffSeconds = (msgSeconds - lastTime);
@@ -80,6 +81,9 @@ public class ThresholdSegmentation implements Segmentation {
             if (newSegment) {
                 if (this.resolution != null) {
                     current.setTrueLabel(this.resolution.resolveLabel(current));
+                    if (current.hasTrueLabel()) {
+                        numLabeled++;
+                    }
                 }
                 segments.add(current);
                 current = new Segment();
@@ -93,11 +97,14 @@ public class ThresholdSegmentation implements Segmentation {
         if (current.getMessages().size() > 0) {
             if (this.resolution != null) {
                 current.setTrueLabel(this.resolution.resolveLabel(current));
+                if (current.hasTrueLabel()) {
+                    numLabeled++;
+                }
             }
             segments.add(current);
         }
 
-        System.out.println("Created " + segments.size() + " segments from messages.");
+        System.out.println("Grouped messages into " + segments.size() + " segments (" + numLabeled + " labeled).");
 
         return segments;
     }

@@ -12,6 +12,7 @@ import etc.aloe.processes.Evaluation;
 import etc.aloe.processes.FeatureExtraction;
 import etc.aloe.processes.FeatureGeneration;
 import etc.aloe.processes.Training;
+import java.util.List;
 
 /**
  * Class that performs cross validation and produces results.
@@ -42,9 +43,12 @@ public class CrossValidationController {
 
     public void run() {
 
+        System.out.println("== " + this.folds + "-Fold Cross Validation ==");
+
         segmentSet = segmentSet.onlyLabeled();
 
         //Prepare for cross validation
+        System.out.println("Randomizing and stratifying segments.");
         CrossValidationPrep<Segment> validationPrep = this.getCrossValidationPrepImpl();
         validationPrep.randomize(segmentSet.getSegments());
         segmentSet.setSegments(validationPrep.stratify(segmentSet.getSegments(), folds));
@@ -72,12 +76,18 @@ public class CrossValidationController {
             Training training = getTrainingImpl();
             Model model = training.train(trainingSet);
 
+            List<Boolean> predictions = model.getPredictedLabels(testingSet);
             Evaluation evaluation = getEvaluationImpl();
-            EvaluationReport report = evaluation.evaluate(model, testingSet);
+            EvaluationReport report = evaluation.evaluate(predictions, testingSet);
 
             evaluationReport.addPartial(report);
+            int numCorrect = report.getTrueNegativeCount() + report.getTruePositiveCount();
+            System.out.println("Validation fold " + (foldIndex + 1) + " completed (" + numCorrect + "/" + testingSet.size() + " correct).");
         }
 
+        System.out.println("Aggregated cross-validation report:");
+        System.out.println(evaluationReport);
+        System.out.println("---------");
     }
 
     public FeatureGeneration getFeatureGenerationImpl() {
