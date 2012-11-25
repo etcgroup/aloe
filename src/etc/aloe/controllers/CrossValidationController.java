@@ -42,6 +42,8 @@ public class CrossValidationController {
 
     public void run() {
 
+        segmentSet = segmentSet.onlyLabeled();
+
         //Prepare for cross validation
         CrossValidationPrep<Segment> validationPrep = this.getCrossValidationPrepImpl();
         validationPrep.randomize(segmentSet.getSegments());
@@ -58,7 +60,7 @@ public class CrossValidationController {
             testingSegments.setSegments(split.getTestingForFold(segmentSet.getSegments(), foldIndex, this.folds));
 
             ExampleSet basicTrainingExamples = trainingSegments.getBasicExamples();
-            ExampleSet basicTestingExamples = trainingSegments.getBasicExamples();
+            ExampleSet basicTestingExamples = testingSegments.getBasicExamples();
 
             FeatureGeneration generation = getFeatureGenerationImpl();
             FeatureSpecification spec = generation.generateFeatures(basicTrainingExamples);
