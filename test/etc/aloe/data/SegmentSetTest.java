@@ -154,4 +154,18 @@ public class SegmentSetTest {
             assertTrue(true);
         }
     }
+
+    /**
+     * Test of onlyLabeled method, of class SegmentSet.
+     */
+    @Test
+    public void testOnlyLabeled() {
+        System.out.println("onlyLabeled");
+        SegmentSet instance = new SegmentSet();
+        SegmentSet expResult = null;
+        SegmentSet result = instance.onlyLabeled();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
 }

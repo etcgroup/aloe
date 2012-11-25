@@ -79,4 +79,14 @@ public class SegmentSet {
     public Segment get(int i) {
         return this.segments.get(i);
     }
+
+    public SegmentSet onlyLabeled() {
+        SegmentSet labeled = new SegmentSet();
+        for (Segment segment : segments) {
+            if (segment.hasTrueLabel()) {
+                labeled.add(segment);
+            }
+        }
+        return labeled;
+    }
 }
