@@ -161,11 +161,19 @@ public class SegmentSetTest {
     @Test
     public void testOnlyLabeled() {
         System.out.println("onlyLabeled");
-        SegmentSet instance = new SegmentSet();
-        SegmentSet expResult = null;
-        SegmentSet result = instance.onlyLabeled();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        SegmentSet segments = new SegmentSet();
+        Segment seg0 = new Segment();
+        seg0.setTrueLabel(Boolean.TRUE);
+        Segment seg1 = new Segment();
+        Segment seg2 = new Segment();
+        seg2.setTrueLabel(Boolean.FALSE);
+        segments.add(seg0);
+        segments.add(seg1);
+        segments.add(seg2);
+
+        SegmentSet result = segments.onlyLabeled();
+        assertEquals(2, result.size());
+        assertEquals(seg0, result.get(0));
+        assertEquals(seg2, result.get(1));
     }
 }

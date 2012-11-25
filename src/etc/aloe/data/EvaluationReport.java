@@ -63,7 +63,7 @@ public class EvaluationReport implements Saving {
     @Override
     public boolean save(OutputStream destination) throws IOException {
         PrintStream out = new PrintStream(destination);
-        out.println(this.toString());
+        out.print(this.toString());
         out.flush();
         return true;
     }

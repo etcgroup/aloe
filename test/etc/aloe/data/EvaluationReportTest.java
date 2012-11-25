@@ -55,13 +55,14 @@ public class EvaluationReportTest {
         assertTrue(eval.save(out));
         out.close();
 
-        String nl = System.getProperty("line.separator");
+        String nl = "\n";
         String expectedReport = "TP: 1" + nl
                 + "FP: 4" + nl
                 + "TN: 2" + nl
-                + "FN: 3" + nl;
+                + "FN: 3";
 
         String report = out.toString();
+
         assertEquals(expectedReport, report);
     }
 
