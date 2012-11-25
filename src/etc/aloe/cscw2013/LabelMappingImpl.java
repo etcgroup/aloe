@@ -17,6 +17,7 @@ public class LabelMappingImpl implements LabelMapping {
             Segment segment = segments.get(s);
             Boolean predictedLabel = predictedLabels.get(s);
 
+            segment.setPredictedLabel(predictedLabel);
             for (Message message : segment.getMessages()) {
                 message.setPredictedLabel(predictedLabel);
             }

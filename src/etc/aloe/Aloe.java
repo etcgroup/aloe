@@ -74,9 +74,9 @@ public class Aloe {
     private File outputEvaluationReportFile;
     private File outputFeatureSpecFile;
     private File outputModelFile;
-    @Option(name = "-m", usage = "use an existing model file")
+    @Option(name = "-m", usage = "use an existing model file (requires -f option)")
     private File inputModelFile;
-    @Option(name = "-f", usage = "use an existing feature specification file")
+    @Option(name = "-f", usage = "use an existing feature specification file (requires -m option)")
     private File inputFeatureSpecFile;
     @Option(name = "-t", usage = "segmentation threshold in seconds (default 30)")
     private int segmentationThresholdSeconds = 30;
@@ -161,10 +161,12 @@ public class Aloe {
 
     private void runTestingMode() {
         Segmentation segmentation = new ThresholdSegmentation(this.segmentationThresholdSeconds, segmentationByParticipant);
+        segmentation.setSegmentResolution(new ResolutionImpl());
+        
         LabelingController labelingController = new LabelingController();
         labelingController.setFeatureExtractionImpl(new FeatureExtractionImpl());
         labelingController.setEvaluationImpl(new EvaluationImpl());
-        labelingController.setPredictionImpl(new LabelMappingImpl());
+        labelingController.setMappingImpl(new LabelMappingImpl());
 
         MessageSet messages = this.loadMessages();
         FeatureSpecification spec = this.loadFeatureSpecification();
@@ -256,6 +258,7 @@ public class Aloe {
             OutputStream outputCSV = new FileOutputStream(outputCSVFile);
             messages.save(outputCSV);
             outputCSV.close();
+            System.out.println("Saved labeled data to " + outputCSVFile);
         } catch (IOException e) {
             System.err.println("Error saving messages to " + this.outputCSVFile);
             System.err.println("\t" + e.getMessage());
@@ -267,6 +270,9 @@ public class Aloe {
             OutputStream outputEval = new FileOutputStream(outputEvaluationReportFile);
             evalReport.save(outputEval);
             outputEval.close();
+            System.out.println("Saved evaluation to " + this.outputEvaluationReportFile);
+            System.out.println("Evaluation:");
+            System.out.println(evalReport.toString());
         } catch (IOException e) {
             System.err.println("Error saving evaluation report to " + this.outputEvaluationReportFile);
             System.err.println("\t" + e.getMessage());
@@ -278,6 +284,7 @@ public class Aloe {
             OutputStream outputFeatureSpec = new FileOutputStream(outputFeatureSpecFile);
             spec.save(outputFeatureSpec);
             outputFeatureSpec.close();
+            System.out.println("Saved feature spec to " + this.outputFeatureSpecFile);
         } catch (IOException e) {
             System.err.println("Error saving feature spec to " + this.outputFeatureSpecFile);
             System.err.println("\t" + e.getMessage());
@@ -289,6 +296,7 @@ public class Aloe {
             OutputStream outputModel = new FileOutputStream(outputModelFile);
             model.save(outputModel);
             outputModel.close();
+            System.out.println("Saved model to " + this.outputModelFile);
         } catch (IOException e) {
             System.err.println("Error saving model to " + this.outputModelFile);
             System.err.println("\t" + e.getMessage());

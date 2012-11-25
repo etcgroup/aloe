@@ -2,6 +2,7 @@ package etc.aloe.filters;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.*;
 import weka.core.*;
 import weka.filters.Filter;
@@ -634,9 +635,9 @@ public class StringToDictionaryVector extends SimpleBatchFilter {
         return result;
     }
 
-    private static class Trie {
+    private static class Trie implements Serializable {
 
-        private static class TrieNode {
+        private static class TrieNode implements Serializable {
 
             boolean exists = false;
             HashMap<Character, TrieNode> branches = new HashMap<Character, Trie.TrieNode>();

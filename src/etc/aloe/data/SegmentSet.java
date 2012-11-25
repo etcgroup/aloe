@@ -66,7 +66,9 @@ public class SegmentSet {
 
             instance.setValue(idAttr, segment.getId());
             instance.setValue(messageAttr, segment.concatMessages());
-            instance.setValue(labelAttr, segment.getTrueLabel() ? "true" : "false");
+            if (segment.hasTrueLabel()) {
+                instance.setValue(labelAttr, segment.getTrueLabel() ? "true" : "false");
+            }
 
             instances.add(instance);
         }

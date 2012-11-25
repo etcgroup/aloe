@@ -1,5 +1,6 @@
 package etc.aloe.filters;
 
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import weka.core.Capabilities.Capability;
@@ -25,7 +26,7 @@ public abstract class AbstractRegexFilter extends SimpleStreamFilter
         this.countRegexLengths = countRegexLengths;
     }
 
-    protected class NamedRegex {
+    protected static class NamedRegex implements Serializable {
 
         private final String name;
         private final String regex;

@@ -60,17 +60,20 @@ public class EvaluationReport implements Saving {
         this.falseNegativeCount = falseNegativeCount;
     }
 
-
-
     @Override
     public boolean save(OutputStream destination) throws IOException {
         PrintStream out = new PrintStream(destination);
-        //TODO: implement me better!
-        out.println("TP: " + truePositiveCount);
-        out.println("FP: " + falsePositiveCount);
-        out.println("TN: " + trueNegativeCount);
-        out.println("FN: " + falseNegativeCount);
+        out.println(this.toString());
+        out.flush();
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "TP: " + truePositiveCount + "\n"
+                + "FP: " + falsePositiveCount + "\n"
+                + "TN: " + trueNegativeCount + "\n"
+                + "FN: " + falseNegativeCount;
     }
 
     public void addPartial(EvaluationReport report) {

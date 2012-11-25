@@ -25,7 +25,7 @@ public class LabelingController {
     private EvaluationReport evaluationReport;
     private Model model;
     private FeatureExtraction featureExtractionImpl;
-    private LabelMapping predictionImpl;
+    private LabelMapping mappingImpl;
     private Evaluation evaluationImpl;
 
     public void setSegmentSet(SegmentSet segments) {
@@ -54,15 +54,13 @@ public class LabelingController {
         List<Boolean> predictedLabels = this.model.getPredictedLabels(examples);
 
         //Map back onto messages
-        LabelMapping prediction = getPredictionImpl();
-        prediction.map(predictedLabels, segmentSet);
+        LabelMapping mapping = getMappingImpl();
+        mapping.map(predictedLabels, segmentSet);
 
         //Evaluate the model on any labeled examples
         ExampleSet labeledExamples = examples.onlyLabeled();
-        if (labeledExamples.size() > 0) {
-            Evaluation evaluation = getEvaluationImpl();
-            this.evaluationReport = evaluation.evaluate(this.model, labeledExamples);
-        }
+        Evaluation evaluation = getEvaluationImpl();
+        this.evaluationReport = evaluation.evaluate(this.model, labeledExamples);
     }
 
     public FeatureExtraction getFeatureExtractionImpl() {
@@ -73,12 +71,12 @@ public class LabelingController {
         this.featureExtractionImpl = featureExtractor;
     }
 
-    public LabelMapping getPredictionImpl() {
-        return this.predictionImpl;
+    public LabelMapping getMappingImpl() {
+        return this.mappingImpl;
     }
 
-    public void setPredictionImpl(LabelMapping prediction) {
-        this.predictionImpl = prediction;
+    public void setMappingImpl(LabelMapping mapping) {
+        this.mappingImpl = mapping;
     }
 
     public Evaluation getEvaluationImpl() {
