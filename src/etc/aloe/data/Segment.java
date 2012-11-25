@@ -1,6 +1,7 @@
 package etc.aloe.data;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -76,5 +77,16 @@ public class Segment implements LabelableItem {
     @Override
     public boolean hasPredictedLabel() {
         return predictedLabel != null;
+    }
+
+    public double getDurationInSeconds() {
+        if (messages.isEmpty()) {
+            return 0;
+        }
+
+        Date start = messages.get(0).getTimestamp();
+        Date stop = messages.get(messages.size() - 1).getTimestamp();
+
+        return 1 + (stop.getTime() - start.getTime()) / 1000.0;
     }
 }
