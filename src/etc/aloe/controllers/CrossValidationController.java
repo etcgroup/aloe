@@ -6,6 +6,7 @@ import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.Model;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
+import etc.aloe.processes.Balancing;
 import etc.aloe.processes.CrossValidationPrep;
 import etc.aloe.processes.CrossValidationSplit;
 import etc.aloe.processes.Evaluation;
@@ -28,6 +29,7 @@ public class CrossValidationController {
     private Evaluation evaluationImpl;
     private CrossValidationPrep<Segment> crossValidationPrepImpl;
     private CrossValidationSplit<Segment> crossValidationSplitImpl;
+    private Balancing balancingImpl;
 
     public EvaluationReport getEvaluationReport() {
         return evaluationReport;
@@ -58,8 +60,13 @@ public class CrossValidationController {
 
             //Split the data
             CrossValidationSplit split = this.getCrossValidationSplitImpl();
+
             SegmentSet trainingSegments = new SegmentSet();
             trainingSegments.setSegments(split.getTrainingForFold(segmentSet.getSegments(), foldIndex, this.folds));
+            if (getBalancingImpl() != null) {
+                trainingSegments = getBalancingImpl().balance(trainingSegments);
+            }
+
             SegmentSet testingSegments = new SegmentSet();
             testingSegments.setSegments(split.getTestingForFold(segmentSet.getSegments(), foldIndex, this.folds));
 
@@ -136,5 +143,13 @@ public class CrossValidationController {
 
     public void setCrossValidationSplitImpl(CrossValidationSplit<Segment> crossValidationSplit) {
         this.crossValidationSplitImpl = crossValidationSplit;
+    }
+
+    public Balancing getBalancingImpl() {
+        return this.balancingImpl;
+    }
+
+    public void setBalancingImpl(Balancing balancing) {
+        this.balancingImpl = balancing;
     }
 }

@@ -5,6 +5,7 @@ import etc.aloe.controllers.LabelingController;
 import etc.aloe.controllers.TrainingController;
 import etc.aloe.cscw2013.CrossValidationPrepImpl;
 import etc.aloe.cscw2013.CrossValidationSplitImpl;
+import etc.aloe.cscw2013.DownsampleBalancing;
 import etc.aloe.cscw2013.EvaluationImpl;
 import etc.aloe.cscw2013.FeatureExtractionImpl;
 import etc.aloe.cscw2013.FeatureGenerationImpl;
@@ -128,12 +129,14 @@ public class Aloe {
         crossValidationController.setFeatureExtractionImpl(new FeatureExtractionImpl());
         crossValidationController.setTrainingImpl(new TrainingImpl());
         crossValidationController.setEvaluationImpl(new EvaluationImpl());
+        crossValidationController.setBalancingImpl(new DownsampleBalancing());
 
         TrainingController trainingController = new TrainingController();
         trainingController.setFeatureGenerationImpl(new FeatureGenerationImpl(termList));
         trainingController.setFeatureExtractionImpl(new FeatureExtractionImpl());
         trainingController.setTrainingImpl(new TrainingImpl());
-
+        trainingController.setBalancingImpl(new DownsampleBalancing());
+        
         //Get and preprocess the data
         MessageSet messages = this.loadMessages();
         Segmentation segmentation = new ThresholdSegmentation(this.segmentationThresholdSeconds, segmentationByParticipant);
@@ -186,7 +189,7 @@ public class Aloe {
         EvaluationReport evalReport = labelingController.getEvaluationReport();
 
         System.out.println("== Saving Output ==");
-        
+
         saveEvaluationReport(evalReport);
         saveMessages(messages);
     }

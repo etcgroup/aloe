@@ -4,10 +4,12 @@
  */
 package etc.aloe.controllers;
 
+import etc.aloe.cscw2013.DownsampleBalancing;
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.Model;
 import etc.aloe.data.SegmentSet;
+import etc.aloe.processes.Balancing;
 import etc.aloe.processes.FeatureExtraction;
 import etc.aloe.processes.FeatureGeneration;
 import etc.aloe.processes.Training;
@@ -24,6 +26,7 @@ public class TrainingController {
     private FeatureExtraction featureExtractionImpl;
     private Training trainingImpl;
     private FeatureGeneration featureGenerationImpl;
+    private Balancing balancingImpl;
 
     public void setSegmentSet(SegmentSet segments) {
         this.segmentSet = segments;
@@ -41,7 +44,12 @@ public class TrainingController {
 
         System.out.println("== Training Final Model ==");
 
-        ExampleSet basicExamples = segmentSet.getBasicExamples();
+        SegmentSet trainingSegments = segmentSet.onlyLabeled();
+        if (getBalancingImpl() != null) {
+            trainingSegments = getBalancingImpl().balance(trainingSegments);
+        }
+
+        ExampleSet basicExamples = trainingSegments.getBasicExamples();
 
         //Generate the features
         FeatureGeneration generation = getFeatureGenerationImpl();
@@ -78,5 +86,13 @@ public class TrainingController {
 
     public FeatureGeneration getFeatureGenerationImpl() {
         return this.featureGenerationImpl;
+    }
+
+    public void setBalancingImpl(Balancing balancing) {
+        this.balancingImpl = balancing;
+    }
+
+    public Balancing getBalancingImpl() {
+        return balancingImpl;
     }
 }
