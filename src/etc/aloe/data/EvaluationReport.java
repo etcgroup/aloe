@@ -60,6 +60,49 @@ public class EvaluationReport implements Saving {
         this.falseNegativeCount = falseNegativeCount;
     }
 
+    /**
+     * Recall = (correctly classified positives) / (total actual positives)
+     *
+     * @return
+     */
+    public double getRecall() {
+        return (double) truePositiveCount / (truePositiveCount + falseNegativeCount);
+    }
+
+    /**
+     * Precision = (correctly classified positives) / (total predicted as
+     * positive)
+     *
+     * @return
+     */
+    public double getPrecision() {
+        return (double) truePositiveCount / (truePositiveCount + falsePositiveCount);
+    }
+
+    /**
+     * FMeasure = (2 * recall * precision) / (recall + precision)
+     *
+     * @return
+     */
+    public double getFMeasure() {
+        double precision = getPrecision();
+        double recall = getRecall();
+        if ((precision + recall) == 0) {
+            return 0;
+        }
+        return 2 * precision * recall / (precision + recall);
+    }
+
+    /**
+     * PercentCorrect = (TP + TN) / (TP + TN + FP + FN)
+     *
+     * @return
+     */
+    private double getPercentCorrect() {
+        return (double) (truePositiveCount + trueNegativeCount)
+                / (truePositiveCount + trueNegativeCount + falsePositiveCount + falseNegativeCount);
+    }
+
     @Override
     public boolean save(OutputStream destination) throws IOException {
         PrintStream out = new PrintStream(destination);
@@ -73,7 +116,11 @@ public class EvaluationReport implements Saving {
         return "TP: " + truePositiveCount + "\n"
                 + "FP: " + falsePositiveCount + "\n"
                 + "TN: " + trueNegativeCount + "\n"
-                + "FN: " + falseNegativeCount;
+                + "FN: " + falseNegativeCount + "\n"
+                + "Precision: " + getPrecision() + "\n"
+                + "Recall: " + getRecall() + "\n"
+                + "FMeasure: " + getFMeasure() + "\n"
+                + "% Correct: " + getPercentCorrect();
     }
 
     public void addPartial(EvaluationReport report) {
