@@ -57,12 +57,12 @@ public class FeatureGenerationImpl implements FeatureGeneration {
             Instances output = finalFilter.getOutputFormat();
             int numAttrs = output.numAttributes();
             System.out.println("generated " + (numAttrs - 1) + " features.");
-            Enumeration attrs = output.enumerateAttributes();
-            while (attrs.hasMoreElements()) {
-                Attribute attr = (Attribute) attrs.nextElement();
-                System.out.print(attr.name() + ", ");
-            }
-            System.out.println();
+//            Enumeration attrs = output.enumerateAttributes();
+//            while (attrs.hasMoreElements()) {
+//                Attribute attr = (Attribute) attrs.nextElement();
+//                System.out.print(attr.name() + ", ");
+//            }
+//            System.out.println();
         } catch (Exception e) {
             System.err.println("Error generating features.");
             System.err.println("\t" + e.getMessage());
