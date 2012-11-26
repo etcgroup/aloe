@@ -57,7 +57,7 @@ public class CrossValidationController {
 
         evaluationReport = new EvaluationReport();
         for (int foldIndex = 0; foldIndex < this.folds; foldIndex++) {
-
+            System.out.println("- Starting fold " + (foldIndex + 1));
             //Split the data
             CrossValidationSplit split = this.getCrossValidationSplitImpl();
 
@@ -69,6 +69,9 @@ public class CrossValidationController {
 
             SegmentSet testingSegments = new SegmentSet();
             testingSegments.setSegments(split.getTestingForFold(segmentSet.getSegments(), foldIndex, this.folds));
+            if (getBalancingImpl() != null) {
+                testingSegments = getBalancingImpl().balance(testingSegments);
+            }
 
             ExampleSet basicTrainingExamples = trainingSegments.getBasicExamples();
             ExampleSet basicTestingExamples = testingSegments.getBasicExamples();
@@ -89,7 +92,7 @@ public class CrossValidationController {
 
             evaluationReport.addPartial(report);
             int numCorrect = report.getTrueNegativeCount() + report.getTruePositiveCount();
-            System.out.println("Validation fold " + (foldIndex + 1) + " completed (" + numCorrect + "/" + testingSet.size() + " correct).");
+            System.out.println("- Fold " + (foldIndex + 1) + " completed (" + numCorrect + "/" + testingSet.size() + " correct).");
         }
 
         System.out.println("Aggregated cross-validation report:");
