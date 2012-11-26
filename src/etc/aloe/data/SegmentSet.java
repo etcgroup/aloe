@@ -67,15 +67,15 @@ public class SegmentSet {
         Attribute idAttr = instances.attribute(ExampleSet.ID_ATTR_NAME);
         Attribute messageAttr = instances.attribute(ExampleSet.MESSAGE_ATTR_NAME);
         Attribute labelAttr = instances.attribute(ExampleSet.LABEL_ATTR_NAME);
-        Attribute duration = instances.attribute(DURATION_ATTR_NAME);
-        Attribute length = instances.attribute(LENGTH_ATTR_NAME);
-        Attribute cps = instances.attribute(CPS_ATTR_NAME);
-        Attribute rate = instances.attribute(RATE_ATTR_NAME);
+        Attribute durationAttr = instances.attribute(DURATION_ATTR_NAME);
+        Attribute lengthAttr = instances.attribute(LENGTH_ATTR_NAME);
+        Attribute cpsAttr = instances.attribute(CPS_ATTR_NAME);
+        Attribute rateAttr = instances.attribute(RATE_ATTR_NAME);
 
 
         for (int i = 0; i < size(); i++) {
             Segment segment = get(i);
-            Instance instance = new DenseInstance(3);
+            Instance instance = new DenseInstance(instances.numAttributes());
 
             String messageStr = segment.concatMessages();
 
@@ -85,7 +85,7 @@ public class SegmentSet {
                 instance.setValue(labelAttr, segment.getTrueLabel() ? "true" : "false");
             }
 
-            computeRateValues(segment, instance, messageStr, duration, length, cps, rate);
+            computeRateValues(segment, instance, messageStr, durationAttr, lengthAttr, cpsAttr, rateAttr);
 
             instances.add(instance);
         }
