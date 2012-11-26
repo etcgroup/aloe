@@ -81,7 +81,7 @@ public class Aloe {
     private File inputFeatureSpecFile;
     @Option(name = "-t", usage = "segmentation threshold in seconds (default 30)")
     private int segmentationThresholdSeconds = 30;
-    @Option(name = "-k", usage = "number of cross-validation folds (default 10)")
+    @Option(name = "-k", usage = "number of cross-validation folds (default 10, 0 to disable cross validation)")
     private int crossValidationFolds = 10;
     @Option(name = "-d", usage = "date format string (default 'yyyy-MM-dd'T'HH:mm:ss')")
     private String dateFormatString = "yyyy-MM-dd'T'HH:mm:ss";
@@ -122,21 +122,24 @@ public class Aloe {
         // This sets up the components of the abstract pipeline with specific
         // implementations.
 
-        CrossValidationController crossValidationController = new CrossValidationController(this.crossValidationFolds);
-        crossValidationController.setCrossValidationPrepImpl(new CrossValidationPrepImpl<Segment>());
-        crossValidationController.setCrossValidationSplitImpl(new CrossValidationSplitImpl<Segment>());
-        crossValidationController.setFeatureGenerationImpl(new FeatureGenerationImpl(termList));
-        crossValidationController.setFeatureExtractionImpl(new FeatureExtractionImpl());
-        crossValidationController.setTrainingImpl(new TrainingImpl());
-        crossValidationController.setEvaluationImpl(new EvaluationImpl());
-        crossValidationController.setBalancingImpl(new DownsampleBalancing());
+        CrossValidationController crossValidationController = null;
+        if (crossValidationFolds > 0) {
+            crossValidationController = new CrossValidationController(this.crossValidationFolds);
+            crossValidationController.setCrossValidationPrepImpl(new CrossValidationPrepImpl<Segment>());
+            crossValidationController.setCrossValidationSplitImpl(new CrossValidationSplitImpl<Segment>());
+            crossValidationController.setFeatureGenerationImpl(new FeatureGenerationImpl(termList));
+            crossValidationController.setFeatureExtractionImpl(new FeatureExtractionImpl());
+            crossValidationController.setTrainingImpl(new TrainingImpl());
+            crossValidationController.setEvaluationImpl(new EvaluationImpl());
+            crossValidationController.setBalancingImpl(new DownsampleBalancing());
+        }
 
         TrainingController trainingController = new TrainingController();
         trainingController.setFeatureGenerationImpl(new FeatureGenerationImpl(termList));
         trainingController.setFeatureExtractionImpl(new FeatureExtractionImpl());
         trainingController.setTrainingImpl(new TrainingImpl());
         trainingController.setBalancingImpl(new DownsampleBalancing());
-        
+
         //Get and preprocess the data
         MessageSet messages = this.loadMessages();
         Segmentation segmentation = new ThresholdSegmentation(this.segmentationThresholdSeconds, segmentationByParticipant);
@@ -144,22 +147,26 @@ public class Aloe {
         SegmentSet segments = segmentation.segment(messages);
 
         //Run cross validation
-        crossValidationController.setSegmentSet(segments);
-        crossValidationController.run();
+        if (crossValidationFolds > 0) {
+            crossValidationController.setSegmentSet(segments);
+            crossValidationController.run();
+        } else {
+            System.out.println("== Skipping Cross Validation ==");
+        }
 
         //Run the full training
         trainingController.setSegmentSet(segments);
         trainingController.run();
 
         //Get the fruits
-        EvaluationReport evalReport = crossValidationController.getEvaluationReport();
+        System.out.println("== Saving Output ==");
+        if (crossValidationFolds > 0) {
+            EvaluationReport evalReport = crossValidationController.getEvaluationReport();
+            saveEvaluationReport(evalReport);
+        }
         FeatureSpecification spec = trainingController.getFeatureSpecification();
         Model model = trainingController.getModel();
 
-        System.out.println("== Saving Output ==");
-
-        //Save the fruits
-        saveEvaluationReport(evalReport);
         saveFeatureSpecification(spec);
         saveModel(model);
     }
