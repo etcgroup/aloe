@@ -87,6 +87,8 @@ public class Aloe {
     private String dateFormatString = "yyyy-MM-dd'T'HH:mm:ss";
     @Option(name = "-e", usage = "emoticon dictionary file (default emoticons.txt)")
     private File emoticonFile = new File("emoticons.txt");
+    @Option(name = "--downsample", usage = "balance the training and test sets by randomly removing excess examples")
+    private boolean useDownsampling = false;
 
     @Option(name = "-r", usage = "random seed")
     void setRandomSeed(int randomSeed) {
@@ -131,14 +133,18 @@ public class Aloe {
             crossValidationController.setFeatureExtractionImpl(new FeatureExtractionImpl());
             crossValidationController.setTrainingImpl(new TrainingImpl());
             crossValidationController.setEvaluationImpl(new EvaluationImpl());
-            crossValidationController.setBalancingImpl(new DownsampleBalancing());
+            if (useDownsampling) {
+                crossValidationController.setBalancingImpl(new DownsampleBalancing());
+            }
         }
 
         TrainingController trainingController = new TrainingController();
         trainingController.setFeatureGenerationImpl(new FeatureGenerationImpl(termList));
         trainingController.setFeatureExtractionImpl(new FeatureExtractionImpl());
         trainingController.setTrainingImpl(new TrainingImpl());
-        trainingController.setBalancingImpl(new DownsampleBalancing());
+        if (useDownsampling) {
+            trainingController.setBalancingImpl(new DownsampleBalancing());
+        }
 
         //Get and preprocess the data
         MessageSet messages = this.loadMessages();
