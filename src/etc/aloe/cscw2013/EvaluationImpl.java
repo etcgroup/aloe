@@ -10,8 +10,11 @@ import java.util.List;
  */
 public class EvaluationImpl implements Evaluation {
 
-    private final double falseNegativeCost;
-    private final double falsePositiveCost;
+    private double falseNegativeCost = 1;
+    private double falsePositiveCost = 1;
+
+    public EvaluationImpl() {
+    }
 
     public EvaluationImpl(double falsePositiveCost, double falseNegativeCost) {
         this.falsePositiveCost = falsePositiveCost;

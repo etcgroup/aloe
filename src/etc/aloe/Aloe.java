@@ -3,6 +3,7 @@ package etc.aloe;
 import etc.aloe.controllers.CrossValidationController;
 import etc.aloe.controllers.LabelingController;
 import etc.aloe.controllers.TrainingController;
+import etc.aloe.cscw2013.CostTrainingImpl;
 import etc.aloe.cscw2013.CrossValidationPrepImpl;
 import etc.aloe.cscw2013.CrossValidationSplitImpl;
 import etc.aloe.cscw2013.DownsampleBalancing;
@@ -22,6 +23,7 @@ import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.filters.StringToDictionaryVector;
 import etc.aloe.processes.Segmentation;
+import etc.aloe.processes.Training;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -45,7 +47,7 @@ import org.kohsuke.args4j.Option;
 public class Aloe {
 
     private final static String DATA_SUFFIX = ".csv";
-    private final static String EVALUATION_REPORT_SUFFIX = ".eval";
+    private final static String EVALUATION_REPORT_SUFFIX = ".txt";
     private final static String MODEL_SUFFIX = ".model";
     private final static String FEATURE_SPEC_SUFFIX = ".spec";
     private final static String OUTPUT_CSV_NAME = "labeled" + DATA_SUFFIX;
@@ -88,12 +90,14 @@ public class Aloe {
     private String dateFormatString = "yyyy-MM-dd'T'HH:mm:ss";
     @Option(name = "-e", usage = "emoticon dictionary file (default emoticons.txt)")
     private File emoticonFile = new File("emoticons.txt");
-    @Option(name = "--downsample", usage = "downsample the majority class in training sets in accordance with the cost ratio")
+    @Option(name = "--downsample", usage = "downsample the majority class in training sets to match the cost ratio")
     private boolean useDownsampling = false;
-    @Option(name = "--upsample", usage = "upsample the minority class in training sets in accordance with the cost ratio")
+    @Option(name = "--upsample", usage = "upsample the minority class in training sets to match the cost ratio")
     private boolean useUpsampling = false;
-    @Option(name = "--cost-sensitive", usage = "use a cost-sensitive version of the classifier during training")
-    private boolean useCostSensitiveLearning = false;
+    @Option(name = "--reweight", usage = "reweight the training data")
+    private boolean useReweighting = false;
+    @Option(name = "--min-cost", usage = "train a classifier that uses the min-cost criterion")
+    private boolean useMinCost = false;
     @Option(name = "--fp-cost", usage = "the cost of a false positive (default 1)")
     private double falsePositiveCost = 1;
     @Option(name = "--fn-cost", usage = "the cost of a false negative (default 1)")
@@ -140,10 +144,14 @@ public class Aloe {
             crossValidationController.setCrossValidationSplitImpl(new CrossValidationSplitImpl<Segment>());
             crossValidationController.setFeatureGenerationImpl(new FeatureGenerationImpl(termList));
             crossValidationController.setFeatureExtractionImpl(new FeatureExtractionImpl());
-            crossValidationController.setTrainingImpl(new TrainingImpl());
+            Training trainingImpl = new TrainingImpl();
+            if (useMinCost || useReweighting) {
+                trainingImpl = new CostTrainingImpl(falsePositiveCost, falseNegativeCost, useReweighting);
+            }
+            crossValidationController.setTrainingImpl(trainingImpl);
             crossValidationController.setEvaluationImpl(new EvaluationImpl(falsePositiveCost, falseNegativeCost));
             crossValidationController.setCosts(falsePositiveCost, falseNegativeCost);
-            
+
             if (useDownsampling) {
                 crossValidationController.setBalancingImpl(new DownsampleBalancing(falsePositiveCost, falseNegativeCost));
             } else if (useUpsampling) {
@@ -154,7 +162,12 @@ public class Aloe {
         TrainingController trainingController = new TrainingController();
         trainingController.setFeatureGenerationImpl(new FeatureGenerationImpl(termList));
         trainingController.setFeatureExtractionImpl(new FeatureExtractionImpl());
-        trainingController.setTrainingImpl(new TrainingImpl());
+        Training trainingImpl = new TrainingImpl();
+        if (useMinCost || useReweighting) {
+            trainingImpl = new CostTrainingImpl(falsePositiveCost, falseNegativeCost, useReweighting);
+        }
+        trainingController.setTrainingImpl(trainingImpl);
+
         if (useDownsampling) {
             trainingController.setBalancingImpl(new DownsampleBalancing(falsePositiveCost, falseNegativeCost));
         } else if (useUpsampling) {
@@ -181,8 +194,10 @@ public class Aloe {
 
         //Get the fruits
         System.out.println("== Saving Output ==");
+
+        EvaluationReport evalReport = null;
         if (crossValidationFolds > 0) {
-            EvaluationReport evalReport = crossValidationController.getEvaluationReport();
+            evalReport = crossValidationController.getEvaluationReport();
             saveEvaluationReport(evalReport);
         }
         FeatureSpecification spec = trainingController.getFeatureSpecification();
@@ -190,6 +205,12 @@ public class Aloe {
 
         saveFeatureSpecification(spec);
         saveModel(model);
+
+        if (evalReport != null) {
+            System.out.println("Aggregated cross-validation report:");
+            System.out.println(evalReport);
+            System.out.println("---------");
+        }
     }
 
     private void runTestingMode() {

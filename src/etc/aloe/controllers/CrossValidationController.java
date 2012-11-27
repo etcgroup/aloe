@@ -97,11 +97,8 @@ public class CrossValidationController {
             evaluationReport.addPartial(report);
             int numCorrect = report.getTrueNegativeCount() + report.getTruePositiveCount();
             System.out.println("- Fold " + (foldIndex + 1) + " completed (" + numCorrect + "/" + testingSet.size() + " correct).");
+            System.out.println();
         }
-
-        System.out.println("Aggregated cross-validation report:");
-        System.out.println(evaluationReport);
-        System.out.println("---------");
     }
 
     public FeatureGeneration getFeatureGenerationImpl() {
