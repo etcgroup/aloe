@@ -111,8 +111,8 @@ public class FeatureExtractionImplTest {
         assertNotNull(examples.getInstances());
 
         Instances instances = examples.getInstances();
-        //3 base attrs + 1
-        assertEquals(4, instances.numAttributes());
+        //3 base attrs + 4 basic features + 1 label
+        assertEquals(8, instances.numAttributes());
         //Contains the added attribute in the right place
         assertEquals(attrName, instances.attribute(basicInstances.numAttributes()).name());
 
@@ -124,6 +124,9 @@ public class FeatureExtractionImplTest {
         assertNotNull(instances.attribute(ExampleSet.LABEL_ATTR_NAME));
         Attribute idAttr = instances.attribute(ExampleSet.ID_ATTR_NAME);
         assertNotNull(idAttr);
+
+        //Basic features are present
+        assertNotNull(instances.attribute(SegmentSet.CPS_ATTR_NAME));
 
         //The correct segments remain
         assertEquals(seg0.getId(), instances.get(0).value(idAttr), 0);
