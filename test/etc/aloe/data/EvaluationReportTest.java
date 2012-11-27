@@ -63,7 +63,7 @@ public class EvaluationReportTest {
 
         String report = out.toString();
 
-        assertTrue(report.startsWith(expectedReport));
+        assertTrue(report.contains(expectedReport));
     }
 
     /**

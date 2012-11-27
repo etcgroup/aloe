@@ -170,15 +170,22 @@ public class EvaluationReport implements Saving {
 
     @Override
     public String toString() {
-        return "TP: " + truePositiveCount + "\n"
+        return  "Examples: " + getTotalExamples() + "\n"
+                + "FP Cost: " + falsePositiveCost + "\n"
+                + "FN Cost: " + falseNegativeCost + "\n"
+                + "------------------\n"
+                + "TP: " + truePositiveCount + "\n"
                 + "FP: " + falsePositiveCount + "\n"
                 + "TN: " + trueNegativeCount + "\n"
                 + "FN: " + falseNegativeCount + "\n"
+                + "------------------\n"
                 + "Precision: " + getPrecision() + "\n"
                 + "Recall: " + getRecall() + "\n"
                 + "FMeasure: " + getFMeasure() + "\n"
+                + "------------------\n"
                 + "% Correct: " + getPercentCorrect() + "\n"
                 + "% Incorrect: " + getPercentIncorrect() + "\n"
+                + "------------------\n"
                 + "Total Cost: " + getTotalCost() + "\n"
                 + "Avg Cost: " + getAverageCost();
     }
