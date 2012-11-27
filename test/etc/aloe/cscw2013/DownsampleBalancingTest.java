@@ -9,6 +9,7 @@ import etc.aloe.data.SegmentSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -21,10 +22,6 @@ import static org.junit.Assert.*;
  * @author michael
  */
 public class DownsampleBalancingTest {
-
-    private SegmentSet segmentSet;
-    private int numTrue;
-    private int numFalse;
 
     public DownsampleBalancingTest() {
     }
@@ -39,21 +36,37 @@ public class DownsampleBalancingTest {
 
     @Before
     public void setUp() {
-        numTrue = 5;
-        numFalse = 11;
+    }
 
+    private SegmentSet generateTestSegments(int numPositive, int numNegative) {
         List<Segment> segments = new ArrayList<Segment>();
-        for (int i = 0; i < numTrue; i++) {
+        for (int i = 0; i < numPositive; i++) {
             segments.add(new Segment(true, null));
         }
-        for (int i = 0; i < numFalse; i++) {
+        for (int i = 0; i < numNegative; i++) {
             segments.add(new Segment(false, null));
         }
 
         Collections.shuffle(segments);
 
-        segmentSet = new SegmentSet();
+        SegmentSet segmentSet = new SegmentSet();
         segmentSet.setSegments(segments);
+        return segmentSet;
+    }
+
+    private List<SegmentSet> generateTestSegments(int numToGenerate) {
+        Random random = new Random(24344);
+
+        List<SegmentSet> segmentSets = new ArrayList<SegmentSet>();
+
+        for (int i = 0; i < numToGenerate; i++) {
+            int numPositive = random.nextInt(200) + 10;
+            int numNegative = random.nextInt(200) + 10;
+
+            segmentSets.add(generateTestSegments(numPositive, numNegative));
+        }
+
+        return segmentSets;
     }
 
     @After
@@ -67,14 +80,22 @@ public class DownsampleBalancingTest {
     public void testBalance() {
         System.out.println("balance equally");
 
+        List<SegmentSet> segmentSets = generateTestSegments(10);
+        for (SegmentSet segmentSet : segmentSets) {
+            DownsampleBalancing instance = new DownsampleBalancing(1, 1);
 
-        DownsampleBalancing instance = new DownsampleBalancing(1, 1);
+            SegmentSet result = instance.balance(segmentSet);
 
-        SegmentSet result = instance.balance(segmentSet);
+            int actualTrue = result.getCountWithTrueLabel(true);
+            int actualFalse = result.getCountWithTrueLabel(false);
 
-        //Should have an equal number of true and false examples
-        assertEquals(numTrue, segmentSet.getCountWithTrueLabel(true));
-        assertEquals(numFalse, segmentSet.getCountWithTrueLabel(false));
+            //Both are more than 0
+            assertTrue(actualTrue > 0);
+            assertTrue(actualFalse > 0);
+
+            //Should have an equal number of true and false examples
+            assertEquals(actualTrue, actualFalse);
+        }
     }
 
     /**
@@ -84,7 +105,7 @@ public class DownsampleBalancingTest {
     public void testBalance_withUnlabeled() {
         System.out.println("balance with unlabeled");
 
-
+        SegmentSet segmentSet = generateTestSegments(20, 110);
         DownsampleBalancing instance = new DownsampleBalancing(1, 1);
 
         segmentSet.add(new Segment(null, null));
@@ -103,20 +124,24 @@ public class DownsampleBalancingTest {
     public void testBalance_againstFalsePositive() {
         System.out.println("balance with high false positive cost");
 
+        List<SegmentSet> segmentSets = generateTestSegments(10);
+        for (SegmentSet segmentSet : segmentSets) {
+            DownsampleBalancing instance = new DownsampleBalancing(2, 1);
 
-        DownsampleBalancing instance = new DownsampleBalancing(2, 1);
+            SegmentSet result = instance.balance(segmentSet);
 
-        SegmentSet result = instance.balance(segmentSet);
+            int actualTrue = result.getCountWithTrueLabel(true);
+            int actualFalse = result.getCountWithTrueLabel(false);
 
-        int actualTrue = segmentSet.getCountWithTrueLabel(true);
-        int actualFalse = segmentSet.getCountWithTrueLabel(false);
+            System.out.println("Balanced (" + segmentSet.getCountWithTrueLabel(true) + ", " + segmentSet.getCountWithTrueLabel(false) + ") to (" + actualTrue + ", " + actualFalse + ")");
 
-        //Both are more than 0
-        assertTrue(actualTrue > 0);
-        assertTrue(actualFalse > 0);
+            //Both are more than 0
+            assertTrue(actualTrue > 0);
+            assertTrue(actualFalse > 0);
 
-        //The ratio of false/true should be 2:1
-        assertEquals((double) actualFalse / actualTrue, 2.0, 0.1);
+            //The ratio of false/true should be 2:1
+            assertEquals(2.0, (double) actualFalse / actualTrue, 0.1);
+        }
     }
 
     /**
@@ -126,19 +151,23 @@ public class DownsampleBalancingTest {
     public void testBalance_againstFalseNegative() {
         System.out.println("balance with high false negative cost");
 
+        List<SegmentSet> segmentSets = generateTestSegments(10);
+        for (SegmentSet segmentSet : segmentSets) {
+            DownsampleBalancing instance = new DownsampleBalancing(1, 2);
 
-        DownsampleBalancing instance = new DownsampleBalancing(1, 2);
+            SegmentSet result = instance.balance(segmentSet);
 
-        SegmentSet result = instance.balance(segmentSet);
+            int actualTrue = result.getCountWithTrueLabel(true);
+            int actualFalse = result.getCountWithTrueLabel(false);
 
-        int actualTrue = segmentSet.getCountWithTrueLabel(true);
-        int actualFalse = segmentSet.getCountWithTrueLabel(false);
+            System.out.println("Balanced (" + segmentSet.getCountWithTrueLabel(true) + ", " + segmentSet.getCountWithTrueLabel(false) + ") to (" + actualTrue + ", " + actualFalse + ")");
 
-        //Both are more than 0
-        assertTrue(actualTrue > 0);
-        assertTrue(actualFalse > 0);
+            //Both are more than 0
+            assertTrue(actualTrue > 0);
+            assertTrue(actualFalse > 0);
 
-        //The ratio of false/true should be 1:2
-        assertEquals((double) actualFalse / actualTrue, 0.5, 0.1);
+            //The ratio of false/true should be 1:2
+            assertEquals(0.5, (double) actualFalse / actualTrue, 0.1);
+        }
     }
 }

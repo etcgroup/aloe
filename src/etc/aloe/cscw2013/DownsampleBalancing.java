@@ -18,6 +18,7 @@ import java.util.Random;
  * @author michael
  */
 public class DownsampleBalancing implements Balancing {
+
     private final double falsePositiveCost;
     private final double falseNegativeCost;
 
@@ -56,19 +57,24 @@ public class DownsampleBalancing implements Balancing {
             throw new IllegalArgumentException("Data set contains " + unlabeled.size() + " unlabeled examples.");
         }
 
-        if (positive.size() < negative.size()) {
-            resultSegments.addAll(positive);
-            sampleInto(resultSegments, negative, positive.size());
-            balanced.setSegments(resultSegments);
-        } else if (negative.size() < positive.size()) {
+        double currentPositiveNegativeRatio = (double) positive.size() / negative.size();
+        double desiredPositiveNegativeRatio = (double) falseNegativeCost / falsePositiveCost;
+
+        //Will we be downsampling positive or negative examples?
+        if (currentPositiveNegativeRatio > desiredPositiveNegativeRatio) {
+            //We are removing positive examples
             resultSegments.addAll(negative);
-            sampleInto(resultSegments, negative, positive.size());
-            balanced.setSegments(resultSegments);
+
+            int desiredPositiveExamples = computeFinalExamples(negative.size(), desiredPositiveNegativeRatio);
+            sampleInto(resultSegments, positive, desiredPositiveExamples);
         } else {
-            resultSegments.addAll(negative);
+            //We are removing negative examples
             resultSegments.addAll(positive);
-            balanced.setSegments(resultSegments);
+
+            int desiredNegativeExamples = computeFinalExamples(positive.size(), 1.0 / desiredPositiveNegativeRatio);
+            sampleInto(resultSegments, negative, desiredNegativeExamples);
         }
+        balanced.setSegments(resultSegments);
 
         return balanced;
     }
@@ -90,5 +96,18 @@ public class DownsampleBalancing implements Balancing {
         }
 
         target.addAll(selected);
+    }
+
+    /**
+     * Computes the number of a particular class that should be remaining, given
+     * the number currently of the opposite class and the desired ratio of the
+     * downsampled class to the opposite class.
+     *
+     * @param numOppositeClass
+     * @param ratioDownsampledToOpposite
+     * @return
+     */
+    private int computeFinalExamples(int numOppositeClass, double ratioDownsampledToOpposite) {
+        return (int) Math.floor(numOppositeClass * ratioDownsampledToOpposite);
     }
 }
