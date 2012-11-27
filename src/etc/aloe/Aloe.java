@@ -13,6 +13,7 @@ import etc.aloe.cscw2013.LabelMappingImpl;
 import etc.aloe.cscw2013.ResolutionImpl;
 import etc.aloe.cscw2013.ThresholdSegmentation;
 import etc.aloe.cscw2013.TrainingImpl;
+import etc.aloe.cscw2013.UpsampleBalancing;
 import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.MessageSet;
@@ -87,8 +88,16 @@ public class Aloe {
     private String dateFormatString = "yyyy-MM-dd'T'HH:mm:ss";
     @Option(name = "-e", usage = "emoticon dictionary file (default emoticons.txt)")
     private File emoticonFile = new File("emoticons.txt");
-    @Option(name = "--downsample", usage = "balance the training and test sets by randomly removing excess examples")
+    @Option(name = "--downsample", usage = "downsample the majority class in training sets in accordance with the cost ratio")
     private boolean useDownsampling = false;
+    @Option(name = "--upsample", usage = "upsample the minority class in training sets in accordance with the cost ratio")
+    private boolean useUpsampling = false;
+    @Option(name = "--cost-sensitive", usage = "use a cost-sensitive version of the classifier during training")
+    private boolean useCostSensitiveLearning = false;
+    @Option(name = "--fp-cost", usage = "the cost of a false positive (default 1)")
+    private double falsePositiveCost = 1;
+    @Option(name = "--fn-cost", usage = "the cost of a false negative (default 1)")
+    private double falseNegativeCost = 1;
 
     @Option(name = "-r", usage = "random seed")
     void setRandomSeed(int randomSeed) {
@@ -132,9 +141,13 @@ public class Aloe {
             crossValidationController.setFeatureGenerationImpl(new FeatureGenerationImpl(termList));
             crossValidationController.setFeatureExtractionImpl(new FeatureExtractionImpl());
             crossValidationController.setTrainingImpl(new TrainingImpl());
-            crossValidationController.setEvaluationImpl(new EvaluationImpl());
+            crossValidationController.setEvaluationImpl(new EvaluationImpl(falsePositiveCost, falseNegativeCost));
+            crossValidationController.setCosts(falsePositiveCost, falseNegativeCost);
+            
             if (useDownsampling) {
-                crossValidationController.setBalancingImpl(new DownsampleBalancing());
+                crossValidationController.setBalancingImpl(new DownsampleBalancing(falsePositiveCost, falseNegativeCost));
+            } else if (useUpsampling) {
+                crossValidationController.setBalancingImpl(new UpsampleBalancing(falsePositiveCost, falseNegativeCost));
             }
         }
 
@@ -143,7 +156,9 @@ public class Aloe {
         trainingController.setFeatureExtractionImpl(new FeatureExtractionImpl());
         trainingController.setTrainingImpl(new TrainingImpl());
         if (useDownsampling) {
-            trainingController.setBalancingImpl(new DownsampleBalancing());
+            trainingController.setBalancingImpl(new DownsampleBalancing(falsePositiveCost, falseNegativeCost));
+        } else if (useUpsampling) {
+            trainingController.setBalancingImpl(new UpsampleBalancing(falsePositiveCost, falseNegativeCost));
         }
 
         //Get and preprocess the data
@@ -185,7 +200,7 @@ public class Aloe {
 
         LabelingController labelingController = new LabelingController();
         labelingController.setFeatureExtractionImpl(new FeatureExtractionImpl());
-        labelingController.setEvaluationImpl(new EvaluationImpl());
+        labelingController.setEvaluationImpl(new EvaluationImpl(falsePositiveCost, falseNegativeCost));
         labelingController.setMappingImpl(new LabelMappingImpl());
 
         MessageSet messages = this.loadMessages();

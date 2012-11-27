@@ -10,10 +10,18 @@ import java.util.List;
  */
 public class EvaluationImpl implements Evaluation {
 
+    private final double falseNegativeCost;
+    private final double falsePositiveCost;
+
+    public EvaluationImpl(double falsePositiveCost, double falseNegativeCost) {
+        this.falsePositiveCost = falsePositiveCost;
+        this.falseNegativeCost = falseNegativeCost;
+    }
+
     @Override
     public EvaluationReport evaluate(List<Boolean> predictions, ExampleSet examples) throws IllegalArgumentException {
 
-        EvaluationReport evaluation = new EvaluationReport();
+        EvaluationReport evaluation = new EvaluationReport(falsePositiveCost, falseNegativeCost);
 
         for (int i = 0; i < examples.size(); i++) {
             Boolean trueLabel = examples.getTrueLabel(i);

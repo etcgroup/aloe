@@ -30,6 +30,8 @@ public class CrossValidationController {
     private CrossValidationPrep<Segment> crossValidationPrepImpl;
     private CrossValidationSplit<Segment> crossValidationSplitImpl;
     private Balancing balancingImpl;
+    private double falsePositiveCost = 1;
+    private double falseNegativeCost = 1;
 
     public EvaluationReport getEvaluationReport() {
         return evaluationReport;
@@ -41,6 +43,11 @@ public class CrossValidationController {
 
     public CrossValidationController(int folds) {
         this.folds = folds;
+    }
+
+    public void setCosts(double falsePositiveCost, double falseNegativeCost) {
+        this.falsePositiveCost = falsePositiveCost;
+        this.falseNegativeCost = falseNegativeCost;
     }
 
     public void run() {
@@ -55,7 +62,7 @@ public class CrossValidationController {
         validationPrep.randomize(segmentSet.getSegments());
         segmentSet.setSegments(validationPrep.stratify(segmentSet.getSegments(), folds));
 
-        evaluationReport = new EvaluationReport();
+        evaluationReport = new EvaluationReport(falsePositiveCost, falseNegativeCost);
         for (int foldIndex = 0; foldIndex < this.folds; foldIndex++) {
             System.out.println("- Starting fold " + (foldIndex + 1));
             //Split the data
