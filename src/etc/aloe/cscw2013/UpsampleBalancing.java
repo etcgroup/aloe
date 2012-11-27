@@ -9,7 +9,6 @@ import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.Balancing;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -79,6 +78,8 @@ public class UpsampleBalancing implements Balancing {
             resultSegments.addAll(negative);
         }
         balanced.setSegments(resultSegments);
+
+        System.out.println("Balanced (" + positive.size() + ", " + negative.size() + ") to (" + balanced.getCountWithTrueLabel(true) + ", " + balanced.getCountWithTrueLabel(false) + ")");
 
         return balanced;
     }

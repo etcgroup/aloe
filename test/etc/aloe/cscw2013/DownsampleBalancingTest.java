@@ -142,8 +142,6 @@ public class DownsampleBalancingTest {
             int actualTrue = result.getCountWithTrueLabel(true);
             int actualFalse = result.getCountWithTrueLabel(false);
 
-            System.out.println("Balanced (" + segmentSet.getCountWithTrueLabel(true) + ", " + segmentSet.getCountWithTrueLabel(false) + ") to (" + actualTrue + ", " + actualFalse + ")");
-
             //Both are more than 0
             assertTrue(actualTrue > 0);
             assertTrue(actualFalse > 0);
@@ -172,8 +170,6 @@ public class DownsampleBalancingTest {
 
             int actualTrue = result.getCountWithTrueLabel(true);
             int actualFalse = result.getCountWithTrueLabel(false);
-
-            System.out.println("Balanced (" + segmentSet.getCountWithTrueLabel(true) + ", " + segmentSet.getCountWithTrueLabel(false) + ") to (" + actualTrue + ", " + actualFalse + ")");
 
             //Both are more than 0
             assertTrue(actualTrue > 0);

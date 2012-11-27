@@ -138,8 +138,6 @@ public class UpsampleBalancingTest {
             int actualTrue = result.getCountWithTrueLabel(true);
             int actualFalse = result.getCountWithTrueLabel(false);
 
-            System.out.println("Balanced (" + segmentSet.getCountWithTrueLabel(true) + ", " + segmentSet.getCountWithTrueLabel(false) + ") to (" + actualTrue + ", " + actualFalse + ")");
-
             //Both are more than they were or the same
             assertTrue(actualTrue >= segmentSet.getCountWithTrueLabel(true));
             assertTrue(actualFalse >= segmentSet.getCountWithTrueLabel(false));
@@ -164,8 +162,6 @@ public class UpsampleBalancingTest {
 
             int actualTrue = result.getCountWithTrueLabel(true);
             int actualFalse = result.getCountWithTrueLabel(false);
-
-            System.out.println("Balanced (" + segmentSet.getCountWithTrueLabel(true) + ", " + segmentSet.getCountWithTrueLabel(false) + ") to (" + actualTrue + ", " + actualFalse + ")");
 
             //Both are more than they were or the same
             assertTrue(actualTrue >= segmentSet.getCountWithTrueLabel(true));
