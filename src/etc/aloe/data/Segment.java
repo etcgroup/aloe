@@ -22,6 +22,17 @@ public class Segment implements LabelableItem {
         ID_COUNTER++;
     }
 
+    /**
+     * Convenience method, mostly for testing.
+     * @param trueLabel
+     * @param predictedLabel
+     */
+    public Segment(Boolean trueLabel, Boolean predictedLabel) {
+        this();
+        this.trueLabel = trueLabel;
+        this.predictedLabel = predictedLabel;
+    }
+
     public int getId() {
         return id;
     }

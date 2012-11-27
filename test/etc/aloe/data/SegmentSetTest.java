@@ -162,11 +162,11 @@ public class SegmentSetTest {
     public void testOnlyLabeled() {
         System.out.println("onlyLabeled");
         SegmentSet segments = new SegmentSet();
-        Segment seg0 = new Segment();
-        seg0.setTrueLabel(Boolean.TRUE);
-        Segment seg1 = new Segment();
-        Segment seg2 = new Segment();
-        seg2.setTrueLabel(Boolean.FALSE);
+
+        Segment seg0 = new Segment(true, null);
+        Segment seg1 = new Segment(null, null);
+        Segment seg2 = new Segment(false, null);
+
         segments.add(seg0);
         segments.add(seg1);
         segments.add(seg2);
@@ -175,5 +175,25 @@ public class SegmentSetTest {
         assertEquals(2, result.size());
         assertEquals(seg0, result.get(0));
         assertEquals(seg2, result.get(1));
+    }
+
+    /**
+     * Test of getCountWithTrueLabel method, of class SegmentSet.
+     */
+    @Test
+    public void testGetCountWithTrueLabel() {
+        System.out.println("getCountWithTrueLabel");
+        
+        SegmentSet segments = new SegmentSet();
+        segments.add(new Segment(true, null));
+        segments.add(new Segment(true, null));
+        segments.add(new Segment(false, null));
+        segments.add(new Segment(false, null));
+        segments.add(new Segment(false, null));
+        segments.add(new Segment(null, null));
+
+        assertEquals(2, segments.getCountWithTrueLabel(true));
+        assertEquals(3, segments.getCountWithTrueLabel(false));
+        assertEquals(1, segments.getCountWithTrueLabel(null));
     }
 }

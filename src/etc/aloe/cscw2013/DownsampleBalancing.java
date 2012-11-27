@@ -18,6 +18,18 @@ import java.util.Random;
  * @author michael
  */
 public class DownsampleBalancing implements Balancing {
+    private final double falsePositiveCost;
+    private final double falseNegativeCost;
+
+    public DownsampleBalancing() {
+        this.falsePositiveCost = 1;
+        this.falseNegativeCost = 1;
+    }
+
+    public DownsampleBalancing(double falsePositiveCost, double falseNegativeCost) {
+        this.falsePositiveCost = falsePositiveCost;
+        this.falseNegativeCost = falseNegativeCost;
+    }
 
     @Override
     public SegmentSet balance(SegmentSet segmentSet) {

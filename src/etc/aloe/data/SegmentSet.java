@@ -131,4 +131,14 @@ public class SegmentSet {
         instance.setValue(cpsAttr, cps);
         instance.setValue(rateAttr, rate);
     }
+
+    public int getCountWithTrueLabel(Boolean label) {
+        int count = 0;
+        for (Segment segment : segments) {
+            if (segment.getTrueLabel() == label) {
+                count++;
+            }
+        }
+        return count;
+    }
 }
