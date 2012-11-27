@@ -21,9 +21,9 @@ import static org.junit.Assert.*;
  *
  * @author michael
  */
-public class DownsampleBalancingTest {
+public class UpsampleBalancingTest {
 
-    public DownsampleBalancingTest() {
+    public UpsampleBalancingTest() {
     }
 
     @BeforeClass
@@ -36,6 +36,10 @@ public class DownsampleBalancingTest {
 
     @Before
     public void setUp() {
+    }
+
+    @After
+    public void tearDown() {
     }
 
     private SegmentSet generateTestSegments(int numPositive, int numNegative) {
@@ -74,12 +78,8 @@ public class DownsampleBalancingTest {
         return segmentSets;
     }
 
-    @After
-    public void tearDown() {
-    }
-
     /**
-     * Test of balance method, of class DownsampleBalancing.
+     * Test of balance method, of class UpsampleBalancing.
      */
     @Test
     public void testBalance() {
@@ -87,20 +87,16 @@ public class DownsampleBalancingTest {
 
         List<SegmentSet> segmentSets = generateTestSegments(10);
         for (SegmentSet segmentSet : segmentSets) {
-            DownsampleBalancing instance = new DownsampleBalancing(1, 1);
+            UpsampleBalancing instance = new UpsampleBalancing(1, 1);
 
             SegmentSet result = instance.balance(segmentSet);
 
             int actualTrue = result.getCountWithTrueLabel(true);
             int actualFalse = result.getCountWithTrueLabel(false);
 
-            //Both are more than 0
-            assertTrue(actualTrue > 0);
-            assertTrue(actualFalse > 0);
-
-            //Both are the same or reduced
-            assertTrue(actualTrue <= segmentSet.getCountWithTrueLabel(true));
-            assertTrue(actualFalse <= segmentSet.getCountWithTrueLabel(false));
+            //Both are more than they were or the same
+            assertTrue(actualTrue >= segmentSet.getCountWithTrueLabel(true));
+            assertTrue(actualFalse >= segmentSet.getCountWithTrueLabel(false));
 
             //Should have an equal number of true and false examples
             assertEquals(actualTrue, actualFalse);
@@ -108,14 +104,14 @@ public class DownsampleBalancingTest {
     }
 
     /**
-     * Test of balance method, of class DownsampleBalancing.
+     * Test of balance method, of class UpsampleBalancing.
      */
     @Test
     public void testBalance_withUnlabeled() {
         System.out.println("balance with unlabeled");
 
         SegmentSet segmentSet = generateTestSegments(20, 110);
-        DownsampleBalancing instance = new DownsampleBalancing(1, 1);
+        UpsampleBalancing instance = new UpsampleBalancing(1, 1);
 
         segmentSet.add(new Segment(null, null));
         try {
@@ -127,7 +123,7 @@ public class DownsampleBalancingTest {
     }
 
     /**
-     * Test of balance method, of class DownsampleBalancing.
+     * Test of balance method, of class UpsampleBalancing.
      */
     @Test
     public void testBalance_againstFalsePositive() {
@@ -135,7 +131,7 @@ public class DownsampleBalancingTest {
 
         List<SegmentSet> segmentSets = generateTestSegments(10);
         for (SegmentSet segmentSet : segmentSets) {
-            DownsampleBalancing instance = new DownsampleBalancing(2, 1);
+            UpsampleBalancing instance = new UpsampleBalancing(2, 1);
 
             SegmentSet result = instance.balance(segmentSet);
 
@@ -144,13 +140,9 @@ public class DownsampleBalancingTest {
 
             System.out.println("Balanced (" + segmentSet.getCountWithTrueLabel(true) + ", " + segmentSet.getCountWithTrueLabel(false) + ") to (" + actualTrue + ", " + actualFalse + ")");
 
-            //Both are more than 0
-            assertTrue(actualTrue > 0);
-            assertTrue(actualFalse > 0);
-
-            //Both are the same or reduced
-            assertTrue(actualTrue <= segmentSet.getCountWithTrueLabel(true));
-            assertTrue(actualFalse <= segmentSet.getCountWithTrueLabel(false));
+            //Both are more than they were or the same
+            assertTrue(actualTrue >= segmentSet.getCountWithTrueLabel(true));
+            assertTrue(actualFalse >= segmentSet.getCountWithTrueLabel(false));
 
             //The ratio of false/true should be 2:1
             assertEquals(2.0, (double) actualFalse / actualTrue, 0.1);
@@ -158,7 +150,7 @@ public class DownsampleBalancingTest {
     }
 
     /**
-     * Test of balance method, of class DownsampleBalancing.
+     * Test of balance method, of class UpsampleBalancing.
      */
     @Test
     public void testBalance_againstFalseNegative() {
@@ -166,7 +158,7 @@ public class DownsampleBalancingTest {
 
         List<SegmentSet> segmentSets = generateTestSegments(10);
         for (SegmentSet segmentSet : segmentSets) {
-            DownsampleBalancing instance = new DownsampleBalancing(1, 2);
+            UpsampleBalancing instance = new UpsampleBalancing(1, 2);
 
             SegmentSet result = instance.balance(segmentSet);
 
@@ -175,13 +167,9 @@ public class DownsampleBalancingTest {
 
             System.out.println("Balanced (" + segmentSet.getCountWithTrueLabel(true) + ", " + segmentSet.getCountWithTrueLabel(false) + ") to (" + actualTrue + ", " + actualFalse + ")");
 
-            //Both are more than 0
-            assertTrue(actualTrue > 0);
-            assertTrue(actualFalse > 0);
-
-            //Both are the same or reduced
-            assertTrue(actualTrue <= segmentSet.getCountWithTrueLabel(true));
-            assertTrue(actualFalse <= segmentSet.getCountWithTrueLabel(false));
+            //Both are more than they were or the same
+            assertTrue(actualTrue >= segmentSet.getCountWithTrueLabel(true));
+            assertTrue(actualFalse >= segmentSet.getCountWithTrueLabel(false));
 
             //The ratio of false/true should be 1:2
             assertEquals(0.5, (double) actualFalse / actualTrue, 0.1);

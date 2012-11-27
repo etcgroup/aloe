@@ -17,17 +17,17 @@ import java.util.Random;
  *
  * @author michael
  */
-public class DownsampleBalancing implements Balancing {
+public class UpsampleBalancing implements Balancing {
 
     private final double falsePositiveCost;
     private final double falseNegativeCost;
 
-    public DownsampleBalancing() {
+    public UpsampleBalancing() {
         this.falsePositiveCost = 1;
         this.falseNegativeCost = 1;
     }
 
-    public DownsampleBalancing(double falsePositiveCost, double falseNegativeCost) {
+    public UpsampleBalancing(double falsePositiveCost, double falseNegativeCost) {
         this.falsePositiveCost = falsePositiveCost;
         this.falseNegativeCost = falseNegativeCost;
     }
@@ -60,15 +60,15 @@ public class DownsampleBalancing implements Balancing {
         double currentPositiveNegativeRatio = (double) positive.size() / negative.size();
         double desiredPositiveNegativeRatio = (double) falseNegativeCost / falsePositiveCost;
 
-        //Will we be downsampling positive or negative examples?
-        if (currentPositiveNegativeRatio > desiredPositiveNegativeRatio) {
-            //We are removing positive examples
+        //Will we be upsampling positive or negative examples?
+        if (currentPositiveNegativeRatio < desiredPositiveNegativeRatio) {
+            //We are adding positive examples
             resultSegments.addAll(negative);
 
             int desiredPositiveExamples = computeFinalExamples(negative.size(), desiredPositiveNegativeRatio);
             sampleInto(resultSegments, positive, desiredPositiveExamples);
-        } else if (currentPositiveNegativeRatio < desiredPositiveNegativeRatio) {
-            //We are removing negative examples
+        } else if (currentPositiveNegativeRatio > desiredPositiveNegativeRatio) {
+            //We are adding negative examples
             resultSegments.addAll(positive);
 
             int desiredNegativeExamples = computeFinalExamples(positive.size(), 1.0 / desiredPositiveNegativeRatio);
@@ -78,26 +78,25 @@ public class DownsampleBalancing implements Balancing {
             resultSegments.addAll(positive);
             resultSegments.addAll(negative);
         }
-
         balanced.setSegments(resultSegments);
 
         return balanced;
     }
 
+    /**
+     * Include all of from, and then sample with replacement.
+     * @param target
+     * @param from
+     * @param number
+     */
     private void sampleInto(List<Segment> target, List<Segment> from, int number) {
-        HashSet<Segment> selected = new HashSet<Segment>();
+        ArrayList<Segment> selected = new ArrayList<Segment>(from);
 
         Random random = RandomProvider.getRandom();
-        for (int i = 0; i < number; i++) {
-            boolean added = false;
-            while (!added) {
-                int index = random.nextInt(from.size());
-                Segment segment = from.get(index);
-                if (!selected.contains(segment)) {
-                    selected.add(segment);
-                    added = true;
-                }
-            }
+        for (int i = selected.size(); i < number; i++) {
+            int index = random.nextInt(from.size());
+            Segment segment = from.get(index);
+            selected.add(segment);
         }
 
         target.addAll(selected);
