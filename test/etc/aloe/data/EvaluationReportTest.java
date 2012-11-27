@@ -116,4 +116,174 @@ public class EvaluationReportTest {
         assertEquals(1, instance.getFalseNegativeCount());
 
     }
+
+    /**
+     * Test of getRecall method, of class EvaluationReport.
+     */
+    @Test
+    public void testGetRecall() {
+        System.out.println("getRecall");
+        EvaluationReport instance = new EvaluationReport();
+        instance.setTrueNegativeCount(1);
+        instance.setTruePositiveCount(2);
+        instance.setFalseNegativeCount(3);
+        instance.setFalsePositiveCount(4);
+
+        double expResult = (2.0) / (2 + 3);
+        double result = instance.getRecall();
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of getPrecision method, of class EvaluationReport.
+     */
+    @Test
+    public void testGetPrecision() {
+        System.out.println("getPrecision");
+        EvaluationReport instance = new EvaluationReport();
+        instance.setTrueNegativeCount(1);
+        instance.setTruePositiveCount(2);
+        instance.setFalseNegativeCount(3);
+        instance.setFalsePositiveCount(4);
+
+        double expResult = (2.0) / (2 + 4);
+        double result = instance.getPrecision();
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of getFMeasure method, of class EvaluationReport.
+     */
+    @Test
+    public void testGetFMeasure() {
+        System.out.println("getFMeasure");
+        EvaluationReport instance = new EvaluationReport();
+        instance.setTrueNegativeCount(1);
+        instance.setTruePositiveCount(2);
+        instance.setFalseNegativeCount(3);
+        instance.setFalsePositiveCount(4);
+
+        double expResult = (2.0 * instance.getPrecision() * instance.getRecall()) / (instance.getPrecision() + instance.getRecall());
+        double result = instance.getFMeasure();
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of getPercentCorrect method, of class EvaluationReport.
+     */
+    @Test
+    public void testGetPercentCorrect() {
+        System.out.println("getPercentCorrect");
+        EvaluationReport instance = new EvaluationReport();
+        instance.setTrueNegativeCount(1);
+        instance.setTruePositiveCount(2);
+        instance.setFalseNegativeCount(3);
+        instance.setFalsePositiveCount(4);
+
+        double expResult = (1.0 + 2.0) / (10);
+        double result = instance.getPercentCorrect();
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of getPercentIncorrect method, of class EvaluationReport.
+     */
+    @Test
+    public void testGetPercentIncorrect() {
+        System.out.println("getPercentIncorrect");
+        EvaluationReport instance = new EvaluationReport();
+        instance.setTrueNegativeCount(1);
+        instance.setTruePositiveCount(2);
+        instance.setFalseNegativeCount(3);
+        instance.setFalsePositiveCount(4);
+
+        double expResult = 1 - instance.getPercentCorrect();
+        double result = instance.getPercentIncorrect();
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of getTotalCost method, of class EvaluationReport.
+     */
+    @Test
+    public void testGetTotalCost_equalCost() {
+        System.out.println("getTotalCost without equal cost");
+        EvaluationReport instance = new EvaluationReport();
+        instance.setTrueNegativeCount(1);
+        instance.setTruePositiveCount(2);
+        instance.setFalseNegativeCount(3);
+        instance.setFalsePositiveCount(4);
+
+        double expResult = 3 + 4;
+        double result = instance.getTotalCost();
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of getTotalCost method, of class EvaluationReport.
+     */
+    @Test
+    public void testGetTotalCost_unequalCost() {
+        System.out.println("getTotalCost with unequal cost");
+        EvaluationReport instance = new EvaluationReport(1, 2);
+        instance.setTrueNegativeCount(1);
+        instance.setTruePositiveCount(2);
+        instance.setFalseNegativeCount(3);
+        instance.setFalsePositiveCount(4);
+
+        double expResult = 2 * 3 + 4;
+        double result = instance.getTotalCost();
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of getAverageCost method, of class EvaluationReport.
+     */
+    @Test
+    public void testGetAverageCost_equalCost() {
+        System.out.println("getAverageCost with equal cost");
+        EvaluationReport instance = new EvaluationReport();
+        instance.setTrueNegativeCount(1);
+        instance.setTruePositiveCount(2);
+        instance.setFalseNegativeCount(3);
+        instance.setFalsePositiveCount(4);
+
+        double expResult = instance.getPercentIncorrect();
+        double result = instance.getAverageCost();
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of getAverageCost method, of class EvaluationReport.
+     */
+    @Test
+    public void testGetAverageCost_unequalCost() {
+        System.out.println("getAverageCost with unequal cost");
+        EvaluationReport instance = new EvaluationReport(1, 2);
+        instance.setTrueNegativeCount(1);
+        instance.setTruePositiveCount(2);
+        instance.setFalseNegativeCount(3);
+        instance.setFalsePositiveCount(4);
+
+        double expResult = instance.getTotalCost() / 10;
+        double result = instance.getAverageCost();
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of getTotalExamples method, of class EvaluationReport.
+     */
+    @Test
+    public void testGetTotalExamples() {
+        System.out.println("getTotalExamples");
+        EvaluationReport instance = new EvaluationReport();
+        instance.setTrueNegativeCount(1);
+        instance.setTruePositiveCount(2);
+        instance.setFalseNegativeCount(3);
+        instance.setFalsePositiveCount(4);
+
+        double expResult = 10;
+        double result = instance.getTotalExamples();
+        assertEquals(expResult, result, 0.0);
+    }
 }

@@ -11,6 +11,25 @@ import java.io.PrintStream;
  */
 public class EvaluationReport implements Saving {
 
+    double falsePositiveCost = 1;
+    double falseNegativeCost = 1;
+
+    /**
+     * Construct an equal-cost evaluation report
+     */
+    public EvaluationReport() {
+    }
+
+    /**
+     * Construct a cost-sensitive evaluation report.
+     *
+     * @param falsePositiveCost
+     * @param falseNegativeCost
+     */
+    public EvaluationReport(double falsePositiveCost, double falseNegativeCost) {
+        this.falsePositiveCost = falsePositiveCost;
+        this.falseNegativeCost = falseNegativeCost;
+    }
     /**
      * The number of examples with a positive prediction that was correct.
      */
@@ -98,9 +117,47 @@ public class EvaluationReport implements Saving {
      *
      * @return
      */
-    private double getPercentCorrect() {
+    public double getPercentCorrect() {
         return (double) (truePositiveCount + trueNegativeCount)
-                / (truePositiveCount + trueNegativeCount + falsePositiveCount + falseNegativeCount);
+                / getTotalExamples();
+    }
+
+    /**
+     * PercentIncorrect = (FP + FN) / (TP + TN + FP + FN)
+     *
+     * @return
+     */
+    public double getPercentIncorrect() {
+        return (double) (falsePositiveCount + falseNegativeCount)
+                / getTotalExamples();
+    }
+
+    /**
+     * Gets the total cost of all misclassified examples.
+     *
+     * @return
+     */
+    public double getTotalCost() {
+        return falsePositiveCount * falsePositiveCost + falseNegativeCount * falseNegativeCost;
+    }
+
+    /**
+     * Gets the cost of all misclassified examples divided by the total number
+     * of examples.
+     *
+     * @return
+     */
+    public double getAverageCost() {
+        return getTotalCost() / getTotalExamples();
+    }
+
+    /**
+     * Get the total number of examples classified.
+     *
+     * @return
+     */
+    public int getTotalExamples() {
+        return truePositiveCount + trueNegativeCount + falsePositiveCount + falseNegativeCount;
     }
 
     @Override
@@ -120,7 +177,10 @@ public class EvaluationReport implements Saving {
                 + "Precision: " + getPrecision() + "\n"
                 + "Recall: " + getRecall() + "\n"
                 + "FMeasure: " + getFMeasure() + "\n"
-                + "% Correct: " + getPercentCorrect();
+                + "% Correct: " + getPercentCorrect() + "\n"
+                + "% Incorrect: " + getPercentIncorrect() + "\n"
+                + "Total Cost: " + getTotalCost() + "\n"
+                + "Avg Cost: " + getAverageCost();
     }
 
     public void addPartial(EvaluationReport report) {
