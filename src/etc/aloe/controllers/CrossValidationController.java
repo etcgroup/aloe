@@ -69,9 +69,6 @@ public class CrossValidationController {
 
             SegmentSet testingSegments = new SegmentSet();
             testingSegments.setSegments(split.getTestingForFold(segmentSet.getSegments(), foldIndex, this.folds));
-            if (getBalancingImpl() != null) {
-                testingSegments = getBalancingImpl().balance(testingSegments);
-            }
 
             ExampleSet basicTrainingExamples = trainingSegments.getBasicExamples();
             ExampleSet basicTestingExamples = testingSegments.getBasicExamples();
