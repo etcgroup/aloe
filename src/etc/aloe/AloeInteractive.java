@@ -30,14 +30,14 @@ public class AloeInteractive extends Aloe {
     }
     private File outputDir;
     private File outputCSVFile;
-    @Option(name = "--model", aliases = {"-m"}, usage = "use an existing model file (requires -f option)", required = true)
+    @Option(name = "--model", aliases = {"-m"}, usage = "use an existing model file", required = true, metaVar="MODEL_FILE")
     private File inputModelFile;
-    @Option(name = "--features", aliases = {"-f"}, usage = "use an existing feature specification file (requires -m option)", required = true)
+    @Option(name = "--features", aliases = {"-f"}, usage = "use an existing feature specification file", required = true, metaVar="FEATURES_FILE")
     private File inputFeatureSpecFile;
 
     @Override
     public void printUsage() {
-        System.err.println("java -jar aloe.jar Interactive [options...] OUTPUT_DIR");
+        System.err.println("java -jar aloe.jar Interactive OUTPUT_DIR -m MODEL_FILE -f FEATURES_FILE [options...]");
     }
 
     @Override

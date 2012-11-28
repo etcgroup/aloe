@@ -40,9 +40,9 @@ public class AloeLabel extends Aloe {
     private File outputDir;
     private File outputCSVFile;
     private File outputEvaluationReportFile;
-    @Option(name = "--model", aliases = {"-m"}, usage = "use an existing model file (requires -f option)", required = true)
+    @Option(name = "--model", aliases = {"-m"}, usage = "use an existing model file", required = true, metaVar="MODEL_FILE")
     private File inputModelFile;
-    @Option(name = "--features", aliases = {"-f"}, usage = "use an existing feature specification file (requires -m option)", required = true)
+    @Option(name = "--features", aliases = {"-f"}, usage = "use an existing feature specification file", required = true, metaVar="FEATURES_FILE")
     private File inputFeatureSpecFile;
     @Option(name = "--fp-cost", usage = "the cost of a false positive (default 1)")
     private double falsePositiveCost = 1;
@@ -51,7 +51,7 @@ public class AloeLabel extends Aloe {
 
     @Override
     public void printUsage() {
-        System.err.println("java -jar aloe.jar Label [options...] INPUT_CSV OUTPUT_DIR");
+        System.err.println("java -jar aloe.jar Label INPUT_CSV OUTPUT_DIR -m MODEL_FILE -f FEATURES_FILE [options...]");
     }
 
     @Override
