@@ -2,14 +2,12 @@ package etc.aloe.data;
 
 import etc.aloe.processes.Loading;
 import etc.aloe.processes.Saving;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import weka.classifiers.Classifier;

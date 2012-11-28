@@ -4,9 +4,7 @@ import etc.aloe.data.ExampleSet;
 import etc.aloe.data.Model;
 import etc.aloe.processes.Training;
 import weka.classifiers.Classifier;
-import weka.classifiers.CostMatrix;
 import weka.classifiers.functions.SMO;
-import weka.classifiers.meta.CostSensitiveClassifier;
 import weka.core.Utils;
 
 /**

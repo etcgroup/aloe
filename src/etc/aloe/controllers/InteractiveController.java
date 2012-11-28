@@ -11,7 +11,6 @@ import etc.aloe.data.MessageSet;
 import etc.aloe.data.Model;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
-import etc.aloe.processes.Evaluation;
 import etc.aloe.processes.FeatureExtraction;
 import etc.aloe.processes.LabelMapping;
 import etc.aloe.processes.Logging;
