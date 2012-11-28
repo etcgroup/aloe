@@ -62,10 +62,6 @@ public class LabelingController {
         //Evaluate the model on labeled examples
         Evaluation evaluation = getEvaluationImpl();
         this.evaluationReport = evaluation.evaluate(predictedLabels, examples);
-
-        System.out.println("Testing Report:");
-        System.out.println(evaluationReport);
-        System.out.println("---------");
     }
 
     public FeatureExtraction getFeatureExtractionImpl() {

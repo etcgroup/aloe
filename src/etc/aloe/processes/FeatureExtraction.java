@@ -7,7 +7,7 @@ import etc.aloe.data.SegmentSet;
 /**
  * FeatureExtraction extracts features from the provided data.
  */
-public interface FeatureExtraction {
+public interface FeatureExtraction extends Loggable {
 
     /**
      * Extracts the specified features from the segmented data.
