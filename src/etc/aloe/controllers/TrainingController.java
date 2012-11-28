@@ -11,7 +11,10 @@ import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.Balancing;
 import etc.aloe.processes.FeatureExtraction;
 import etc.aloe.processes.FeatureGeneration;
+import etc.aloe.processes.FeatureWeighting;
 import etc.aloe.processes.Training;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -26,6 +29,26 @@ public class TrainingController {
     private Training trainingImpl;
     private FeatureGeneration featureGenerationImpl;
     private Balancing balancingImpl;
+    private FeatureWeighting featureWeightingImpl;
+    private static final int NUM_TOP_FEATURES = 10;
+    private List<String> topFeatures;
+    private List<Map.Entry<String, Double>> featureWeights;
+
+    public List<String> getTopFeatures() {
+        return topFeatures;
+    }
+
+    public List<Map.Entry<String, Double>> getFeatureWeights() {
+        return featureWeights;
+    }
+
+    public void setFeatureWeightingImpl(FeatureWeighting featureWeightingImpl) {
+        this.featureWeightingImpl = featureWeightingImpl;
+    }
+
+    public FeatureWeighting getFeatureWeightingImpl() {
+        return featureWeightingImpl;
+    }
 
     public void setSegmentSet(SegmentSet segments) {
         this.segmentSet = segments;
@@ -61,6 +84,10 @@ public class TrainingController {
         //Train the model
         Training training = getTrainingImpl();
         this.model = training.train(examples);
+
+        //Get the top features
+        this.topFeatures = getFeatureWeightingImpl().getTopFeatures(examples.getInstances(), this.model.getClassifier(), NUM_TOP_FEATURES);
+        this.featureWeights = getFeatureWeightingImpl().getFeatureWeights(examples.getInstances(), this.model.getClassifier());
     }
 
     public FeatureExtraction getFeatureExtractionImpl() {

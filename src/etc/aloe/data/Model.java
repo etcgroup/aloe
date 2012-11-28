@@ -71,7 +71,7 @@ public class Model implements Saving, Loading {
         return results;
     }
 
-    Classifier getClassifier() {
+    public Classifier getClassifier() {
         return classifier;
     }
 }

@@ -1,5 +1,6 @@
 package etc.aloe;
 
+import com.csvreader.CsvWriter;
 import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.MessageSet;
@@ -9,12 +10,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import org.kohsuke.args4j.Option;
 
@@ -168,6 +172,43 @@ public abstract class Aloe {
             System.exit(1);
         }
         return null;
+    }
+
+    protected void saveTopFeatures(List<String> topFeatures, File outputTopFeaturesFile) {
+        try {
+            PrintStream output = new PrintStream(outputTopFeaturesFile);
+            for (String feature : topFeatures) {
+                output.println(feature);
+            }
+            output.close();
+            System.out.println("Saved top features to " + outputTopFeaturesFile);
+        } catch (FileNotFoundException e) {
+            System.err.println("Top features file not found:" + outputTopFeaturesFile);
+            System.err.println("\t" + e.getMessage());
+        }
+    }
+
+    protected void saveFeatureWeights(List<Map.Entry<String, Double>> featureWeights, File outputFeatureWeightsFile) {
+        try {
+            CsvWriter writer = new CsvWriter(new FileWriter(outputFeatureWeightsFile), ',');
+
+            writer.write("Feature");
+            writer.write("Weight");
+            writer.write("WeightSquared");
+            writer.endRecord();
+
+            for (Map.Entry<String, Double> entry : featureWeights) {
+                writer.write(entry.getKey());
+                writer.write(entry.getValue() + "");
+                writer.write(entry.getValue() * entry.getValue() + "");
+                writer.endRecord();
+            }
+            writer.close();
+            System.out.println("Saved feature weights to " + outputFeatureWeightsFile);
+        } catch (IOException e) {
+            System.err.println("Error writing feature weights to " + outputFeatureWeightsFile);
+            System.err.println("\t" + e.getMessage());
+        }
     }
 
     public abstract void printUsage();

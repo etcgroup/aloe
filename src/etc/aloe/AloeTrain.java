@@ -14,6 +14,7 @@ import etc.aloe.cscw2013.EvaluationImpl;
 import etc.aloe.cscw2013.FeatureExtractionImpl;
 import etc.aloe.cscw2013.FeatureGenerationImpl;
 import etc.aloe.cscw2013.ResolutionImpl;
+import etc.aloe.cscw2013.SMOFeatureWeighting;
 import etc.aloe.cscw2013.ThresholdSegmentation;
 import etc.aloe.cscw2013.TrainingImpl;
 import etc.aloe.cscw2013.UpsampleBalancing;
@@ -27,6 +28,7 @@ import etc.aloe.processes.Segmentation;
 import etc.aloe.processes.Training;
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -47,11 +49,15 @@ public class AloeTrain extends Aloe {
         outputEvaluationReportFile = new File(dir, FileNames.OUTPUT_EVALUTION_REPORT_NAME);
         outputFeatureSpecFile = new File(dir, FileNames.OUTPUT_FEATURE_SPEC_NAME);
         outputModelFile = new File(dir, FileNames.OUTPUT_MODEL_NAME);
+        outputTopFeaturesFile = new File(dir, FileNames.OUTPUT_TOP_FEATURES_NAME);
+        outputFeatureWeightsFile = new File(dir, FileNames.OUTPUT_FEATURE_WEIGHTS_NAME);
     }
     private File outputDir;
     private File outputEvaluationReportFile;
     private File outputFeatureSpecFile;
     private File outputModelFile;
+    private File outputTopFeaturesFile;
+    private File outputFeatureWeightsFile;
     private List<String> termList;
     @Option(name = "--folds", aliases = {"-k"}, usage = "number of cross-validation folds (default 10, 0 to disable cross validation)")
     private int crossValidationFolds = 10;
@@ -72,7 +78,7 @@ public class AloeTrain extends Aloe {
 
     @Override
     public void printUsage() {
-        System.err.println("java -jar aloe.jar Train [options...] INPUT_CSV OUTPUT_DIR");
+        System.err.println("java -jar aloe.jar Train INPUT_CSV OUTPUT_DIR [options...]");
     }
 
     @Override
@@ -113,6 +119,7 @@ public class AloeTrain extends Aloe {
             trainingImpl = new CostTrainingImpl(falsePositiveCost, falseNegativeCost, useReweighting);
         }
         trainingController.setTrainingImpl(trainingImpl);
+        trainingController.setFeatureWeightingImpl(new SMOFeatureWeighting());
 
         if (useDownsampling) {
             trainingController.setBalancingImpl(new DownsampleBalancing(falsePositiveCost, falseNegativeCost));
@@ -148,10 +155,13 @@ public class AloeTrain extends Aloe {
         }
         FeatureSpecification spec = trainingController.getFeatureSpecification();
         Model model = trainingController.getModel();
+        List<String> topFeatures = trainingController.getTopFeatures();
+        List<Map.Entry<String, Double>> featureWeights = trainingController.getFeatureWeights();
 
         saveFeatureSpecification(spec, outputFeatureSpecFile);
         saveModel(model, outputModelFile);
-
+        saveTopFeatures(topFeatures, outputTopFeaturesFile);
+        saveFeatureWeights(featureWeights, outputFeatureWeightsFile);
         if (evalReport != null) {
             System.out.println("Aggregated cross-validation report:");
             System.out.println(evalReport);
