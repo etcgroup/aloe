@@ -32,12 +32,14 @@ public abstract class Aloe {
     /**
      * True if segmentation should separate messages by participant.
      */
-    @Option(name = "--by-participant", aliases = {"-bp"}, usage = "separate different participants into different segments")
-    protected boolean segmentationByParticipant = true;
+    @Option(name = "--ignore-participants", usage = "ignore participants during segmentation")
+    protected boolean ignoreParticipants = false;
     @Option(name = "--threshold", aliases = {"-t"}, usage = "segmentation threshold in seconds (default 30)")
     protected int segmentationThresholdSeconds = 30;
     @Option(name = "--dateformat", aliases = {"-d"}, usage = "date format string (default 'yyyy-MM-dd'T'HH:mm:ss')")
     protected String dateFormatString = "yyyy-MM-dd'T'HH:mm:ss";
+    @Option(name = "--no-segmentation", usage = "disable segmentation (each message is in its own segment)")
+    protected boolean disableSegmentation = false;
 
     @Option(name = "--random", aliases = {"-r"}, usage = "random seed")
     void setRandomSeed(int randomSeed) {

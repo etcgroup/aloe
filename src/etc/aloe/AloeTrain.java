@@ -13,6 +13,7 @@ import etc.aloe.cscw2013.DownsampleBalancing;
 import etc.aloe.cscw2013.EvaluationImpl;
 import etc.aloe.cscw2013.FeatureExtractionImpl;
 import etc.aloe.cscw2013.FeatureGenerationImpl;
+import etc.aloe.cscw2013.NullSegmentation;
 import etc.aloe.cscw2013.ResolutionImpl;
 import etc.aloe.cscw2013.SMOFeatureWeighting;
 import etc.aloe.cscw2013.ThresholdSegmentation;
@@ -75,6 +76,8 @@ public class AloeTrain extends Aloe {
     private double falsePositiveCost = 1;
     @Option(name = "--fn-cost", usage = "the cost of a false negative (default 1)")
     private double falseNegativeCost = 1;
+    @Option(name="--balance-test-set", usage="apply balancing to the test set as well as the training set")
+    private boolean balanceTestSet = false;
 
     @Override
     public void printUsage() {
@@ -88,6 +91,11 @@ public class AloeTrain extends Aloe {
 
         // This sets up the components of the abstract pipeline with specific
         // implementations.
+
+        double costNormFactor = 0.5 * (falseNegativeCost + falsePositiveCost);
+        falseNegativeCost /= costNormFactor;
+        falsePositiveCost /= costNormFactor;
+        System.out.println("Costs normalized to " + falseNegativeCost + " (FN) " + falsePositiveCost + " (FP).");
 
         CrossValidationController crossValidationController = null;
         if (crossValidationFolds > 0) {
@@ -109,6 +117,7 @@ public class AloeTrain extends Aloe {
             } else if (useUpsampling) {
                 crossValidationController.setBalancingImpl(new UpsampleBalancing(falsePositiveCost, falseNegativeCost));
             }
+            crossValidationController.setBalanceTestSet(balanceTestSet);
         }
 
         TrainingController trainingController = new TrainingController();
@@ -129,8 +138,13 @@ public class AloeTrain extends Aloe {
 
         //Get and preprocess the data
         MessageSet messages = this.loadMessages(dateFormatString, inputCSVFile);
-        Segmentation segmentation = new ThresholdSegmentation(this.segmentationThresholdSeconds, segmentationByParticipant);
-        segmentation.setSegmentResolution(new ResolutionImpl());
+        Segmentation segmentation;
+        if (disableSegmentation) {
+            segmentation = new NullSegmentation();
+        } else {
+            segmentation = new ThresholdSegmentation(this.segmentationThresholdSeconds, !ignoreParticipants);
+            segmentation.setSegmentResolution(new ResolutionImpl());
+        }
         SegmentSet segments = segmentation.segment(messages);
 
         //Run cross validation

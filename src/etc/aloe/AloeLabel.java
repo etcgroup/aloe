@@ -8,6 +8,7 @@ import etc.aloe.controllers.LabelingController;
 import etc.aloe.cscw2013.EvaluationImpl;
 import etc.aloe.cscw2013.FeatureExtractionImpl;
 import etc.aloe.cscw2013.LabelMappingImpl;
+import etc.aloe.cscw2013.NullSegmentation;
 import etc.aloe.cscw2013.ResolutionImpl;
 import etc.aloe.cscw2013.ThresholdSegmentation;
 import etc.aloe.data.EvaluationReport;
@@ -58,8 +59,18 @@ public class AloeLabel extends Aloe {
     public void run() {
         System.out.println("== Preparation ==");
 
-        Segmentation segmentation = new ThresholdSegmentation(this.segmentationThresholdSeconds, segmentationByParticipant);
-        segmentation.setSegmentResolution(new ResolutionImpl());
+        double costNormFactor = 0.5 * (falseNegativeCost + falsePositiveCost);
+        falseNegativeCost /= costNormFactor;
+        falsePositiveCost /= costNormFactor;
+        System.out.println("Costs normalized to " + falseNegativeCost + " (FN) " + falsePositiveCost + " (FP).");
+
+        Segmentation segmentation;
+        if (disableSegmentation) {
+            segmentation = new NullSegmentation();
+        } else {
+            segmentation = new ThresholdSegmentation(this.segmentationThresholdSeconds, !ignoreParticipants);
+            segmentation.setSegmentResolution(new ResolutionImpl());
+        }
 
         LabelingController labelingController = new LabelingController();
         labelingController.setFeatureExtractionImpl(new FeatureExtractionImpl());
