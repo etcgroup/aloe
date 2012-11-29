@@ -8,7 +8,6 @@ import etc.aloe.data.Message;
 import etc.aloe.data.MessageSet;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
-import etc.aloe.processes.SegmentResolution;
 import java.util.Date;
 import org.junit.After;
 import org.junit.AfterClass;

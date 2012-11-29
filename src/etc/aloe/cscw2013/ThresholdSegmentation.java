@@ -53,7 +53,7 @@ public class ThresholdSegmentation implements Segmentation {
 
     @Override
     public SegmentSet segment(MessageSet messageSet) {
-System.out.println("Segmenting with " + thresholdSeconds + " second threshold," + (byParticipant ? "" : " not") + " separating by participant.");
+        System.out.println("Segmenting with " + thresholdSeconds + " second threshold," + (byParticipant ? "" : " not") + " separating by participant.");
         List<Message> messages = sortByTime(messageSet.getMessages());
         if (byParticipant) {
             messages = sortByParticipant(messages);
