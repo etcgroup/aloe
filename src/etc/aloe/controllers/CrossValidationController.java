@@ -32,6 +32,7 @@ public class CrossValidationController {
     private Balancing balancingImpl;
     private double falsePositiveCost = 1;
     private double falseNegativeCost = 1;
+    private boolean balanceTestSet;
 
     public EvaluationReport getEvaluationReport() {
         return evaluationReport;
@@ -76,6 +77,9 @@ public class CrossValidationController {
 
             SegmentSet testingSegments = new SegmentSet();
             testingSegments.setSegments(split.getTestingForFold(segmentSet.getSegments(), foldIndex, this.folds));
+            if (getBalancingImpl() != null && balanceTestSet) {
+                testingSegments = getBalancingImpl().balance(testingSegments);
+            }
 
             ExampleSet basicTrainingExamples = trainingSegments.getBasicExamples();
             ExampleSet basicTestingExamples = testingSegments.getBasicExamples();
@@ -155,5 +159,9 @@ public class CrossValidationController {
 
     public void setBalancingImpl(Balancing balancing) {
         this.balancingImpl = balancing;
+    }
+
+    public void setBalanceTestSet(boolean balanceTestSet) {
+        this.balanceTestSet = balanceTestSet;
     }
 }
