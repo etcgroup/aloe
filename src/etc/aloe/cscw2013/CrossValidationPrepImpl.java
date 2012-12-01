@@ -37,7 +37,7 @@ public class CrossValidationPrepImpl<T extends LabelableItem> implements CrossVa
      *
      * Adapted from weka.core.Instances.randomize().
      *
-     * @param random a random number generator
+     * @param instances
      */
     @Override
     public void randomize(List<T> instances) {
