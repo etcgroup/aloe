@@ -1,2 +1,0 @@
-@echo off
-java -classpath ".\lib\weka.jar;.\lib\snowball.jar;.\lib\commons-lang3-3.1.jar;.\lib\MySQLDriver\mysql-connector-java-5.1.13-bin.jar;.\lib\daisy.jar;.\lib\javacsv.jar;.\%1\chat_wekalizer.jar" -Xmx3048m cmd.studies.%2
