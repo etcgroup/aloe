@@ -45,13 +45,13 @@ public class Main {
 
         Aloe aloe = null;
         switch (mode) {
-            case Train:
+            case train:
                 aloe = new AloeTrain();
                 break;
-            case Label:
+            case label:
                 aloe = new AloeLabel();
                 break;
-            case Interactive:
+            case interactive:
                 aloe = new AloeInteractive();
                 break;
         }
@@ -72,9 +72,9 @@ public class Main {
 
     private static enum ModeName {
 
-        Train,
-        Label,
-        Interactive
+        train,
+        label,
+        interactive
     }
     @Argument(index = 0, usage = "mode", required = true, metaVar = "MODE_NAME")
     private ModeName mode;
