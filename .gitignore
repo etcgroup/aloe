@@ -9,7 +9,7 @@
 nbproject/private/
 
 # Dependencies #
-lib/
+lib/*.jar
 
 # Input/output #
 *.csv
