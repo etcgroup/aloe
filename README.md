@@ -284,4 +284,5 @@ More information is available on the [SCCL website](http://depts.washington.edu/
 ## License ##
 
 ALOE is released under the GNU General Public License (version 3).
+
 Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl).
