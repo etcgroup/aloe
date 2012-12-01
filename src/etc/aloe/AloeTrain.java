@@ -48,8 +48,8 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 /**
- * Class that takes input training data, uses cross validation to evaluate
- * the model, then trains a final model on the full training set.
+ * Class that takes input training data, uses cross validation to evaluate the
+ * model, then trains a final model on the full training set.
  *
  * @author Michael Brooks <mjbrooks@uw.edu>
  */
@@ -76,7 +76,7 @@ public class AloeTrain extends Aloe {
     private File outputTopFeaturesFile;
     private File outputFeatureWeightsFile;
     private List<String> termList;
-    @Option(name = "--folds", aliases = {"-k"}, usage = "number of cross-validation folds (default 10, 0 to disable cross validation)")
+    @Option(name = "--folds", aliases = {"-k"}, usage = "number of cross-validation folds (default 10, 0 to disable cross validation)", metaVar = "FOLDS")
     private int crossValidationFolds = 10;
     @Option(name = "--emoticons", aliases = {"-e"}, usage = "emoticon dictionary file (default emoticons.txt)")
     private File emoticonFile = new File("emoticons.txt");
@@ -88,9 +88,9 @@ public class AloeTrain extends Aloe {
     private boolean useReweighting = false;
     @Option(name = "--min-cost", usage = "train a classifier that uses the min-cost criterion")
     private boolean useMinCost = false;
-    @Option(name = "--fp-cost", usage = "the cost of a false positive (default 1)")
+    @Option(name = "--fp-cost", usage = "the cost of a false positive (default 1)", metaVar = "COST")
     private double falsePositiveCost = 1;
-    @Option(name = "--fn-cost", usage = "the cost of a false negative (default 1)")
+    @Option(name = "--fn-cost", usage = "the cost of a false negative (default 1)", metaVar = "COST")
     private double falseNegativeCost = 1;
     @Option(name = "--balance-test-set", usage = "apply balancing to the test set as well as the training set")
     private boolean balanceTestSet = false;

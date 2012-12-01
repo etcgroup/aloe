@@ -65,9 +65,9 @@ public class AloeLabel extends Aloe {
     private File inputModelFile;
     @Option(name = "--features", aliases = {"-f"}, usage = "use an existing feature specification file", required = true, metaVar="FEATURES_FILE")
     private File inputFeatureSpecFile;
-    @Option(name = "--fp-cost", usage = "the cost of a false positive (default 1)")
+    @Option(name = "--fp-cost", usage = "the cost of a false positive (default 1)", metaVar="COST")
     private double falsePositiveCost = 1;
-    @Option(name = "--fn-cost", usage = "the cost of a false negative (default 1)")
+    @Option(name = "--fn-cost", usage = "the cost of a false negative (default 1)", metaVar="COST")
     private double falseNegativeCost = 1;
 
     @Override

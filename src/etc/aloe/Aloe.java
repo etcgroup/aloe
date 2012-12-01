@@ -53,9 +53,9 @@ public abstract class Aloe {
      */
     @Option(name = "--ignore-participants", usage = "ignore participants during segmentation")
     protected boolean ignoreParticipants = false;
-    @Option(name = "--threshold", aliases = {"-t"}, usage = "segmentation threshold in seconds (default 30)")
+    @Option(name = "--threshold", aliases = {"-t"}, usage = "segmentation threshold in seconds (default 30)", metaVar = "SECONDS")
     protected int segmentationThresholdSeconds = 30;
-    @Option(name = "--dateformat", aliases = {"-d"}, usage = "date format string (default 'yyyy-MM-dd HH:mm:ss')")
+    @Option(name = "--dateformat", aliases = {"-d"}, usage = "date format string (default 'yyyy-MM-dd HH:mm:ss')", metaVar = "DATE_FORMAT")
     protected String dateFormatString = "yyyy-MM-dd HH:mm:ss";
     @Option(name = "--no-segmentation", usage = "disable segmentation (each message is in its own segment)")
     protected boolean disableSegmentation = false;
