@@ -5,16 +5,17 @@ ALOE stands for Affect Labeller of Expressions. The latest version is 1.0.
 
 ALOE was developed to train and test machine learning classifiers for
 automatically labeling chat messages with different emotion or affect categories.
+The software runs in one of three modes:
 
-In "train" mode, ALOE takes a list of messages with ground truth labels 
+* In "train" mode, ALOE takes a list of messages with ground truth labels 
 (either "true" or "false") and trains a classifier to predict the labels 
 for unseen messages.
 
-In "label" mode, ALOE uses a classifier it has already trained, to 
+* In "label" mode, ALOE uses a classifier it has already trained, to 
 generate predicted labels for a set of unlabeled messages, or to evaluate 
 the classifier on a labeled "test" set.
 
-Finally, ALOE features an "interactive" mode where a trained model is used
+* Finally, ALOE features an "interactive" mode where a trained model is used
 to predict the label for messages that you type while the program runs.
 
 These three modes are explained in detail below.
@@ -32,7 +33,7 @@ its own required and optional arguments, detailed below.
 
 The following are some common options that can be used in any of the three modes:
 
-* `--dateformat DATE_FORMAT` (or `-d DATE_FORMAT`): Provide a custom 
+* `--dateformat DATE_FORMAT`, `-d DATE_FORMAT`: Provide a custom 
   date format string (default is 'yyyy-MM-dd HH:mm:ss') as for 
   [SimpleDateFormat](http://download.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html).
   
@@ -83,7 +84,7 @@ java -jar aloe.jar train INPUT_CSV OUTPUT_DIR [options...]
 The input file must minimally contain columns for `id`, `participant`, `time`, `message`, and `truth`.
 
 `OUTPUT_DIR` is a required path to a directory where ALOE's output files will be created. The output files that ALOE produces
-in "train" mode are described below. *Files in this directory may be overwritten.*
+in "train" mode are described below. **Files in this directory may be overwritten.**
 
 Use custom costs:
 * `--fn-cost COST`: Set a cost for false negatives (default 1).
@@ -99,24 +100,23 @@ Use Weka's CostSensitiveClassifier:
 * `--min-cost`: Train a classifier that uses the min-cost criterion.
 
 Other options:
-* `--emoticons (-e) FILE`, `-e FILE`: Custom emoticon dictionary file (default 'emoticons.txt').
+* `--emoticons FILE`, `-e FILE`: Custom emoticon dictionary file (default *emoticons.txt*).
 * `--folds FOLDS`, `-k FOLDS`: Set the number of cross-validation folds (default 10, use 0 to disable cross validation).
  
 #### Output
 
 Within the provided `OUTPUT_DIR`, ALOE will create the following files:
 
-* `features.spec`: A binary file containing the fully configured filters used to extract features 
+* *features.spec*: A binary file containing the fully configured filters used to extract features 
    from the message data.
-* `model.model`: A binary file containing the trained model. This file should always be paired with
-   its matching `features.spec` file for future use.
-
-* `report.txt`: A human-readable report about cross-validation results.
-* `top_features.txt`: A human-readable ranked list of the top 10 most highly-weighted features.
-* `feature_weights.csv`: A CSV spreadsheet listing the weight that was assigned to each feature
+* *model.model*: A binary file containing the trained model. This file should always be paired with
+   its matching *features.spec* file for future use.
+* *report.txt*: A human-readable report about cross-validation results.
+* *top_features.txt*: A human-readable ranked list of the top 10 most highly-weighted features.
+* *feature_weights.csv*: A CSV spreadsheet listing the weight that was assigned to each feature
    by the classifier.
    
-*Files in the output directory may be overwritten.*
+**Files in the output directory may be overwritten.**
 
 ### Label Mode
 
@@ -138,13 +138,13 @@ The input file must minimally contain columns for `id`, `participant`, `time`, a
 is provided, messages for which a truth value is provided will be labeled and used to evaluate the classifier.
 
 `OUTPUT_DIR` is a required path to a directory where ALOE's output files will be created. The output files that ALOE produces
-in "label" mode are described below. *Files in this directory may be overwritten.*
+in "label" mode are described below. **Files in this directory may be overwritten.**
 
 Required options:
-* `--features FEATURES_FILE`, `-f FEATURES_FILE`: Path to an existing feature specification file (i.e. 'features.spec'),
+* `--features FEATURES_FILE`, `-f FEATURES_FILE`: Path to an existing feature specification file (i.e. *features.spec*),
    produced in "train" mode.
-* `--model MODEL_FILE`, `-m MODEL_FILE`: Path to an existing model file (i.e. 'model.model'),
-   produced in "train" mode. *This must match the provided features file.*
+* `--model MODEL_FILE`, `-m MODEL_FILE`: Path to an existing model file (i.e. *model.model*),
+   produced in "train" mode. **This must match the provided features file.**
 
 Use custom costs:
 * `--fn-cost COST`: Set a cost for false negatives (default 1).
@@ -154,11 +154,11 @@ Use custom costs:
 
 Within the provided `OUTPUT_DIR`, ALOE will create the following files:
 
-* `report.txt`: A human-readable report about cross-validation results. This is only produced if some of the input
+* *report.txt*: A human-readable report about cross-validation results. This is only produced if some of the input
    data had ground-truth labels provided.
-* `labeled.csv`: A CSV spreadsheet containing the input data, with new `predicted` and `segment` columns.
+* *labeled.csv*: A CSV spreadsheet containing the input data, with new `predicted` and `segment` columns.
 
-*Files in the output directory may be overwritten.*
+**Files in the output directory may be overwritten.**
    
 ### Interactive Mode
 
@@ -174,22 +174,22 @@ java -jar aloe.jar interactive OUTPUT_DIR -m MODEL_FILE -f FEATURES_FILE [option
 ```
 
 `OUTPUT_DIR` is a required path to a directory where ALOE's output files will be created. The output files that ALOE produces
-in "interactive" mode are described below. *Files in this directory may be overwritten.*
+in "interactive" mode are described below. **Files in this directory may be overwritten.**
 
 Required options:
-* `--features FEATURES_FILE`, `-f FEATURES_FILE`: Path to an existing feature specification file (i.e. 'features.spec'),
+* `--features FEATURES_FILE`, `-f FEATURES_FILE`: Path to an existing feature specification file (i.e. *features.spec*),
    produced in "train" mode.
-* `--model MODEL_FILE`, `-m MODEL_FILE`: Path to an existing model file (i.e. 'model.model'),
-   produced in "train" mode. *This must match the provided features file.*
+* `--model MODEL_FILE`, `-m MODEL_FILE`: Path to an existing model file (i.e. *model.model*),
+   produced in "train" mode. **This must match the provided features file.**
    
 #### Output
 
 Within the provided `OUTPUT_DIR`, ALOE will create the following file:
 
-* `labeled.csv`: A CSV spreadsheet containing the messages typed by the user, with `predicted` column, 
+* *labeled.csv*: A CSV spreadsheet containing the messages typed by the user, with `predicted` column, 
    indicating the predicted label for the message: `true` or `false`.
    
-*Files in the output directory may be overwritten.*
+**Files in the output directory may be overwritten.**
 
 ## Building ALOE
 
