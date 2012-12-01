@@ -72,7 +72,7 @@ public class AloeLabel extends Aloe {
 
     @Override
     public void printUsage() {
-        System.err.println("java -jar aloe.jar Label INPUT_CSV OUTPUT_DIR -m MODEL_FILE -f FEATURES_FILE [options...]");
+        System.err.println("java -jar aloe.jar label INPUT_CSV OUTPUT_DIR -m MODEL_FILE -f FEATURES_FILE [options...]");
     }
 
     @Override

@@ -97,7 +97,7 @@ public class AloeTrain extends Aloe {
 
     @Override
     public void printUsage() {
-        System.err.println("java -jar aloe.jar Train INPUT_CSV OUTPUT_DIR [options...]");
+        System.err.println("java -jar aloe.jar train INPUT_CSV OUTPUT_DIR [options...]");
     }
 
     @Override

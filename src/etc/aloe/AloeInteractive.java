@@ -52,7 +52,7 @@ public class AloeInteractive extends Aloe {
 
     @Override
     public void printUsage() {
-        System.err.println("java -jar aloe.jar Interactive OUTPUT_DIR -m MODEL_FILE -f FEATURES_FILE [options...]");
+        System.err.println("java -jar aloe.jar interactive OUTPUT_DIR -m MODEL_FILE -f FEATURES_FILE [options...]");
     }
 
     @Override
