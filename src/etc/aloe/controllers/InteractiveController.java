@@ -1,6 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of ALOE.
+ *
+ * ALOE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * ALOE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with ALOE.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
  */
 package etc.aloe.controllers;
 
@@ -13,14 +27,16 @@ import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.FeatureExtraction;
 import etc.aloe.processes.LabelMapping;
-import etc.aloe.processes.Logging;
+import etc.aloe.processes.Loggable;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
 /**
+ * Class that takes messages from the user interactively and classifies them
+ * using and existing model and feature set.
  *
- * @author kuksenok
+ * @author Michael Brooks <mjbrooks@uw.edu>
  */
 public class InteractiveController {
 
@@ -69,7 +85,7 @@ public class InteractiveController {
 
             //First extract features
             FeatureExtraction extraction = getFeatureExtractionImpl();
-            extraction.setVerbosity(Logging.Verbosity.Quiet);
+            extraction.setVerbosity(Loggable.Verbosity.Quiet);
 
             ExampleSet examples = extraction.extractFeatures(segmentSet.getBasicExamples(), featureSpecification);
 

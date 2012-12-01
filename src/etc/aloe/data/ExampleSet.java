@@ -1,3 +1,21 @@
+/*
+ * This file is part of ALOE.
+ *
+ * ALOE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * ALOE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with ALOE.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
+ */
 package etc.aloe.data;
 
 import weka.core.Attribute;
@@ -14,19 +32,30 @@ import weka.filters.unsupervised.instance.RemoveWithValues;
  * which contains the message text. '*id' - which is a unique integer
  * identifying the message. 'label' - the ground truth label for the instance (0
  * or 1)
+ *
+ * @author Michael Brooks <mjbrooks@uw.edu>
  */
 public class ExampleSet {
 
     public final static String ID_ATTR_NAME = "*id";
     public final static String MESSAGE_ATTR_NAME = "message";
     public final static String LABEL_ATTR_NAME = "label";
-
     private Instances instances;
 
+    /**
+     * Construct an ExampleSet containing the given instances.
+     *
+     * @param instances
+     */
     public ExampleSet(Instances instances) {
         this.instances = instances;
     }
 
+    /**
+     * Make a copy of the ExampleSet, copying the underlying instances.
+     *
+     * @return
+     */
     public ExampleSet copy() {
         return new ExampleSet(new Instances(instances));
     }
@@ -62,10 +91,21 @@ public class ExampleSet {
         }
     }
 
+    /**
+     * Get the ith instance.
+     *
+     * @param i
+     * @return
+     */
     public Instance get(int i) {
         return instances.get(i);
     }
 
+    /**
+     * Get the underlying instances.
+     *
+     * @return
+     */
     public Instances getInstances() {
         return instances;
     }
@@ -100,6 +140,11 @@ public class ExampleSet {
         return Boolean.parseBoolean(classValueStr);
     }
 
+    /**
+     * Set the underlying instances.
+     *
+     * @param instances
+     */
     public void setInstances(Instances instances) {
         this.instances = instances;
     }

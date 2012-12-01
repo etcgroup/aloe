@@ -1,6 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of ALOE.
+ *
+ * ALOE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * ALOE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with ALOE.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
  */
 package etc.aloe;
 
@@ -34,8 +48,10 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 /**
+ * Class that takes input training data, uses cross validation to evaluate
+ * the model, then trains a final model on the full training set.
  *
- * @author michael
+ * @author Michael Brooks <mjbrooks@uw.edu>
  */
 public class AloeTrain extends Aloe {
 
@@ -76,7 +92,7 @@ public class AloeTrain extends Aloe {
     private double falsePositiveCost = 1;
     @Option(name = "--fn-cost", usage = "the cost of a false negative (default 1)")
     private double falseNegativeCost = 1;
-    @Option(name="--balance-test-set", usage="apply balancing to the test set as well as the training set")
+    @Option(name = "--balance-test-set", usage = "apply balancing to the test set as well as the training set")
     private boolean balanceTestSet = false;
 
     @Override
@@ -87,11 +103,11 @@ public class AloeTrain extends Aloe {
     @Override
     public void run() {
         System.out.println("== Preparation ==");
+
+        //Read the emoticons
         termList = loadTermList(emoticonFile);
 
-        // This sets up the components of the abstract pipeline with specific
-        // implementations.
-
+        //Normalize the costs (to sum to 2)
         double costNormFactor = 0.5 * (falseNegativeCost + falsePositiveCost);
         falseNegativeCost /= costNormFactor;
         falsePositiveCost /= costNormFactor;
@@ -99,7 +115,10 @@ public class AloeTrain extends Aloe {
 
         CrossValidationController crossValidationController = null;
         if (crossValidationFolds > 0) {
+            //If we're doing cross validation, set up a cross validation controller.
             crossValidationController = new CrossValidationController(this.crossValidationFolds);
+
+            //Provide implementations of the needed processes
             crossValidationController.setCrossValidationPrepImpl(new CrossValidationPrepImpl<Segment>());
             crossValidationController.setCrossValidationSplitImpl(new CrossValidationSplitImpl<Segment>());
             crossValidationController.setFeatureGenerationImpl(new FeatureGenerationImpl(termList));
@@ -110,17 +129,21 @@ public class AloeTrain extends Aloe {
             }
             crossValidationController.setTrainingImpl(trainingImpl);
             crossValidationController.setEvaluationImpl(new EvaluationImpl(falsePositiveCost, falseNegativeCost));
-            crossValidationController.setCosts(falsePositiveCost, falseNegativeCost);
-
             if (useDownsampling) {
                 crossValidationController.setBalancingImpl(new DownsampleBalancing(falsePositiveCost, falseNegativeCost));
             } else if (useUpsampling) {
                 crossValidationController.setBalancingImpl(new UpsampleBalancing(falsePositiveCost, falseNegativeCost));
             }
+
+            //Set some other options
+            crossValidationController.setCosts(falsePositiveCost, falseNegativeCost);
             crossValidationController.setBalanceTestSet(balanceTestSet);
         }
 
+        //Create a training controller for making the final model
         TrainingController trainingController = new TrainingController();
+
+        //Implementations for the training controller
         trainingController.setFeatureGenerationImpl(new FeatureGenerationImpl(termList));
         trainingController.setFeatureExtractionImpl(new FeatureExtractionImpl());
         Training trainingImpl = new TrainingImpl();
@@ -129,7 +152,6 @@ public class AloeTrain extends Aloe {
         }
         trainingController.setTrainingImpl(trainingImpl);
         trainingController.setFeatureWeightingImpl(new SMOFeatureWeighting());
-
         if (useDownsampling) {
             trainingController.setBalancingImpl(new DownsampleBalancing(falsePositiveCost, falseNegativeCost));
         } else if (useUpsampling) {
@@ -159,7 +181,7 @@ public class AloeTrain extends Aloe {
         trainingController.setSegmentSet(segments);
         trainingController.run();
 
-        //Get the fruits
+        //Get the fruits of our labors
         System.out.println("== Saving Output ==");
 
         EvaluationReport evalReport = null;

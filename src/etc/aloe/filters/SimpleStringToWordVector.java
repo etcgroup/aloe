@@ -1,3 +1,21 @@
+/*
+ * This file is part of ALOE.
+ *
+ * ALOE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * ALOE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with ALOE.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
+ */
 package etc.aloe.filters;
 
 import java.util.regex.Pattern;
@@ -8,6 +26,8 @@ import weka.core.stemmers.Stemmer;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 
 /**
+ * Extension of Weka's StringToWordVector filter that allows a string attribute
+ * to be specified by name, and uses a special term filter (NoNonsenseStemmer).
  *
  * @author Michael Brooks <mjbrooks@uw.edu>
  */
@@ -26,7 +46,7 @@ public class SimpleStringToWordVector extends StringToWordVector {
             throw new IllegalStateException("Attribute " + stringAttributeName + " does not exist");
         }
 
-        this.setAttributeIndicesArray(new int[] {stringAttr.index()});
+        this.setAttributeIndicesArray(new int[]{stringAttr.index()});
 
         return super.setInputFormat(instanceInfo);
     }
@@ -40,6 +60,7 @@ public class SimpleStringToWordVector extends StringToWordVector {
     }
 
     public static class NoNonsenseStemmer implements Stemmer {
+
         private SnowballStemmer snowball;
         private final Pattern nonsensePattern;
 
@@ -70,7 +91,5 @@ public class SimpleStringToWordVector extends StringToWordVector {
         public String getRevision() {
             return "1";
         }
-
     }
-
 }

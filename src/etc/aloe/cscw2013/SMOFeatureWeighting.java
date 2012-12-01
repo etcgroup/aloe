@@ -1,12 +1,25 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of ALOE.
+ *
+ * ALOE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * ALOE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with ALOE.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
  */
 package etc.aloe.cscw2013;
 
 import etc.aloe.processes.FeatureWeighting;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -18,8 +31,12 @@ import weka.classifiers.meta.CostSensitiveClassifier;
 import weka.core.Instances;
 
 /**
+ * Extracts top features and feature weights from a linear support vector
+ * machine (SMO) classifier.
  *
- * @author michael
+ * Also works with a CostSensitiveClassifier wrapping an SMO.
+ *
+ * @author Michael Brooks <mjbrooks@uw.edu>
  */
 public class SMOFeatureWeighting implements FeatureWeighting {
 
@@ -71,6 +88,13 @@ public class SMOFeatureWeighting implements FeatureWeighting {
         return entries;
     }
 
+    /**
+     * Given a classifier, attempts to cast it to an SMO or get the contained
+     * SMO.
+     *
+     * @param classifier
+     * @return
+     */
     private SMO getSMO(Classifier classifier) {
         if (classifier instanceof CostSensitiveClassifier) {
             classifier = ((CostSensitiveClassifier) classifier).getClassifier();

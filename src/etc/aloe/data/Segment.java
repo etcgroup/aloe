@@ -1,3 +1,21 @@
+/*
+ * This file is part of ALOE.
+ *
+ * ALOE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * ALOE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with ALOE.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
+ */
 package etc.aloe.data;
 
 import java.util.ArrayList;
@@ -7,6 +25,8 @@ import java.util.List;
 /**
  * Stores a list of LabeledMessages, associated with an unique ID for the
  * segment (auto-increment, zero-index)
+ *
+ * @author Michael Brooks <mjbrooks@uw.edu>
  */
 public class Segment implements LabelableItem {
 
@@ -16,6 +36,9 @@ public class Segment implements LabelableItem {
     private Boolean trueLabel;
     private Boolean predictedLabel;
 
+    /**
+     * Construct an empty, unlabeled segment.
+     */
     public Segment() {
         messages = new ArrayList<Message>();
         id = ID_COUNTER;
@@ -24,6 +47,7 @@ public class Segment implements LabelableItem {
 
     /**
      * Convenience method, mostly for testing.
+     *
      * @param trueLabel
      * @param predictedLabel
      */
@@ -33,10 +57,20 @@ public class Segment implements LabelableItem {
         this.predictedLabel = predictedLabel;
     }
 
+    /**
+     * Get the segment's id.
+     *
+     * @return
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Concatenate the message strings with a space separator.
+     *
+     * @return
+     */
     public String concatMessages() {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
@@ -51,11 +85,21 @@ public class Segment implements LabelableItem {
         return sb.toString();
     }
 
+    /**
+     * Add a message to the segment.
+     *
+     * @param message
+     */
     public void add(Message message) {
         messages.add(message);
         message.setSegmentId(this.id);
     }
 
+    /**
+     * Get the underlying message list.
+     *
+     * @return
+     */
     public List<Message> getMessages() {
         return messages;
     }
@@ -90,6 +134,12 @@ public class Segment implements LabelableItem {
         return predictedLabel != null;
     }
 
+    /**
+     * Get the duration of the segment in seconds. If the segment is empty,
+     * returns 0.
+     *
+     * @return
+     */
     public double getDurationInSeconds() {
         if (messages.isEmpty()) {
             return 0;

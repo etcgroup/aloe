@@ -1,6 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of ALOE.
+ *
+ * ALOE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * ALOE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with ALOE.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
  */
 package etc.aloe.data;
 
@@ -13,15 +27,17 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 /**
+ * Represents a collection of segments. Knows how to transform itself into Weka
+ * Instances with basic feature information.
  *
- * @author michael
+ * @author Michael Brooks <mjbrooks@uw.edu>
  */
 public class SegmentSet {
+
     public static final String DURATION_ATTR_NAME = "duration";
     public static final String LENGTH_ATTR_NAME = "length";
     public static final String CPS_ATTR_NAME = "cps";
     public static final String RATE_ATTR_NAME = "rate";
-
     private List<Segment> segments = new ArrayList<Segment>();
 
     /**
@@ -42,14 +58,32 @@ public class SegmentSet {
         return this.segments.size();
     }
 
+    /**
+     * Get the underlying list of segments.
+     *
+     * @return
+     */
     public List<Segment> getSegments() {
         return segments;
     }
 
+    /**
+     * Set the underlying list of segments.
+     *
+     * @param segments
+     */
     public void setSegments(List<Segment> segments) {
         this.segments = segments;
     }
 
+    /**
+     * Convert the segment set into an ExampleSet (ready for feature
+     * extraction). The returned example set includes an id attribute, the
+     * message text, a label attribute, and several basic features extracted
+     * from the segment.
+     *
+     * @return
+     */
     public ExampleSet getBasicExamples() {
         ArrayList<Attribute> attributes = new ArrayList<Attribute>();
 
@@ -93,10 +127,21 @@ public class SegmentSet {
         return new ExampleSet(instances);
     }
 
+    /**
+     * Get the ith segment.
+     *
+     * @param i
+     * @return
+     */
     public Segment get(int i) {
         return this.segments.get(i);
     }
 
+    /**
+     * Return a new segment set containing only the labeled segments.
+     *
+     * @return
+     */
     public SegmentSet onlyLabeled() {
         SegmentSet labeled = new SegmentSet();
         for (Segment segment : segments) {
@@ -107,6 +152,18 @@ public class SegmentSet {
         return labeled;
     }
 
+    /**
+     * Computes the basic timing-related features about a segment and applies
+     * them to the given instance.
+     *
+     * @param segment
+     * @param instance
+     * @param messageStr
+     * @param durationAttr
+     * @param lengthAttr
+     * @param cpsAttr
+     * @param rateAttr
+     */
     private void computeRateValues(Segment segment, Instance instance, String messageStr, Attribute durationAttr, Attribute lengthAttr, Attribute cpsAttr, Attribute rateAttr) {
         double duration = segment.getDurationInSeconds();
         double length = segment.getMessages().size();
@@ -132,6 +189,13 @@ public class SegmentSet {
         instance.setValue(rateAttr, rate);
     }
 
+    /**
+     * Counts the number of segments that have the given label (true, false, or
+     * null).
+     *
+     * @param label
+     * @return
+     */
     public int getCountWithTrueLabel(Boolean label) {
         int count = 0;
         for (Segment segment : segments) {

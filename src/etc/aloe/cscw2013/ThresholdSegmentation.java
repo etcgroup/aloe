@@ -1,3 +1,21 @@
+/*
+ * This file is part of ALOE.
+ *
+ * ALOE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * ALOE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with ALOE.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
+ */
 package etc.aloe.cscw2013;
 
 import etc.aloe.data.Message;
@@ -12,7 +30,14 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
+ * Segments messages according to a time threshold. Messages separated by more
+ * than the threshold go into different segments. Can optionally separate
+ * messages by participant as well.
  *
+ * In order for labels to be applied to segments, be sure to set the segment
+ * resolution procedure.
+ *
+ * @author Michael Brooks <mjbrooks@uw.edu>
  */
 public class ThresholdSegmentation implements Segmentation {
 
@@ -20,11 +45,24 @@ public class ThresholdSegmentation implements Segmentation {
     private final boolean byParticipant;
     private SegmentResolution resolution;
 
+    /**
+     * Construct a new ThresholdSegmentation.
+     *
+     * @param thresholdSeconds The number of segments to use as the segmentation
+     * threshold.
+     * @param byParticipant True if messages should be separated by participant.
+     */
     public ThresholdSegmentation(int thresholdSeconds, boolean byParticipant) {
         this.thresholdSeconds = thresholdSeconds;
         this.byParticipant = byParticipant;
     }
 
+    /**
+     * Return a list of messages sorted by participant name (ascending).
+     *
+     * @param original
+     * @return
+     */
     private List<Message> sortByParticipant(List<Message> original) {
         List<Message> messages = new ArrayList<Message>(original);
 
@@ -38,6 +76,12 @@ public class ThresholdSegmentation implements Segmentation {
         return messages;
     }
 
+    /**
+     * Return a list of messages sorted by time (ascending).
+     *
+     * @param original
+     * @return
+     */
     private List<Message> sortByTime(List<Message> original) {
         List<Message> messages = new ArrayList<Message>(original);
 

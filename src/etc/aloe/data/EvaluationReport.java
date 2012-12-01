@@ -1,3 +1,21 @@
+/*
+ * This file is part of ALOE.
+ *
+ * ALOE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * ALOE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with ALOE.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
+ */
 package etc.aloe.data;
 
 import etc.aloe.processes.Saving;
@@ -8,6 +26,8 @@ import java.io.PrintStream;
 /**
  * The EvaluationReport contains data about model performance as compared to a
  * source of truth data.
+ *
+ * @author Michael Brooks <mjbrooks@uw.edu>
  */
 public class EvaluationReport implements Saving {
 
@@ -30,51 +50,79 @@ public class EvaluationReport implements Saving {
         this.falsePositiveCost = falsePositiveCost;
         this.falseNegativeCost = falseNegativeCost;
     }
-    /**
-     * The number of examples with a positive prediction that was correct.
-     */
     private int truePositiveCount;
-    /**
-     * The number of examples with a negative prediction that was correct.
-     */
     private int trueNegativeCount;
-    /**
-     * The number of examples with a positive prediction that was incorrect.
-     */
     private int falsePositiveCount;
-    /**
-     * The number of examples with a negative prediction that was incorrect.
-     */
     private int falseNegativeCount;
 
+    /**
+     * Get the number of examples with a positive prediction that was correct.
+     *
+     * @return
+     */
     public int getTruePositiveCount() {
         return truePositiveCount;
     }
 
+    /**
+     * Get the number of examples with a negative prediction that was correct.
+     *
+     * @return
+     */
     public int getTrueNegativeCount() {
         return trueNegativeCount;
     }
 
+    /**
+     * Get the number of examples with a positive prediction that was incorrect.
+     *
+     * @return
+     */
     public int getFalsePositiveCount() {
         return falsePositiveCount;
     }
 
+    /**
+     * Get the number of examples with a negative prediction that was incorrect.
+     *
+     * @return
+     */
     public int getFalseNegativeCount() {
         return falseNegativeCount;
     }
 
+    /**
+     * Set the number of examples with a positive prediction that was correct.
+     *
+     * @param truePositiveCount
+     */
     public void setTruePositiveCount(int truePositiveCount) {
         this.truePositiveCount = truePositiveCount;
     }
 
+    /**
+     * Set the number of examples with a negative prediction that was correct.
+     *
+     * @param trueNegativeCount
+     */
     public void setTrueNegativeCount(int trueNegativeCount) {
         this.trueNegativeCount = trueNegativeCount;
     }
 
+    /**
+     * Set the number of examples with a positive prediction that was incorrect.
+     *
+     * @param falsePositiveCount
+     */
     public void setFalsePositiveCount(int falsePositiveCount) {
         this.falsePositiveCount = falsePositiveCount;
     }
 
+    /**
+     * Set the number of examples with a negative prediction that was incorrect.
+     *
+     * @param falseNegativeCount
+     */
     public void setFalseNegativeCount(int falseNegativeCount) {
         this.falseNegativeCount = falseNegativeCount;
     }
@@ -168,9 +216,14 @@ public class EvaluationReport implements Saving {
         return true;
     }
 
+    /**
+     * Get the evaluation report as a string.
+     *
+     * @return
+     */
     @Override
     public String toString() {
-        return  "Examples: " + getTotalExamples() + "\n"
+        return "Examples: " + getTotalExamples() + "\n"
                 + "FP Cost: " + falsePositiveCost + "\n"
                 + "FN Cost: " + falseNegativeCost + "\n"
                 + "------------------\n"
@@ -190,6 +243,12 @@ public class EvaluationReport implements Saving {
                 + "Avg Cost: " + getAverageCost();
     }
 
+    /**
+     * Add a partial evaluation report to this report. Modifies the current
+     * report.
+     *
+     * @param report
+     */
     public void addPartial(EvaluationReport report) {
         truePositiveCount += report.truePositiveCount;
         trueNegativeCount += report.trueNegativeCount;
@@ -197,6 +256,12 @@ public class EvaluationReport implements Saving {
         falseNegativeCount += report.falseNegativeCount;
     }
 
+    /**
+     * Record an individual prediction.
+     *
+     * @param predictedLabel
+     * @param actualLabel
+     */
     public void recordPrediction(Boolean predictedLabel, Boolean actualLabel) {
         if (predictedLabel == true) {
             if (predictedLabel == actualLabel) {

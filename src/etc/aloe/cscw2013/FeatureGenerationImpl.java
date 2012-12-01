@@ -1,3 +1,21 @@
+/*
+ * This file is part of ALOE.
+ *
+ * ALOE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * ALOE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with ALOE.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
+ */
 package etc.aloe.cscw2013;
 
 import etc.aloe.data.ExampleSet;
@@ -19,8 +37,12 @@ import weka.filters.unsupervised.attribute.RemoveByName;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 
 /**
+ * Generates a set of filters that extract the desired features from message
+ * texts.
  *
- * @author michael
+ * Features include words, emoticons, pronouns, punctuations, and other strings.
+ *
+ * @author Michael Brooks <mjbrooks@uw.edu>
  */
 public class FeatureGenerationImpl implements FeatureGeneration {
 
@@ -29,6 +51,12 @@ public class FeatureGenerationImpl implements FeatureGeneration {
     private static final String BAG_OF_WORDS_FEATURE_PREFIX = "_";
     private final List<String> emoticonDictionary;
 
+    /**
+     * Construct a new FeatureGeneration implementation.
+     *
+     * @param emoticonDictionary The list of emoticons to look for in the
+     * messages.
+     */
     public FeatureGenerationImpl(List<String> emoticonDictionary) {
         this.emoticonDictionary = emoticonDictionary;
     }
@@ -55,12 +83,6 @@ public class FeatureGenerationImpl implements FeatureGeneration {
             Instances output = finalFilter.getOutputFormat();
             int numAttrs = output.numAttributes();
             System.out.println("generated " + (numAttrs - 1) + " features.");
-//            Enumeration attrs = output.enumerateAttributes();
-//            while (attrs.hasMoreElements()) {
-//                Attribute attr = (Attribute) attrs.nextElement();
-//                System.out.print(attr.name() + ", ");
-//            }
-//            System.out.println();
         } catch (Exception e) {
             System.err.println("Error generating features.");
             System.err.println("\t" + e.getMessage());
@@ -69,6 +91,13 @@ public class FeatureGenerationImpl implements FeatureGeneration {
         return spec;
     }
 
+    /**
+     * Configure the special words filter with the provided data..
+     *
+     * @param examples
+     * @return
+     * @throws Exception
+     */
     private Filter getSpecialWordsFilter(ExampleSet examples) throws Exception {
         SpecialRegexFilter filter = new SpecialRegexFilter(ExampleSet.MESSAGE_ATTR_NAME);
 
@@ -79,6 +108,13 @@ public class FeatureGenerationImpl implements FeatureGeneration {
         return filter;
     }
 
+    /**
+     * Configure the spelling filter to work with the provided data.
+     *
+     * @param examples
+     * @return
+     * @throws Exception
+     */
     private Filter getSpellingFilter(ExampleSet examples) throws Exception {
         SpellingRegexFilter filter = new SpellingRegexFilter(ExampleSet.MESSAGE_ATTR_NAME);
         filter.setCountRegexLengths(COUNT_REGEX_LENGTHS);
@@ -90,6 +126,13 @@ public class FeatureGenerationImpl implements FeatureGeneration {
         return filter;
     }
 
+    /**
+     * Configure the punctuation filter to work with the provided data.
+     *
+     * @param examples
+     * @return
+     * @throws Exception
+     */
     private Filter getPunctuationFilter(ExampleSet examples) throws Exception {
         PunctuationRegexFilter filter = new PunctuationRegexFilter(ExampleSet.MESSAGE_ATTR_NAME);
         filter.setCountRegexLengths(COUNT_REGEX_LENGTHS);
@@ -101,6 +144,13 @@ public class FeatureGenerationImpl implements FeatureGeneration {
         return filter;
     }
 
+    /**
+     * Configure the pronouns filter to work with the provided data.
+     *
+     * @param examples
+     * @return
+     * @throws Exception
+     */
     private Filter getPronounsFilter(ExampleSet examples) throws Exception {
         PronounRegexFilter filter = new PronounRegexFilter(ExampleSet.MESSAGE_ATTR_NAME);
 
@@ -111,6 +161,13 @@ public class FeatureGenerationImpl implements FeatureGeneration {
         return filter;
     }
 
+    /**
+     * Configure the emoticons filter to work with the provided examples.
+     *
+     * @param examples
+     * @return
+     * @throws Exception
+     */
     private Filter getEmoticonsFilter(ExampleSet examples) throws Exception {
         StringToDictionaryVector filter = new StringToDictionaryVector();
         filter.setAttributeNamePrefix(EMOTICON_FEATURE_PREFIX);
@@ -129,6 +186,13 @@ public class FeatureGenerationImpl implements FeatureGeneration {
         return filter;
     }
 
+    /**
+     * Get a bag of words filter based on the provided examples.
+     *
+     * @param examples
+     * @return
+     * @throws Exception
+     */
     private Filter getBagOfWordsFilter(ExampleSet examples) throws Exception {
         SimpleStringToWordVector filter = new SimpleStringToWordVector();
         filter.setAttributeNamePrefix(BAG_OF_WORDS_FEATURE_PREFIX);
@@ -156,6 +220,14 @@ public class FeatureGenerationImpl implements FeatureGeneration {
         return filter;
     }
 
+    /**
+     * Get a filter that removes the id attribute from the data set, necessary
+     * before training.
+     *
+     * @param examples
+     * @return
+     * @throws Exception
+     */
     private Filter getRemoveIDFilter(ExampleSet examples) throws Exception {
         RemoveByName filter = new RemoveByName();
         filter.setExpression(Pattern.quote(ExampleSet.ID_ATTR_NAME));

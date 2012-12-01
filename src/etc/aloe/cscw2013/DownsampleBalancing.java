@@ -1,6 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of ALOE.
+ *
+ * ALOE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * ALOE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with ALOE.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
  */
 package etc.aloe.cscw2013;
 
@@ -14,19 +28,31 @@ import java.util.List;
 import java.util.Random;
 
 /**
+ * Balances a data set via downsampling.
  *
- * @author michael
+ * @author Michael Brooks <mjbrooks@uw.edu>
  */
 public class DownsampleBalancing implements Balancing {
 
     private final double falsePositiveCost;
     private final double falseNegativeCost;
 
+    /**
+     * Construct a downsampling balancer with equal weight to positive and
+     * negative classes.
+     */
     public DownsampleBalancing() {
         this.falsePositiveCost = 1;
         this.falseNegativeCost = 1;
     }
 
+    /**
+     * Construct a balancer that downsamples according to the ratio between the
+     * two provided costs.
+     *
+     * @param falsePositiveCost
+     * @param falseNegativeCost
+     */
     public DownsampleBalancing(double falsePositiveCost, double falseNegativeCost) {
         this.falsePositiveCost = falsePositiveCost;
         this.falseNegativeCost = falseNegativeCost;
@@ -86,6 +112,14 @@ public class DownsampleBalancing implements Balancing {
         return balanced;
     }
 
+    /**
+     * Randomly select the given number of segments from 'from' and insert them
+     * into 'target', without replacement.
+     *
+     * @param target
+     * @param from
+     * @param number
+     */
     private void sampleInto(List<Segment> target, List<Segment> from, int number) {
         HashSet<Segment> selected = new HashSet<Segment>();
 

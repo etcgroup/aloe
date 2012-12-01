@@ -1,3 +1,21 @@
+/*
+ * This file is part of ALOE.
+ *
+ * ALOE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * ALOE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with ALOE.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
+ */
 package etc.aloe.data;
 
 import com.csvreader.CsvReader;
@@ -18,6 +36,8 @@ import java.util.List;
 
 /**
  * MessageSet contains messages.
+ *
+ * @author Michael Brooks <mjbrooks@uw.edu>
  */
 public class MessageSet implements Loading, Saving {
 
@@ -41,14 +61,30 @@ public class MessageSet implements Loading, Saving {
     private DateFormat dateFormat;
     private Charset charset = Charset.forName("UTF-8");
 
+    /**
+     * Add a message to the set.
+     *
+     * @param message
+     */
     public void add(Message message) {
         messages.add(message);
     }
 
+    /**
+     * Get the underlying list of messages.
+     *
+     * @return
+     */
     public List<Message> getMessages() {
         return messages;
     }
 
+    /**
+     * Makes sure that the csv headers contain the minimum required fields.
+     *
+     * @param csvReader
+     * @throws InvalidObjectException
+     */
     private void validateCSVHeaders(CsvReader csvReader) throws InvalidObjectException {
 
         String[] headers = null;
@@ -212,14 +248,30 @@ public class MessageSet implements Loading, Saving {
         return this.dateFormat;
     }
 
+    /**
+     * Set the date format used to import/export timestamps.
+     *
+     * @param dateFormat
+     */
     public void setDateFormat(DateFormat dateFormat) {
         this.dateFormat = dateFormat;
     }
 
+    /**
+     * Get the size of the message set.
+     *
+     * @return
+     */
     public int size() {
         return this.messages.size();
     }
 
+    /**
+     * Get the ith message.
+     *
+     * @param i
+     * @return
+     */
     public Message get(int i) {
         return this.messages.get(i);
     }

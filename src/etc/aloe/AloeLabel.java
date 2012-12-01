@@ -1,6 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of ALOE.
+ *
+ * ALOE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * ALOE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with ALOE.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
  */
 package etc.aloe;
 
@@ -22,8 +36,14 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 /**
+ * Class that takes input data (may be labeled, unlabeled, or mixed) and
+ * applies an existing model (and feature set) to it in order to generate
+ * labels.
  *
- * @author michael
+ * If there are any labeled examples in the input data, an evaluation is
+ * generated comparing the predicted labels to the true labels.
+ *
+ * @author Michael Brooks <mjbrooks@uw.edu
  */
 public class AloeLabel extends Aloe {
 
@@ -59,11 +79,13 @@ public class AloeLabel extends Aloe {
     public void run() {
         System.out.println("== Preparation ==");
 
+        //Normalize the cost factors (sum to 2)
         double costNormFactor = 0.5 * (falseNegativeCost + falsePositiveCost);
         falseNegativeCost /= costNormFactor;
         falsePositiveCost /= costNormFactor;
         System.out.println("Costs normalized to " + falseNegativeCost + " (FN) " + falsePositiveCost + " (FP).");
 
+        //Set up the segmentation
         Segmentation segmentation;
         if (disableSegmentation) {
             segmentation = new NullSegmentation();
@@ -72,22 +94,28 @@ public class AloeLabel extends Aloe {
             segmentation.setSegmentResolution(new ResolutionImpl());
         }
 
+        //Create a labeling controller
         LabelingController labelingController = new LabelingController();
+
+        //Provide implementations of the needed processes
         labelingController.setFeatureExtractionImpl(new FeatureExtractionImpl());
         labelingController.setEvaluationImpl(new EvaluationImpl(falsePositiveCost, falseNegativeCost));
         labelingController.setMappingImpl(new LabelMappingImpl());
 
+        //Process the input messages
         MessageSet messages = this.loadMessages(dateFormatString, inputCSVFile);
         FeatureSpecification spec = this.loadFeatureSpecification(inputFeatureSpecFile);
         Model model = this.loadModel(inputModelFile);
 
         SegmentSet segments = segmentation.segment(messages);
 
+        //Run the labeling process
         labelingController.setModel(model);
         labelingController.setSegmentSet(segments);
         labelingController.setFeatureSpecification(spec);
         labelingController.run();
 
+        //Get the outputs
         EvaluationReport evalReport = labelingController.getEvaluationReport();
 
         System.out.println("== Saving Output ==");
