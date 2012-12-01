@@ -34,7 +34,7 @@ import org.kohsuke.args4j.CmdLineParser;
 public class Main {
 
     private void printUsage() {
-        System.err.println("For Help: java -jar aloe.jar MODE_NAME --help");
+        System.err.println("For specific usage: java -jar aloe.jar MODE");
         System.err.println("List of modes: ");
         for (ModeName cmd : ModeName.values()) {
             System.err.println("\t" + cmd.name());
@@ -76,18 +76,24 @@ public class Main {
         label,
         interactive
     }
-    @Argument(index = 0, usage = "mode", required = true, metaVar = "MODE_NAME")
+    @Argument(index = 0, usage = "mode", required = true, metaVar = "MODE")
     private ModeName mode;
 
     public static void main(String[] args) {
 
-        //Separate the first argument from the rest of the arguments
-        String[] restOfArgs = Arrays.copyOfRange(args, 1, args.length);
-        String[] firstArgs = Arrays.copyOfRange(args, 0, 1);
-
         //Parse the command line arguments
         Main main = new Main();
         CmdLineParser parser = new CmdLineParser(main);
+
+        if (args.length < 1) {
+            System.err.println("MODE is required.");
+            main.printUsage();
+            return;
+        }
+
+        //Separate the first argument from the rest of the arguments
+        String[] restOfArgs = Arrays.copyOfRange(args, 1, args.length);
+        String[] firstArgs = Arrays.copyOfRange(args, 0, 1);
 
         try {
             parser.parseArgument(firstArgs);
@@ -98,7 +104,6 @@ public class Main {
         }
 
         //And go!
-
         main.run(restOfArgs);
     }
 }
