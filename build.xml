@@ -73,6 +73,7 @@
     -->
 
     <target name="-post-jar">
+        <copy file="${basedir}/emoticons.txt" todir="${dist.dir}"/>
         <copy file="${basedir}/README.md" todir="${dist.dir}"/>
         <delete file="${dist.dir}/README.TXT"/>
     </target>
