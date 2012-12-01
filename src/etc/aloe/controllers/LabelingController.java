@@ -29,7 +29,7 @@ import etc.aloe.processes.LabelMapping;
 import java.util.List;
 
 /**
- * 
+ * Class for using an existing model to label unlabeled data.
  *
  * @author Michael Brooks <mjbrooks@uw.edu>
  */
