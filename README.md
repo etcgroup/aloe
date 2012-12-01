@@ -67,6 +67,17 @@ Output CSV files will have a similar format, but with added `predicted` and `seg
 The `predicted` column indicates the predicted label for the message, `true` or `false`. The 
 `segment` column contains an integer id of the segment to which the message was assigned.
 
+Below is some example message data with predicted labels:
+```
+id,time,participant,message,truth,predicted,segment
+5,2004-11-27 03:36:32,Alice,Hello,false,false,1
+9,2004-11-27 03:36:43,Bob,Well hello there.,true,true,2
+10,2004-11-27 03:36:49,Alice,I am super happy today!,true,true,1
+11,2004-11-27 03:37:01,Bob,"Why, there's nothing to be happy about!",false,true,2
+12,2004-11-27 03:37:15,Bob,In fact I am going back to bed.,false,false,2
+```
+
+
 ### Train Mode
 
 In "train" mode, ALOE performs the following tasks:
