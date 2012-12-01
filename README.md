@@ -20,7 +20,10 @@ to predict the label for messages that you type while the program runs.
 
 These three modes are explained in detail below.
 
-Javadocs for ALOE can be found [here](http://etcgroup.github.com/aloe/javadoc-v1.0).
+**[Download the binary distribution of ALOE](https://github.com/downloads/etcgroup/aloe/aloe-v1.0.zip)**
+
+**[Visit the Javadocs](http://etcgroup.github.com/aloe/javadoc-v1.0)**
+
 
 ## Running ALOE
 
