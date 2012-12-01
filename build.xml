@@ -72,9 +72,32 @@
 
     -->
 
+    <!-- Get a build time -->
+    <tstamp>
+        <format property="build.time" pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ"/>
+    </tstamp>
+
+    <!-- Get the short revision code -->
+    <exec executable="git" outputproperty="app.revision" failifexecutionfails="false">
+        <arg value="rev-parse"/>
+        <arg value="HEAD"/>
+    </exec>
+
+    <!-- Set the version -->
+    <property name="app.version" value="v1.0"/>
+
     <target name="-post-jar">
+        <concat destfile="${dist.dir}/README.md">
+            <header>```
+Version: ${app.version}
+Revision: ${app.revision}
+Build Time: ${build.time}
+```
+</header>
+            <path path="${basedir}/README.md"/>
+        </concat>
         <copy file="${basedir}/emoticons.txt" todir="${dist.dir}"/>
-        <copy file="${basedir}/LICENSE_GPL.txt" todir="${dist.dir}"/>
+        <copy file="${basedir}/LICENSE-GPL.txt" todir="${dist.dir}"/>
         <copy file="${basedir}/README.md" todir="${dist.dir}"/>
         <delete file="${dist.dir}/README.TXT"/>
     </target>

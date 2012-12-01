@@ -7,12 +7,12 @@ ALOE was developed to train and test machine learning classifiers for
 automatically labeling chat messages with different emotion or affect categories.
 The software runs in one of three modes:
 
-* In "train" mode, ALOE takes a list of messages with ground truth labels 
-(either "true" or "false") and trains a classifier to predict the labels 
+* In "train" mode, ALOE takes a list of messages with ground truth labels
+(either "true" or "false") and trains a classifier to predict the labels
 for unseen messages.
 
-* In "label" mode, ALOE uses a classifier it has already trained, to 
-generate predicted labels for a set of unlabeled messages, or to evaluate 
+* In "label" mode, ALOE uses a classifier it has already trained, to
+generate predicted labels for a set of unlabeled messages, or to evaluate
 the classifier on a labeled "test" set.
 
 * Finally, ALOE features an "interactive" mode where a trained model is used
@@ -30,15 +30,15 @@ The basic usage for ALOE is the following:
 java -jar aloe.jar MODE OPTIONS...
 ```
 
-The `MODE` can be one of "train", "label", or "interactive". Each mode has 
+The `MODE` can be one of "train", "label", or "interactive". Each mode has
 its own required and optional arguments, detailed below.
 
 The following are some common options that can be used in any of the three modes:
 
-* `--dateformat DATE_FORMAT`, `-d DATE_FORMAT`: Provide a custom 
-  date format string (default is 'yyyy-MM-dd HH:mm:ss') as for 
+* `--dateformat DATE_FORMAT`, `-d DATE_FORMAT`: Provide a custom
+  date format string (default is 'yyyy-MM-dd HH:mm:ss') as for
   [SimpleDateFormat](http://download.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html).
-  
+
 * `--random N`, `-r N`: Random seed for the Random instance shared across ALOE.
 
 * `--ignore-participants`: Ignore participants during segmentation.
@@ -55,7 +55,7 @@ Input files must minimally have `id`, `time`, `participant`, and `message` colum
 
 * `id`: a positive integer uniquely identifying the message.
 * `time`: a value parseable by [SimpleDateFormat](download.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html).
-  The default date-time format is that of the MySQL DATETIME type: 'yyyy-MM-dd HH:mm:ss' but other 
+  The default date-time format is that of the MySQL DATETIME type: 'yyyy-MM-dd HH:mm:ss' but other
   formats can be provided via the `--dateformat` option.
 * `participant`: contains the name of the person who originated each message. If that isn't
    relevant for your data set, you can just use the same participant name (or an empty string) for each record.
@@ -64,7 +64,7 @@ Input files must minimally have `id`, `time`, `participant`, and `message` colum
 A `truth` column may be provided if the data is labeled. Its values should be `true`, `false`, or empty.
 
 Output CSV files will have a similar format, but with added `predicted` and `segment` columns.
-The `predicted` column indicates the predicted label for the message, `true` or `false`. The 
+The `predicted` column indicates the predicted label for the message, `true` or `false`. The
 `segment` column contains an integer id of the segment to which the message was assigned.
 
 Sample messages with ground truth labels (i.e. data for "train" mode):
@@ -118,7 +118,7 @@ in "train" mode are described below. **Files in this directory may be overwritte
 Use custom costs:
 * `--fn-cost COST`: Set a cost for false negatives (default 1).
 * `--fp-cost COST`: Set a cost for false positives (default 1).
- 
+
 Adjust the class frequencies:
 * `--downsample`, `-ds`: Use downsampling in the training data on the majority class to suit the cost ratio.
 * `--upsample`, `-us`: Use upsampling in the training data on the minority class in to suit the cost ratio.
@@ -131,12 +131,12 @@ Use Weka's CostSensitiveClassifier:
 Other options:
 * `--emoticons FILE`, `-e FILE`: Custom emoticon dictionary file (default *emoticons.txt*).
 * `--folds FOLDS`, `-k FOLDS`: Set the number of cross-validation folds (default 10, use 0 to disable cross validation).
- 
+
 #### Output
 
 Within the provided `OUTPUT_DIR`, ALOE will create the following files:
 
-* *features.spec*: A binary file containing the fully configured filters used to extract features 
+* *features.spec*: A binary file containing the fully configured filters used to extract features
    from the message data.
 * *model.model*: A binary file containing the trained model. This file should always be paired with
    its matching *features.spec* file for future use.
@@ -144,7 +144,7 @@ Within the provided `OUTPUT_DIR`, ALOE will create the following files:
 * *top_features.txt*: A human-readable ranked list of the top 10 most highly-weighted features.
 * *feature_weights.csv*: A CSV spreadsheet listing the weight that was assigned to each feature
    by the classifier.
-   
+
 **Files in the output directory may be overwritten.**
 
 ### Label Mode
@@ -188,7 +188,7 @@ Within the provided `OUTPUT_DIR`, ALOE will create the following files:
 * *labeled.csv*: A CSV spreadsheet containing the input data, with new `predicted` and `segment` columns.
 
 **Files in the output directory may be overwritten.**
-   
+
 ### Interactive Mode
 
 In "interactive" mode, ALOE performs the following steps:
@@ -210,14 +210,14 @@ Required options:
    produced in "train" mode.
 * `--model MODEL_FILE`, `-m MODEL_FILE`: Path to an existing model file (i.e. *model.model*),
    produced in "train" mode. **This must match the provided features file.**
-   
+
 #### Output
 
 Within the provided `OUTPUT_DIR`, ALOE will create the following file:
 
-* *labeled.csv*: A CSV spreadsheet containing the messages typed by the user, with `predicted` column, 
+* *labeled.csv*: A CSV spreadsheet containing the messages typed by the user, with `predicted` column,
    indicating the predicted label for the message: `true` or `false`.
-   
+
 **Files in the output directory may be overwritten.**
 
 ## Building ALOE
@@ -270,8 +270,8 @@ Principle contributors:
 If you publish research conducted using this software, please cite the following paper:
 
 ```
-Brooks, M., Kuksenok, K., Torkildson, M. K., Perry, D., Robinson, J. J., 
-  Scott, T. J., Anicello, O., Zukowski, A.,  Harris, P., Aragon, C. R. 2013. 
+Brooks, M., Kuksenok, K., Torkildson, M. K., Perry, D., Robinson, J. J.,
+  Scott, T. J., Anicello, O., Zukowski, A.,  Harris, P., Aragon, C. R. 2013.
   Statistical Affect Detection in Collaborative Chat. Proceedings of CSCW 2013. ACM.
 ```
 
