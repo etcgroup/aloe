@@ -1,7 +1,7 @@
 ALOE
 ====
 
-ALOE stands for Affect Labeller of Expressions. The latest version is 1.0.
+ALOE stands for Affect Labeler of Expressions. The latest version is 1.0.
 
 ALOE was developed to train and test machine learning classifiers for
 automatically labeling chat messages with different emotion or affect categories.
