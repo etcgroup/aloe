@@ -16,8 +16,10 @@
  *
  * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
  */
-package etc.aloe.cscw2013;
+package etc.aloe.data;
 
+import etc.aloe.TestLabelable;
+import etc.aloe.processes.CrossValidationSplit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,11 +34,11 @@ import static org.junit.Assert.*;
  *
  * @author Michael Brooks <mjbrooks@uw.edu>
  */
-public class CrossValidationSplitImplTest {
+public class CrossValidationSplitTest {
 
     private List<TestLabelable> originalItems;
 
-    public CrossValidationSplitImplTest() {
+    public CrossValidationSplitTest() {
     }
 
     @BeforeClass
@@ -72,7 +74,7 @@ public class CrossValidationSplitImplTest {
     }
 
     /**
-     * Test of getTrainingForFold method, of class CrossValidationSplitImpl.
+     * Test of getTrainingForFold method, of class CrossValidationSplit.
      * Tests the middle fold.
      */
     @Test
@@ -86,14 +88,14 @@ public class CrossValidationSplitImplTest {
         expectedTraining.addAll(originalItems.subList(0, 4));
         expectedTraining.addAll(originalItems.subList(8, 12));
 
-        CrossValidationSplitImpl instance = new CrossValidationSplitImpl();
+        CrossValidationSplit instance = new CrossValidationSplit();
         List<TestLabelable> training = instance.getTrainingForFold(originalItems, foldIndex, numFolds);
 
         assertArrayEquals("Correct training set for middle fold", expectedTraining.toArray(), training.toArray());
     }
 
     /**
-     * Test of getTestingForFold method, of class CrossValidationSplitImpl.
+     * Test of getTestingForFold method, of class CrossValidationSplit.
      * Tests the middle fold.
      */
     @Test
@@ -105,7 +107,7 @@ public class CrossValidationSplitImplTest {
         List<TestLabelable> expectedTesting = new ArrayList<TestLabelable>();
         expectedTesting.addAll(originalItems.subList(4, 8));
 
-        CrossValidationSplitImpl instance = new CrossValidationSplitImpl();
+        CrossValidationSplit instance = new CrossValidationSplit();
 
         List<TestLabelable> testing = instance.getTestingForFold(originalItems, foldIndex, numFolds);
 
@@ -113,7 +115,7 @@ public class CrossValidationSplitImplTest {
     }
 
     /**
-     * Test of getTrainingForFold method, of class CrossValidationSplitImpl.
+     * Test of getTrainingForFold method, of class CrossValidationSplit.
      * Tests the first fold.
      */
     @Test
@@ -126,14 +128,14 @@ public class CrossValidationSplitImplTest {
         List<TestLabelable> expectedTraining = new ArrayList<TestLabelable>();
         expectedTraining.addAll(originalItems.subList(4, 12));
 
-        CrossValidationSplitImpl instance = new CrossValidationSplitImpl();
+        CrossValidationSplit instance = new CrossValidationSplit();
         List<TestLabelable> training = instance.getTrainingForFold(originalItems, foldIndex, numFolds);
 
         assertArrayEquals("Correct training set for first fold", expectedTraining.toArray(), training.toArray());
     }
 
     /**
-     * Test of getTestingForFold method, of class CrossValidationSplitImpl.
+     * Test of getTestingForFold method, of class CrossValidationSplit.
      * Tests the first fold.
      */
     @Test
@@ -146,7 +148,7 @@ public class CrossValidationSplitImplTest {
         List<TestLabelable> expectedTesting = new ArrayList<TestLabelable>();
         expectedTesting.addAll(originalItems.subList(0, 4));
 
-        CrossValidationSplitImpl instance = new CrossValidationSplitImpl();
+        CrossValidationSplit instance = new CrossValidationSplit();
 
         List<TestLabelable> testing = instance.getTestingForFold(originalItems, foldIndex, numFolds);
 
@@ -154,7 +156,7 @@ public class CrossValidationSplitImplTest {
     }
 
     /**
-     * Test of getTrainingForFold method, of class CrossValidationSplitImpl.
+     * Test of getTrainingForFold method, of class CrossValidationSplit.
      * Tests the last fold.
      */
     @Test
@@ -167,14 +169,14 @@ public class CrossValidationSplitImplTest {
         List<TestLabelable> expectedTraining = new ArrayList<TestLabelable>();
         expectedTraining.addAll(originalItems.subList(0, 8));
 
-        CrossValidationSplitImpl instance = new CrossValidationSplitImpl();
+        CrossValidationSplit instance = new CrossValidationSplit();
         List<TestLabelable> training = instance.getTrainingForFold(originalItems, foldIndex, numFolds);
 
         assertArrayEquals("Correct training set for last fold", expectedTraining.toArray(), training.toArray());
     }
 
     /**
-     * Test of getTestingForFold method, of class CrossValidationSplitImpl.
+     * Test of getTestingForFold method, of class CrossValidationSplit.
      * Tests the middle fold.
      */
     @Test
@@ -187,7 +189,7 @@ public class CrossValidationSplitImplTest {
         List<TestLabelable> expectedTesting = new ArrayList<TestLabelable>();
         expectedTesting.addAll(originalItems.subList(8, 12));
 
-        CrossValidationSplitImpl instance = new CrossValidationSplitImpl();
+        CrossValidationSplit instance = new CrossValidationSplit();
 
         List<TestLabelable> testing = instance.getTestingForFold(originalItems, foldIndex, numFolds);
 

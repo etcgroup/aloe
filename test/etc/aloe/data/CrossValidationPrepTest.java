@@ -16,8 +16,10 @@
  *
  * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
  */
-package etc.aloe.cscw2013;
+package etc.aloe.data;
 
+import etc.aloe.TestLabelable;
+import etc.aloe.processes.CrossValidationPrep;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,11 +34,11 @@ import static org.junit.Assert.*;
  *
  * @author Michael Brooks <mjbrooks@uw.edu>
  */
-public class CrossValidationPrepImplTest {
+public class CrossValidationPrepTest {
 
     private List<TestLabelable> originalItems;
 
-    public CrossValidationPrepImplTest() {
+    public CrossValidationPrepTest() {
     }
 
     @BeforeClass
@@ -72,7 +74,7 @@ public class CrossValidationPrepImplTest {
     }
 
     /**
-     * Test of randomize method, of class CrossValidationPrepImpl.
+     * Test of randomize method, of class CrossValidationPrep.
      */
     @Test
     public void testRandomize() {
@@ -83,7 +85,7 @@ public class CrossValidationPrepImplTest {
 
             List<TestLabelable> randomizedItems = new ArrayList<TestLabelable>(originalItems);
 
-            CrossValidationPrepImpl<TestLabelable> instance = new CrossValidationPrepImpl<TestLabelable>();
+            CrossValidationPrep<TestLabelable> instance = new CrossValidationPrep<TestLabelable>();
             instance.randomize(randomizedItems);
 
             assertEquals("size unchanged", originalItems.size(), randomizedItems.size());
@@ -99,7 +101,7 @@ public class CrossValidationPrepImplTest {
     }
 
     /**
-     * Test of swap method, of class CrossValidationPrepImpl.
+     * Test of swap method, of class CrossValidationPrep.
      */
     @Test
     public void testSwap() {
@@ -107,7 +109,7 @@ public class CrossValidationPrepImplTest {
 
         List<TestLabelable> items = new ArrayList<TestLabelable>(originalItems);
 
-        CrossValidationPrepImpl instance = new CrossValidationPrepImpl();
+        CrossValidationPrep instance = new CrossValidationPrep();
         instance.swap(items, 0, items.size() - 1);
 
         assertEquals("size unchanged", originalItems.size(), items.size());
@@ -116,7 +118,7 @@ public class CrossValidationPrepImplTest {
     }
 
     /**
-     * Test of stratify method, of class CrossValidationPrepImpl.
+     * Test of stratify method, of class CrossValidationPrep.
      */
     @Test
     public void testStratify() {
@@ -125,7 +127,7 @@ public class CrossValidationPrepImplTest {
         List<TestLabelable> items = new ArrayList<TestLabelable>(originalItems);
 
         int numStrats = 3;
-        CrossValidationPrepImpl instance = new CrossValidationPrepImpl();
+        CrossValidationPrep instance = new CrossValidationPrep();
         List<TestLabelable> stratified = instance.stratify(items, numStrats);
 
         assertEquals("size unchanged", originalItems.size(), stratified.size());

@@ -22,7 +22,7 @@ import com.csvreader.CsvWriter;
 import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.MessageSet;
-import etc.aloe.data.Model;
+import etc.aloe.cscw2013.WekaModel;
 import etc.aloe.filters.StringToDictionaryVector;
 import java.io.File;
 import java.io.FileInputStream;
@@ -90,8 +90,8 @@ public abstract class Aloe {
         return messages;
     }
 
-    protected Model loadModel(File inputModelFile) {
-        Model model = new Model();
+    protected WekaModel loadModel(File inputModelFile) {
+        WekaModel model = new WekaModel();
         try {
             System.out.println("Reading model from " + inputModelFile);
             InputStream inputModel = new FileInputStream(inputModelFile);
@@ -172,7 +172,7 @@ public abstract class Aloe {
         }
     }
 
-    protected void saveModel(Model model, File outputModelFile) {
+    protected void saveModel(WekaModel model, File outputModelFile) {
         try {
             OutputStream outputModel = new FileOutputStream(outputModelFile);
             model.save(outputModel);

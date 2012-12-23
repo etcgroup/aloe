@@ -16,7 +16,7 @@
  *
  * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
  */
-package etc.aloe.cscw2013;
+package etc.aloe;
 
 import etc.aloe.data.LabelableItem;
 
@@ -25,7 +25,7 @@ import etc.aloe.data.LabelableItem;
  *
  * @author Michael Brooks <mjbrooks@uw.edu>
  */
-class TestLabelable implements LabelableItem {
+public class TestLabelable implements LabelableItem {
 
     private Boolean trueLabel;
     private Boolean predictedLabel;

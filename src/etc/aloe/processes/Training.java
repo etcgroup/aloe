@@ -19,7 +19,7 @@
 package etc.aloe.processes;
 
 import etc.aloe.data.ExampleSet;
-import etc.aloe.data.Model;
+import etc.aloe.cscw2013.WekaModel;
 
 /**
  * Training creates a trained model from labeled examples.
@@ -33,5 +33,5 @@ public interface Training {
      * @param examples
      * @return
      */
-    Model train(ExampleSet examples);
+    WekaModel train(ExampleSet examples);
 }

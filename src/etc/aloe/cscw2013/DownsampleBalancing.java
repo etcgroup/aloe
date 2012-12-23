@@ -107,7 +107,8 @@ public class DownsampleBalancing implements Balancing {
 
         balanced.setSegments(resultSegments);
 
-        System.out.println("Balanced (" + positive.size() + ", " + negative.size() + ") to (" + balanced.getCountWithTrueLabel(true) + ", " + balanced.getCountWithTrueLabel(false) + ")");
+        System.out.println("Balanced (" + positive.size() + ", " + negative.size() + ") to ("
+                + balanced.getCountWithTrueLabel(true) + ", " + balanced.getCountWithTrueLabel(false) + ")");
 
         return balanced;
     }

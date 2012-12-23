@@ -20,7 +20,6 @@ package etc.aloe.cscw2013;
 
 import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.ExampleSet;
-import etc.aloe.data.Model;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -113,7 +112,7 @@ public class EvaluationImplTest {
             assertTrue(false);
         }
 
-        Model model = new Model(classifier);
+        WekaModel model = new WekaModel(classifier);
 
         ExampleSet examples = new ExampleSet(testInstances);
         EvaluationImpl instance = new EvaluationImpl();

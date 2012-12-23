@@ -21,8 +21,6 @@ package etc.aloe;
 import etc.aloe.controllers.CrossValidationController;
 import etc.aloe.controllers.TrainingController;
 import etc.aloe.cscw2013.CostTrainingImpl;
-import etc.aloe.cscw2013.CrossValidationPrepImpl;
-import etc.aloe.cscw2013.CrossValidationSplitImpl;
 import etc.aloe.cscw2013.DownsampleBalancing;
 import etc.aloe.cscw2013.EvaluationImpl;
 import etc.aloe.cscw2013.FeatureExtractionImpl;
@@ -36,8 +34,7 @@ import etc.aloe.cscw2013.UpsampleBalancing;
 import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.MessageSet;
-import etc.aloe.data.Model;
-import etc.aloe.data.Segment;
+import etc.aloe.cscw2013.WekaModel;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.Segmentation;
 import etc.aloe.processes.Training;
@@ -119,8 +116,6 @@ public class AloeTrain extends Aloe {
             crossValidationController = new CrossValidationController(this.crossValidationFolds);
 
             //Provide implementations of the needed processes
-            crossValidationController.setCrossValidationPrepImpl(new CrossValidationPrepImpl<Segment>());
-            crossValidationController.setCrossValidationSplitImpl(new CrossValidationSplitImpl<Segment>());
             crossValidationController.setFeatureGenerationImpl(new FeatureGenerationImpl(termList));
             crossValidationController.setFeatureExtractionImpl(new FeatureExtractionImpl());
             Training trainingImpl = new TrainingImpl();
@@ -190,7 +185,7 @@ public class AloeTrain extends Aloe {
             saveEvaluationReport(evalReport, outputEvaluationReportFile);
         }
         FeatureSpecification spec = trainingController.getFeatureSpecification();
-        Model model = trainingController.getModel();
+        WekaModel model = trainingController.getModel();
         List<String> topFeatures = trainingController.getTopFeatures();
         List<Map.Entry<String, Double>> featureWeights = trainingController.getFeatureWeights();
 

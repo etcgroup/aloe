@@ -28,7 +28,7 @@ import etc.aloe.cscw2013.ThresholdSegmentation;
 import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.MessageSet;
-import etc.aloe.data.Model;
+import etc.aloe.cscw2013.WekaModel;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.Segmentation;
 import java.io.File;
@@ -105,7 +105,7 @@ public class AloeLabel extends Aloe {
         //Process the input messages
         MessageSet messages = this.loadMessages(dateFormatString, inputCSVFile);
         FeatureSpecification spec = this.loadFeatureSpecification(inputFeatureSpecFile);
-        Model model = this.loadModel(inputModelFile);
+        WekaModel model = this.loadModel(inputModelFile);
 
         SegmentSet segments = segmentation.segment(messages);
 

@@ -23,7 +23,7 @@ import etc.aloe.cscw2013.FeatureExtractionImpl;
 import etc.aloe.cscw2013.LabelMappingImpl;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.MessageSet;
-import etc.aloe.data.Model;
+import etc.aloe.cscw2013.WekaModel;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import org.kohsuke.args4j.Argument;
@@ -66,7 +66,7 @@ public class AloeInteractive extends Aloe {
         interactiveController.setMappingImpl(new LabelMappingImpl());
 
         FeatureSpecification spec = this.loadFeatureSpecification(inputFeatureSpecFile);
-        Model model = this.loadModel(inputModelFile);
+        WekaModel model = this.loadModel(inputModelFile);
 
         interactiveController.setModel(model);
         interactiveController.setFeatureSpecification(spec);

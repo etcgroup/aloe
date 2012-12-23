@@ -130,7 +130,7 @@ public class ExampleSet {
      * @param classValue
      * @return
      */
-    Boolean getClassLabel(double classValue) {
+    public Boolean getClassLabel(double classValue) {
         if (Double.isNaN(classValue)) {
             return null;
         }

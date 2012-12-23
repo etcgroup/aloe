@@ -16,8 +16,10 @@
  *
  * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
  */
-package etc.aloe.data;
+package etc.aloe.cscw2013;
 
+import etc.aloe.cscw2013.WekaModel;
+import etc.aloe.data.ExampleSet;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -41,12 +43,12 @@ import weka.core.Instances;
  *
  * @author Michael Brooks <mjbrooks@uw.edu>
  */
-public class ModelTest {
+public class WekaModelTest {
 
     private Instances instances;
     private Instances testInstances;
 
-    public ModelTest() {
+    public WekaModelTest() {
     }
 
     @BeforeClass
@@ -106,7 +108,7 @@ public class ModelTest {
 
         J48 classifier = new J48();
         classifier.setNumFolds(456);
-        Model model = new Model(classifier);
+        WekaModel model = new WekaModel(classifier);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         assertTrue(model.save(out));
@@ -145,7 +147,7 @@ public class ModelTest {
         byte[] serializedStr = out.toByteArray();
 
         ByteArrayInputStream in = new ByteArrayInputStream(serializedStr);
-        Model model = new Model();
+        WekaModel model = new WekaModel();
         assertTrue(model.load(in));
         in.close();
 
@@ -169,7 +171,7 @@ public class ModelTest {
             assertTrue("Classifier could not be trained", false);
         }
 
-        Model instance = new Model(classifier);
+        WekaModel instance = new WekaModel(classifier);
 
         Boolean[] expResult = new Boolean[]{true, true, false, false};
         ExampleSet examples = new ExampleSet(testInstances);

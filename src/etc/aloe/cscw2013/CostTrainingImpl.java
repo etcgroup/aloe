@@ -19,7 +19,6 @@
 package etc.aloe.cscw2013;
 
 import etc.aloe.data.ExampleSet;
-import etc.aloe.data.Model;
 import etc.aloe.processes.Training;
 import weka.classifiers.Classifier;
 import weka.classifiers.CostMatrix;
@@ -46,7 +45,7 @@ public class CostTrainingImpl implements Training {
     }
 
     @Override
-    public Model train(ExampleSet examples) {
+    public WekaModel train(ExampleSet examples) {
         System.out.println("SMO Options: " + SMO_OPTIONS);
         SMO smo = new SMO();
         try {
@@ -85,7 +84,7 @@ public class CostTrainingImpl implements Training {
             System.err.println("Unable to train SMO.");
             System.err.println("\t" + ex.getMessage());
         }
-        Model model = new Model(classifier);
+        WekaModel model = new WekaModel(classifier);
         return model;
     }
 }

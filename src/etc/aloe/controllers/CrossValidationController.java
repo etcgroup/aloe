@@ -21,7 +21,7 @@ package etc.aloe.controllers;
 import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
-import etc.aloe.data.Model;
+import etc.aloe.cscw2013.WekaModel;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.Balancing;
@@ -48,8 +48,6 @@ public class CrossValidationController {
     private FeatureExtraction featureExtractionImpl;
     private Training trainingImpl;
     private Evaluation evaluationImpl;
-    private CrossValidationPrep<Segment> crossValidationPrepImpl;
-    private CrossValidationSplit<Segment> crossValidationSplitImpl;
     private Balancing balancingImpl;
     private double falsePositiveCost = 1;
     private double falseNegativeCost = 1;
@@ -80,7 +78,7 @@ public class CrossValidationController {
 
         //Prepare for cross validation
         System.out.println("Randomizing and stratifying segments.");
-        CrossValidationPrep<Segment> validationPrep = this.getCrossValidationPrepImpl();
+        CrossValidationPrep<Segment> validationPrep = new CrossValidationPrep<Segment>();
         validationPrep.randomize(segmentSet.getSegments());
         segmentSet.setSegments(validationPrep.stratify(segmentSet.getSegments(), folds));
 
@@ -88,7 +86,7 @@ public class CrossValidationController {
         for (int foldIndex = 0; foldIndex < this.folds; foldIndex++) {
             System.out.println("- Starting fold " + (foldIndex + 1));
             //Split the data
-            CrossValidationSplit split = this.getCrossValidationSplitImpl();
+            CrossValidationSplit<Segment> split = new CrossValidationSplit<Segment>();
 
             SegmentSet trainingSegments = new SegmentSet();
             trainingSegments.setSegments(split.getTrainingForFold(segmentSet.getSegments(), foldIndex, this.folds));
@@ -113,7 +111,7 @@ public class CrossValidationController {
             ExampleSet testingSet = extraction.extractFeatures(basicTestingExamples, spec);
 
             Training training = getTrainingImpl();
-            Model model = training.train(trainingSet);
+            WekaModel model = training.train(trainingSet);
 
             List<Boolean> predictions = model.getPredictedLabels(testingSet);
             Evaluation evaluation = getEvaluationImpl();
@@ -156,22 +154,6 @@ public class CrossValidationController {
 
     public void setEvaluationImpl(Evaluation evaluation) {
         this.evaluationImpl = evaluation;
-    }
-
-    public CrossValidationPrep<Segment> getCrossValidationPrepImpl() {
-        return this.crossValidationPrepImpl;
-    }
-
-    public void setCrossValidationPrepImpl(CrossValidationPrep<Segment> crossValidationPrep) {
-        this.crossValidationPrepImpl = crossValidationPrep;
-    }
-
-    public CrossValidationSplit<Segment> getCrossValidationSplitImpl() {
-        return this.crossValidationSplitImpl;
-    }
-
-    public void setCrossValidationSplitImpl(CrossValidationSplit<Segment> crossValidationSplit) {
-        this.crossValidationSplitImpl = crossValidationSplit;
     }
 
     public Balancing getBalancingImpl() {

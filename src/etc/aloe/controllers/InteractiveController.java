@@ -22,7 +22,7 @@ import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.Message;
 import etc.aloe.data.MessageSet;
-import etc.aloe.data.Model;
+import etc.aloe.cscw2013.WekaModel;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.FeatureExtraction;
@@ -41,7 +41,7 @@ import java.util.Scanner;
 public class InteractiveController {
 
     private FeatureSpecification featureSpecification;
-    private Model model;
+    private WekaModel model;
     private FeatureExtraction featureExtractionImpl;
     private MessageSet messages;
     private LabelMapping mappingImpl;
@@ -50,7 +50,7 @@ public class InteractiveController {
         this.featureSpecification = spec;
     }
 
-    public void setModel(Model model) {
+    public void setModel(WekaModel model) {
         this.model = model;
     }
 

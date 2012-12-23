@@ -19,6 +19,7 @@
 package etc.aloe.processes;
 
 import etc.aloe.data.LabelableItem;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,7 +28,7 @@ import java.util.List;
  *
  * @author Michael Brooks <mjbrooks@uw.edu>
  */
-public interface CrossValidationSplit<T extends LabelableItem> {
+public class CrossValidationSplit<T extends LabelableItem> {
 
     /**
      * Creates the training set for one fold of a cross-validation on the
@@ -39,7 +40,39 @@ public interface CrossValidationSplit<T extends LabelableItem> {
      * greater than 1.
      * @return the training set
      */
-    List<T> getTrainingForFold(List<T> instances, int foldIndex, int numFolds);
+    public List<T> getTrainingForFold(List<T> instances, int foldIndex, int numFolds) {
+
+        int numInstForFold, first, offset;
+
+        if (numFolds < 2) {
+            throw new IllegalArgumentException("Number of folds must be at least 2!");
+        }
+        if (numFolds > instances.size()) {
+            throw new IllegalArgumentException("Can't have more folds than instances!");
+        }
+
+
+        numInstForFold = instances.size() / numFolds;
+        if (foldIndex < instances.size() % numFolds) {
+            numInstForFold++;
+            offset = foldIndex;
+        } else {
+            offset = instances.size() % numFolds;
+        }
+
+        List<T> train = new ArrayList<T>(instances.size() - numInstForFold);
+
+        first = foldIndex * (instances.size() / numFolds) + offset;
+
+        for (int i = 0; i < first; i++) {
+            train.add(instances.get(i));
+        }
+        for (int i = first + numInstForFold; i < instances.size(); i++) {
+            train.add(instances.get(i));
+        }
+
+        return train;
+    }
 
     /**
      * Creates the test set for one fold of a cross-validation on the dataset.
@@ -50,5 +83,33 @@ public interface CrossValidationSplit<T extends LabelableItem> {
      * greater than 1.
      * @return the test set as a set
      */
-    List<T> getTestingForFold(List<T> instances, int foldIndex, int numFolds);
+    public List<T> getTestingForFold(List<T> instances, int foldIndex, int numFolds) {
+        int numInstForFold, first, offset;
+
+        if (numFolds < 2) {
+            throw new IllegalArgumentException("Number of folds must be at least 2!");
+        }
+        if (numFolds > instances.size()) {
+            throw new IllegalArgumentException("Can't have more folds than instances!");
+        }
+
+
+        numInstForFold = instances.size() / numFolds;
+        if (foldIndex < instances.size() % numFolds) {
+            numInstForFold++;
+            offset = foldIndex;
+        } else {
+            offset = instances.size() % numFolds;
+        }
+
+        List<T> test = new ArrayList<T>(numInstForFold);
+
+        first = foldIndex * (instances.size() / numFolds) + offset;
+
+        for (int i = first; i < first + numInstForFold; i++) {
+            test.add(instances.get(i));
+        }
+
+        return test;
+    }
 }

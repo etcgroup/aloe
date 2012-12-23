@@ -19,7 +19,6 @@
 package etc.aloe.cscw2013;
 
 import etc.aloe.data.ExampleSet;
-import etc.aloe.data.Model;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -99,7 +98,7 @@ public class TrainingImplTest {
         System.out.println("train");
 
         TrainingImpl instance = new TrainingImpl();
-        Model model = instance.train(new ExampleSet(instances));
+        WekaModel model = instance.train(new ExampleSet(instances));
 
         //The test here is whether the model works
         Boolean[] expResult = new Boolean[]{true, true, false, false};
