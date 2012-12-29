@@ -24,6 +24,7 @@ import etc.aloe.data.Model;
 import etc.aloe.options.InteractiveOptions;
 import etc.aloe.options.LabelOptions;
 import etc.aloe.options.ModeOptions;
+import etc.aloe.options.SingleOptions;
 import etc.aloe.options.TrainOptions;
 import etc.aloe.processes.Balancing;
 import etc.aloe.processes.Evaluation;
@@ -76,6 +77,8 @@ public interface PipelineFactory {
     LabelOptions constructLabelOptions();
 
     TrainOptions constructTrainOptions();
+
+    SingleOptions constructSingleOptions();
 
     void setOptions(ModeOptions options);
 }

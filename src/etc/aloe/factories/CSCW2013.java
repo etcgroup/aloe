@@ -38,6 +38,7 @@ import etc.aloe.filters.StringToDictionaryVector;
 import etc.aloe.options.InteractiveOptions;
 import etc.aloe.options.LabelOptions;
 import etc.aloe.options.ModeOptions;
+import etc.aloe.options.SingleOptions;
 import etc.aloe.options.TrainOptions;
 import etc.aloe.processes.Balancing;
 import etc.aloe.processes.Evaluation;
@@ -215,8 +216,11 @@ public class CSCW2013 implements PipelineFactory {
     @Override
     public TrainOptions constructTrainOptions() {
         return new TrainOptionsImpl();
+    }
 
-
+    @Override
+    public SingleOptions constructSingleOptions() {
+        return new SingleOptionsImpl();
     }
 
     @Override
@@ -225,6 +229,9 @@ public class CSCW2013 implements PipelineFactory {
     }
 
     static class InteractiveOptionsImpl extends InteractiveOptions {
+    }
+
+    static class SingleOptionsImpl extends SingleOptions {
     }
 
     static class LabelOptionsImpl extends LabelOptions {

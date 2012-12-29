@@ -18,40 +18,26 @@
  */
 package etc.aloe.options;
 
-import etc.aloe.FileNames;
 import java.io.File;
-import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 /**
- * Defines options for all label-mode runs, regardless of pipeline
- * implementation.
+ * Defines options required for all single-message labeling-mode runs,
+ * independent of pipeline implementation.
  *
  * @author Michael Brooks <mjbrooks@uw.edu>
  */
-public class LabelOptions extends ModeOptions {
+public class SingleOptions extends ModeOptions {
 
-    @Argument(index = 0, usage = "input CSV file containing messages", required = true, metaVar = "INPUT_CSV")
-    public File inputCSVFile;
-
-    @Argument(index = 1, usage = "output directory (contents may be overwritten)", required = true, metaVar = "OUTPUT_DIR")
-    private void setOutputDir(File dir) {
-        this.outputDir = dir;
-        dir.mkdir();
-
-        outputCSVFile = new File(dir, FileNames.OUTPUT_CSV_NAME);
-        outputEvaluationReportFile = new File(dir, FileNames.OUTPUT_EVALUTION_REPORT_NAME);
-    }
-    public File outputDir;
-    public File outputCSVFile;
-    public File outputEvaluationReportFile;
     @Option(name = "--model", aliases = {"-m"}, usage = "use an existing model file", required = true, metaVar = "MODEL_FILE")
     public File inputModelFile;
     @Option(name = "--features", aliases = {"-f"}, usage = "use an existing feature specification file", required = true, metaVar = "FEATURES_FILE")
     public File inputFeatureSpecFile;
+    @Option(name = "--message", aliases = {"-x"}, usage = "message text", required = true, metaVar = "MESSAGE_TEXT")
+    public String messageText;
 
     @Override
     public void printUsage() {
-        System.err.println("java -jar aloe.jar PIPELINE_CLASS label INPUT_CSV OUTPUT_DIR -m MODEL_FILE -f FEATURES_FILE [options...]");
+        System.err.println("java -jar aloe.jar PIPELINE_CLASS single -m MODEL_FILE -f FEATURES_FILE -x MESSAGE_TEXT [options...]");
     }
 }

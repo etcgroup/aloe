@@ -61,6 +61,11 @@ public class Main {
                 aloe.setPipeline(pipelineClassName);
                 options = aloe.factory.constructInteractiveOptions();
                 break;
+            case single:
+                aloe = new AloeSingle();
+                aloe.setPipeline(pipelineClassName);
+                options = aloe.factory.constructSingleOptions();
+                break;
         }
 
         CmdLineParser parser = new CmdLineParser(options);
@@ -83,7 +88,8 @@ public class Main {
 
         train,
         label,
-        interactive
+        interactive,
+        single
     }
     @Argument(index = 1, usage = "mode", required = true, metaVar = "MODE")
     private ModeName mode;
