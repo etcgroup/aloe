@@ -29,18 +29,8 @@ import org.kohsuke.args4j.Option;
  */
 public abstract class ModeOptions {
 
-    @Option(name = "--fp-cost", usage = "the cost of a false positive (default 1)", metaVar = "COST")
-    public double falsePositiveCost = 1;
-    @Option(name = "--fn-cost", usage = "the cost of a false negative (default 1)", metaVar = "COST")
-    public double falseNegativeCost = 1;
     @Option(name = "--dateformat", aliases = {"-d"}, usage = "date format string (default 'yyyy-MM-dd HH:mm:ss')", metaVar = "DATE_FORMAT")
     public String dateFormatString = "yyyy-MM-dd HH:mm:ss";
-    @Option(name = "--ignore-participants", usage = "ignore participants during segmentation")
-    public boolean ignoreParticipants = false;
-    @Option(name = "--threshold", aliases = {"-t"}, usage = "segmentation threshold in seconds (default 30)", metaVar = "SECONDS")
-    public int segmentationThresholdSeconds = 30;
-    @Option(name = "--no-segmentation", usage = "disable segmentation (each message is in its own segment)")
-    public boolean disableSegmentation = false;
 
     @Option(name = "--random", aliases = {"-r"}, usage = "random seed")
     void setRandomSeed(int randomSeed) {

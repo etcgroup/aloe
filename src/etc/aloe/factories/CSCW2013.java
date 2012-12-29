@@ -64,14 +64,38 @@ import org.kohsuke.args4j.Option;
 public class CSCW2013 implements PipelineFactory {
 
     public ModeOptions options;
+    private double falseNegativeCost = 1;
+    private double falsePositiveCost = 1;
 
     @Override
     public void initialize() {
+        if (options instanceof TrainOptionsImpl) {
+            TrainOptionsImpl trainOpts = (TrainOptionsImpl) options;
+            falseNegativeCost = trainOpts.falseNegativeCost;
+            falsePositiveCost = trainOpts.falsePositiveCost;
+        } else if (options instanceof LabelOptionsImpl) {
+            LabelOptionsImpl labelOpts = (LabelOptionsImpl) options;
+            falseNegativeCost = labelOpts.falseNegativeCost;
+            falsePositiveCost = labelOpts.falsePositiveCost;
+        } else {
+            throw new IllegalArgumentException("Options should be for Training or Labeling");
+        }
+
         //Normalize the cost factors (sum to 2)
-        double costNormFactor = 0.5 * (options.falseNegativeCost + options.falsePositiveCost);
-        options.falseNegativeCost /= costNormFactor;
-        options.falsePositiveCost /= costNormFactor;
-        System.out.println("Costs normalized to " + options.falseNegativeCost + " (FN) " + options.falsePositiveCost + " (FP).");
+        double costNormFactor = 0.5 * (falseNegativeCost + falsePositiveCost);
+        falseNegativeCost /= costNormFactor;
+        falsePositiveCost /= costNormFactor;
+        System.out.println("Costs normalized to " + falseNegativeCost + " (FN) " + falsePositiveCost + " (FP).");
+
+        if (options instanceof TrainOptionsImpl) {
+            TrainOptionsImpl trainOpts = (TrainOptionsImpl) options;
+            trainOpts.falseNegativeCost = falseNegativeCost;
+            trainOpts.falsePositiveCost = falsePositiveCost;
+        } else if (options instanceof LabelOptionsImpl) {
+            LabelOptionsImpl labelOpts = (LabelOptionsImpl) options;
+            labelOpts.falseNegativeCost = falseNegativeCost;
+            labelOpts.falsePositiveCost = falsePositiveCost;
+        }
     }
 
     protected List<String> loadTermList(File emoticonFile) {
@@ -92,7 +116,7 @@ public class CSCW2013 implements PipelineFactory {
 
     @Override
     public Evaluation constructEvaluation() {
-        return new EvaluationImpl(options.falsePositiveCost, options.falseNegativeCost);
+        return new EvaluationImpl(falsePositiveCost, falseNegativeCost);
     }
 
     @Override
@@ -129,11 +153,29 @@ public class CSCW2013 implements PipelineFactory {
 
     @Override
     public Segmentation constructSegmentation() {
-        if (options.disableSegmentation) {
+        boolean disableSegmentation = false;
+        int segmentationThresholdSeconds = 30;
+        boolean ignoreParticipants = false;
+
+        if (options instanceof TrainOptionsImpl) {
+            TrainOptionsImpl trainOpts = (TrainOptionsImpl) options;
+            disableSegmentation = trainOpts.disableSegmentation;
+            segmentationThresholdSeconds = trainOpts.segmentationThresholdSeconds;
+            ignoreParticipants = trainOpts.ignoreParticipants;
+        } else if (options instanceof LabelOptionsImpl) {
+            LabelOptionsImpl labelOpts = (LabelOptionsImpl) options;
+            disableSegmentation = labelOpts.disableSegmentation;
+            segmentationThresholdSeconds = labelOpts.segmentationThresholdSeconds;
+            ignoreParticipants = labelOpts.ignoreParticipants;
+        } else {
+            throw new IllegalArgumentException("Options should be for Training or Labeling");
+        }
+
+        if (disableSegmentation) {
             return new NullSegmentation();
         } else {
-            Segmentation segmentation = new ThresholdSegmentation(options.segmentationThresholdSeconds,
-                    !options.ignoreParticipants);
+            Segmentation segmentation = new ThresholdSegmentation(segmentationThresholdSeconds,
+                    !ignoreParticipants);
             segmentation.setSegmentResolution(new ResolutionImpl());
             return segmentation;
         }
@@ -235,10 +277,31 @@ public class CSCW2013 implements PipelineFactory {
     }
 
     static class LabelOptionsImpl extends LabelOptions {
+
+        @Option(name = "--fp-cost", usage = "the cost of a false positive (default 1)", metaVar = "COST")
+        public double falsePositiveCost = 1;
+        @Option(name = "--fn-cost", usage = "the cost of a false negative (default 1)", metaVar = "COST")
+        public double falseNegativeCost = 1;
+        @Option(name = "--ignore-participants", usage = "ignore participants during segmentation")
+        public boolean ignoreParticipants = false;
+        @Option(name = "--threshold", aliases = {"-t"}, usage = "segmentation threshold in seconds (default 30)", metaVar = "SECONDS")
+        public int segmentationThresholdSeconds = 30;
+        @Option(name = "--no-segmentation", usage = "disable segmentation (each message is in its own segment)")
+        public boolean disableSegmentation = false;
     }
 
     static class TrainOptionsImpl extends TrainOptions {
 
+        @Option(name = "--fp-cost", usage = "the cost of a false positive (default 1)", metaVar = "COST")
+        public double falsePositiveCost = 1;
+        @Option(name = "--fn-cost", usage = "the cost of a false negative (default 1)", metaVar = "COST")
+        public double falseNegativeCost = 1;
+        @Option(name = "--ignore-participants", usage = "ignore participants during segmentation")
+        public boolean ignoreParticipants = false;
+        @Option(name = "--threshold", aliases = {"-t"}, usage = "segmentation threshold in seconds (default 30)", metaVar = "SECONDS")
+        public int segmentationThresholdSeconds = 30;
+        @Option(name = "--no-segmentation", usage = "disable segmentation (each message is in its own segment)")
+        public boolean disableSegmentation = false;
         @Option(name = "--upsample", aliases = {"-us"}, usage = "upsample the minority class in training sets to match the cost ratio")
         private boolean useUpsampling = false;
         @Option(name = "--reweight", aliases = {"-rw"}, usage = "reweight the training data")

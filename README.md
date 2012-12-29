@@ -5,7 +5,7 @@ ALOE stands for Affect Labeler of Expressions. The latest version is 1.0.
 
 ALOE was developed to train and test machine learning classifiers for
 automatically labeling chat messages with different emotion or affect categories.
-The software runs in one of three modes:
+The software runs in one of four modes:
 
 * In "train" mode, ALOE takes a list of messages with ground truth labels
 (either "true" or "false") and trains a classifier to predict the labels
@@ -14,6 +14,9 @@ for unseen messages.
 * In "label" mode, ALOE uses a classifier it has already trained, to
 generate predicted labels for a set of unlabeled messages, or to evaluate
 the classifier on a labeled "test" set.
+
+* In "single" mode, ALOE uses a previous classifier to label a single message
+provided as a command line argument ("-x" option).
 
 * Finally, ALOE features an "interactive" mode where a trained model is used
 to predict the label for messages that you type while the program runs.
@@ -30,10 +33,14 @@ These three modes are explained in detail below.
 The basic usage for ALOE is the following:
 
 ```
-java -jar aloe.jar MODE OPTIONS...
+java -jar aloe.jar PIPELINE_CLASS MODE OPTIONS...
 ```
 
-The `MODE` can be one of "train", "label", or "interactive". Each mode has
+The `PIPELINE_CLASS` must be the name of a class in the `etc.aloe.factories` package,
+which implements `etc.aloe.factories.PipelineFactory`. Currently, the only
+available class is `CSCW2013`.
+
+The `MODE` can be one of "train", "label", "single", or "interactive". Each mode has
 its own required and optional arguments, detailed below.
 
 The following are some common options that can be used in any of the three modes:
@@ -44,11 +51,13 @@ The following are some common options that can be used in any of the three modes
 
 * `--random N`, `-r N`: Random seed for the Random instance shared across ALOE.
 
-* `--ignore-participants`: Ignore participants during segmentation.
-  By default, messages from different participants are teased apart into different segments.
-* `--threshold SECONDS`, `-t SECONDS`: Segmentation threshold in seconds (default 30).
-   A gap between messages of more than this threshold starts a new segment.
-* `--no-segmentation`: Disable segmentation (each message is in its own segment).
+### Pipeline Classes
+
+Specific pipeline classes define additional options, depending on the mode.
+The available pipelines are listed here. Basic options available (or required)
+regardless of the pipeline selected are in the following sections.
+
+* [CSCW2013](docs/cscw2013.md) - segmentation by time threshold, mixed feature set, and linear SVM classification.
 
 ### Data Format
 
@@ -109,7 +118,7 @@ In "train" mode, ALOE performs the following tasks:
 #### Usage
 
 ```
-java -jar aloe.jar train INPUT_CSV OUTPUT_DIR [options...]
+java -jar aloe.jar PIPELINE_CLASS train INPUT_CSV OUTPUT_DIR [options...]
 ```
 
 `INPUT_CSV` is a required path to a comma-separated value (CSV) file with labeled message data (format described above).
@@ -117,23 +126,6 @@ The input file must minimally contain columns for `id`, `participant`, `time`, `
 
 `OUTPUT_DIR` is a required path to a directory where ALOE's output files will be created. The output files that ALOE produces
 in "train" mode are described below. **Files in this directory may be overwritten.**
-
-Use custom costs:
-* `--fn-cost COST`: Set a cost for false negatives (default 1).
-* `--fp-cost COST`: Set a cost for false positives (default 1).
-
-Adjust the class frequencies:
-* `--downsample`, `-ds`: Use downsampling in the training data on the majority class to suit the cost ratio.
-* `--upsample`, `-us`: Use upsampling in the training data on the minority class in to suit the cost ratio.
-* `--balance-test-set`: Apply the selected balancing algorithm to the test set as well as the training set.
-
-Use Weka's CostSensitiveClassifier:
-* `--reweight`, `-rw`: Reweight the training data to suit the cost ratio.
-* `--min-cost`: Train a classifier that uses the min-cost criterion.
-
-Other options:
-* `--emoticons FILE`, `-e FILE`: Custom emoticon dictionary file (default *emoticons.txt*).
-* `--folds FOLDS`, `-k FOLDS`: Set the number of cross-validation folds (default 10, use 0 to disable cross validation).
 
 #### Output
 
@@ -162,7 +154,7 @@ In "label" mode, ALOE performs the following steps:
 #### Usage
 
 ```
-java -jar aloe.jar label INPUT_CSV OUTPUT_DIR -m MODEL_FILE -f FEATURES_FILE [options...]
+java -jar aloe.jar PIPELINE_CLASS label INPUT_CSV OUTPUT_DIR -m MODEL_FILE -f FEATURES_FILE [options...]
 ```
 
 `INPUT_CSV` is a required path to a comma-separated value (CSV) file with message data (format described above).
@@ -178,10 +170,6 @@ Required options:
 * `--model MODEL_FILE`, `-m MODEL_FILE`: Path to an existing model file (i.e. *model.model*),
    produced in "train" mode. **This must match the provided features file.**
 
-Use custom costs:
-* `--fn-cost COST`: Set a cost for false negatives (default 1).
-* `--fp-cost COST`: Set a cost for false positives (default 1).
-
 #### Output
 
 Within the provided `OUTPUT_DIR`, ALOE will create the following files:
@@ -191,6 +179,30 @@ Within the provided `OUTPUT_DIR`, ALOE will create the following files:
 * *labeled.csv*: A CSV spreadsheet containing the input data, with new `predicted` and `segment` columns.
 
 **Files in the output directory may be overwritten.**
+
+### Single Mode
+
+In "single" mode, ALOE performs the following steps:
+1. Read a trained model and feature specification from files.
+2. Label the message provided via the "-x" argument and classify using the loaded model.
+3. Print the label.
+
+#### Usage
+
+```
+java -jar aloe.jar PIPELINE_CLASS single -m MODEL_FILE -f FEATURES_FILE -x MESSAGE_TEXT [options...]
+```
+
+Required options:
+* `--features FEATURES_FILE`, `-f FEATURES_FILE`: Path to an existing feature specification file (i.e. *features.spec*),
+   produced in "train" mode.
+* `--model MODEL_FILE`, `-m MODEL_FILE`: Path to an existing model file (i.e. *model.model*),
+   produced in "train" mode. **This must match the provided features file.**
+* `--message MESSAGE_TEXT`, `-x MESSAGE_TEXT`: Text of message to label.
+
+#### Output
+
+ALOE simply prints `true` if the model predicted that the label applies, and `false` otherwise.
 
 ### Interactive Mode
 
@@ -202,7 +214,7 @@ In "interactive" mode, ALOE performs the following steps:
 #### Usage
 
 ```
-java -jar aloe.jar interactive OUTPUT_DIR -m MODEL_FILE -f FEATURES_FILE [options...]
+java -jar aloe.jar PIPELINE_CLASS interactive OUTPUT_DIR -m MODEL_FILE -f FEATURES_FILE [options...]
 ```
 
 `OUTPUT_DIR` is a required path to a directory where ALOE's output files will be created. The output files that ALOE produces
