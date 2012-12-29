@@ -57,7 +57,7 @@ Specific pipeline classes define additional options, depending on the mode.
 The available pipelines are listed here. Basic options available (or required)
 regardless of the pipeline selected are in the following sections.
 
-* [CSCW2013](docs/cscw2013.md) - segmentation by time threshold, mixed feature set, and linear SVM classification.
+* [CSCW2013](http://github.com/etcgroup/aloe/blob/master/docs/cscw2013.md) - segmentation by time threshold, mixed feature set, and linear SVM classification.
 
 ### Data Format
 
