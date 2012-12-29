@@ -18,10 +18,10 @@
  */
 package etc.aloe.processes;
 
+import etc.aloe.data.ExampleSet;
+import etc.aloe.data.Model;
 import java.util.List;
 import java.util.Map;
-import weka.classifiers.Classifier;
-import weka.core.Instances;
 
 /**
  * Process for extracting feature weight information.
@@ -30,7 +30,7 @@ import weka.core.Instances;
  */
 public interface FeatureWeighting {
 
-    List<String> getTopFeatures(Instances dataFormat, Classifier classifier, int topN);
+    List<String> getTopFeatures(ExampleSet trainingExamples, Model model, int topN);
 
-    List<Map.Entry<String, Double>> getFeatureWeights(Instances dataFormat, Classifier classifier);
+    List<Map.Entry<String, Double>> getFeatureWeights(ExampleSet trainingExamples, Model model);
 }

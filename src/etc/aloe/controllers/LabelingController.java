@@ -21,7 +21,7 @@ package etc.aloe.controllers;
 import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
-import etc.aloe.cscw2013.WekaModel;
+import etc.aloe.data.Model;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.Evaluation;
 import etc.aloe.processes.FeatureExtraction;
@@ -38,7 +38,7 @@ public class LabelingController {
     private SegmentSet segmentSet;
     private FeatureSpecification featureSpecification;
     private EvaluationReport evaluationReport;
-    private WekaModel model;
+    private Model model;
     private FeatureExtraction featureExtractionImpl;
     private LabelMapping mappingImpl;
     private Evaluation evaluationImpl;
@@ -51,7 +51,7 @@ public class LabelingController {
         this.featureSpecification = spec;
     }
 
-    public void setModel(WekaModel model) {
+    public void setModel(Model model) {
         this.model = model;
     }
 

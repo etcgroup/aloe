@@ -21,7 +21,7 @@ package etc.aloe.controllers;
 import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
-import etc.aloe.cscw2013.WekaModel;
+import etc.aloe.data.Model;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.Balancing;
@@ -41,7 +41,7 @@ import java.util.List;
  */
 public class CrossValidationController {
 
-    private final int folds;
+    private int folds;
     private EvaluationReport evaluationReport;
     private SegmentSet segmentSet;
     private FeatureGeneration featureGenerationImpl;
@@ -61,7 +61,10 @@ public class CrossValidationController {
         this.segmentSet = segments;
     }
 
-    public CrossValidationController(int folds) {
+    public CrossValidationController() {
+    }
+
+    public void setFolds(int folds) {
         this.folds = folds;
     }
 
@@ -72,55 +75,60 @@ public class CrossValidationController {
 
     public void run() {
 
-        System.out.println("== " + this.folds + "-Fold Cross Validation ==");
+        if (this.folds > 0) {
 
-        segmentSet = segmentSet.onlyLabeled();
+            System.out.println("== " + this.folds + "-Fold Cross Validation ==");
 
-        //Prepare for cross validation
-        System.out.println("Randomizing and stratifying segments.");
-        CrossValidationPrep<Segment> validationPrep = new CrossValidationPrep<Segment>();
-        validationPrep.randomize(segmentSet.getSegments());
-        segmentSet.setSegments(validationPrep.stratify(segmentSet.getSegments(), folds));
+            segmentSet = segmentSet.onlyLabeled();
 
-        evaluationReport = new EvaluationReport(falsePositiveCost, falseNegativeCost);
-        for (int foldIndex = 0; foldIndex < this.folds; foldIndex++) {
-            System.out.println("- Starting fold " + (foldIndex + 1));
-            //Split the data
-            CrossValidationSplit<Segment> split = new CrossValidationSplit<Segment>();
+            //Prepare for cross validation
+            System.out.println("Randomizing and stratifying segments.");
+            CrossValidationPrep<Segment> validationPrep = new CrossValidationPrep<Segment>();
+            validationPrep.randomize(segmentSet.getSegments());
+            segmentSet.setSegments(validationPrep.stratify(segmentSet.getSegments(), folds));
 
-            SegmentSet trainingSegments = new SegmentSet();
-            trainingSegments.setSegments(split.getTrainingForFold(segmentSet.getSegments(), foldIndex, this.folds));
-            if (getBalancingImpl() != null) {
-                trainingSegments = getBalancingImpl().balance(trainingSegments);
+            evaluationReport = new EvaluationReport(falsePositiveCost, falseNegativeCost);
+            for (int foldIndex = 0; foldIndex < this.folds; foldIndex++) {
+                System.out.println("- Starting fold " + (foldIndex + 1));
+                //Split the data
+                CrossValidationSplit<Segment> split = new CrossValidationSplit<Segment>();
+
+                SegmentSet trainingSegments = new SegmentSet();
+                trainingSegments.setSegments(split.getTrainingForFold(segmentSet.getSegments(), foldIndex, this.folds));
+                if (getBalancingImpl() != null) {
+                    trainingSegments = getBalancingImpl().balance(trainingSegments);
+                }
+
+                SegmentSet testingSegments = new SegmentSet();
+                testingSegments.setSegments(split.getTestingForFold(segmentSet.getSegments(), foldIndex, this.folds));
+                if (getBalancingImpl() != null && balanceTestSet) {
+                    testingSegments = getBalancingImpl().balance(testingSegments);
+                }
+
+                ExampleSet basicTrainingExamples = trainingSegments.getBasicExamples();
+                ExampleSet basicTestingExamples = testingSegments.getBasicExamples();
+
+                FeatureGeneration generation = getFeatureGenerationImpl();
+                FeatureSpecification spec = generation.generateFeatures(basicTrainingExamples);
+
+                FeatureExtraction extraction = getFeatureExtractionImpl();
+                ExampleSet trainingSet = extraction.extractFeatures(basicTrainingExamples, spec);
+                ExampleSet testingSet = extraction.extractFeatures(basicTestingExamples, spec);
+
+                Training training = getTrainingImpl();
+                Model model = training.train(trainingSet);
+
+                List<Boolean> predictions = model.getPredictedLabels(testingSet);
+                Evaluation evaluation = getEvaluationImpl();
+                EvaluationReport report = evaluation.evaluate(predictions, testingSet);
+
+                evaluationReport.addPartial(report);
+                int numCorrect = report.getTrueNegativeCount() + report.getTruePositiveCount();
+                System.out.println("- Fold " + (foldIndex + 1) + " completed (" + numCorrect + "/" + testingSet.size() + " correct).");
+                System.out.println();
             }
-
-            SegmentSet testingSegments = new SegmentSet();
-            testingSegments.setSegments(split.getTestingForFold(segmentSet.getSegments(), foldIndex, this.folds));
-            if (getBalancingImpl() != null && balanceTestSet) {
-                testingSegments = getBalancingImpl().balance(testingSegments);
-            }
-
-            ExampleSet basicTrainingExamples = trainingSegments.getBasicExamples();
-            ExampleSet basicTestingExamples = testingSegments.getBasicExamples();
-
-            FeatureGeneration generation = getFeatureGenerationImpl();
-            FeatureSpecification spec = generation.generateFeatures(basicTrainingExamples);
-
-            FeatureExtraction extraction = getFeatureExtractionImpl();
-            ExampleSet trainingSet = extraction.extractFeatures(basicTrainingExamples, spec);
-            ExampleSet testingSet = extraction.extractFeatures(basicTestingExamples, spec);
-
-            Training training = getTrainingImpl();
-            WekaModel model = training.train(trainingSet);
-
-            List<Boolean> predictions = model.getPredictedLabels(testingSet);
-            Evaluation evaluation = getEvaluationImpl();
-            EvaluationReport report = evaluation.evaluate(predictions, testingSet);
-
-            evaluationReport.addPartial(report);
-            int numCorrect = report.getTrueNegativeCount() + report.getTruePositiveCount();
-            System.out.println("- Fold " + (foldIndex + 1) + " completed (" + numCorrect + "/" + testingSet.size() + " correct).");
-            System.out.println();
+        } else {
+            System.out.println("== Skipping Cross Validation ==");
         }
     }
 

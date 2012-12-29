@@ -20,7 +20,7 @@ package etc.aloe.controllers;
 
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
-import etc.aloe.cscw2013.WekaModel;
+import etc.aloe.data.Model;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.Balancing;
 import etc.aloe.processes.FeatureExtraction;
@@ -39,7 +39,7 @@ public class TrainingController {
 
     private SegmentSet segmentSet;
     private FeatureSpecification featureSpecification;
-    private WekaModel model;
+    private Model model;
     private FeatureExtraction featureExtractionImpl;
     private Training trainingImpl;
     private FeatureGeneration featureGenerationImpl;
@@ -73,7 +73,7 @@ public class TrainingController {
         return this.featureSpecification;
     }
 
-    public WekaModel getModel() {
+    public Model getModel() {
         return this.model;
     }
 
@@ -101,8 +101,8 @@ public class TrainingController {
         this.model = training.train(examples);
 
         //Get the top features
-        this.topFeatures = getFeatureWeightingImpl().getTopFeatures(examples.getInstances(), this.model.getClassifier(), NUM_TOP_FEATURES);
-        this.featureWeights = getFeatureWeightingImpl().getFeatureWeights(examples.getInstances(), this.model.getClassifier());
+        this.topFeatures = getFeatureWeightingImpl().getTopFeatures(examples, this.model, NUM_TOP_FEATURES);
+        this.featureWeights = getFeatureWeightingImpl().getFeatureWeights(examples, this.model);
     }
 
     public FeatureExtraction getFeatureExtractionImpl() {

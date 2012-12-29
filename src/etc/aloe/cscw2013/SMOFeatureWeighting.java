@@ -18,6 +18,8 @@
  */
 package etc.aloe.cscw2013;
 
+import etc.aloe.data.ExampleSet;
+import etc.aloe.data.Model;
 import etc.aloe.processes.FeatureWeighting;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +27,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import weka.classifiers.Classifier;
 import weka.classifiers.functions.SMO;
 import weka.classifiers.meta.CostSensitiveClassifier;
@@ -41,9 +44,9 @@ import weka.core.Instances;
 public class SMOFeatureWeighting implements FeatureWeighting {
 
     @Override
-    public List<String> getTopFeatures(Instances dataFormat, Classifier classifier, int topN) {
-        List<Map.Entry<String, Double>> weights = getFeatureWeights(dataFormat, classifier);
+    public List<String> getTopFeatures(ExampleSet trainingExamples, Model model, int topN) {
 
+        List<Map.Entry<String, Double>> weights = getFeatureWeights(trainingExamples, model);
         Collections.sort(weights, new Comparator<Map.Entry<String, Double>>() {
             @Override
             public int compare(Map.Entry<String, Double> o1, Map.Entry<String, Double> o2) {
@@ -62,7 +65,11 @@ public class SMOFeatureWeighting implements FeatureWeighting {
     }
 
     @Override
-    public List<Map.Entry<String, Double>> getFeatureWeights(Instances dataFormat, Classifier classifier) {
+    public List<Entry<String, Double>> getFeatureWeights(ExampleSet trainingExamples, Model model) {
+        WekaModel wekaModel = (WekaModel) model;
+        Classifier classifier = wekaModel.getClassifier();
+        Instances dataFormat = trainingExamples.getInstances();
+
         SMO smo = getSMO(classifier);
 
         double[] sparseWeights = smo.sparseWeights()[0][1];

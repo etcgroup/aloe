@@ -22,8 +22,9 @@ import com.csvreader.CsvWriter;
 import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.MessageSet;
-import etc.aloe.cscw2013.WekaModel;
-import etc.aloe.filters.StringToDictionaryVector;
+import etc.aloe.data.Model;
+import etc.aloe.factories.PipelineFactory;
+import etc.aloe.options.ModeOptions;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,11 +35,8 @@ import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import org.kohsuke.args4j.Option;
 
 /**
  * Main Aloe controller superclass. Provides many useful IO methods used by the
@@ -48,26 +46,30 @@ import org.kohsuke.args4j.Option;
  */
 public abstract class Aloe {
 
-    /**
-     * True if segmentation should separate messages by participant.
-     */
-    @Option(name = "--ignore-participants", usage = "ignore participants during segmentation")
-    protected boolean ignoreParticipants = false;
-    @Option(name = "--threshold", aliases = {"-t"}, usage = "segmentation threshold in seconds (default 30)", metaVar = "SECONDS")
-    protected int segmentationThresholdSeconds = 30;
-    @Option(name = "--dateformat", aliases = {"-d"}, usage = "date format string (default 'yyyy-MM-dd HH:mm:ss')", metaVar = "DATE_FORMAT")
-    protected String dateFormatString = "yyyy-MM-dd HH:mm:ss";
-    @Option(name = "--no-segmentation", usage = "disable segmentation (each message is in its own segment)")
-    protected boolean disableSegmentation = false;
+    protected PipelineFactory factory = null;
 
-    @Option(name = "--random", aliases = {"-r"}, usage = "random seed")
-    void setRandomSeed(int randomSeed) {
-        RandomProvider.setRandom(new Random(randomSeed));
+    protected void setPipeline(String className) {
+        className = "etc.aloe.factories." + className;
+        try {
+            this.factory = (PipelineFactory) Class.forName(className).newInstance();
+        } catch (InstantiationException ex) {
+            System.err.println("Error instantiating pipeline class " + className);
+            System.err.println(ex.getMessage());
+            System.exit(1);
+        } catch (IllegalAccessException ex) {
+            System.err.println("Cannot access constructor for class " + className);
+            System.err.println(ex.getMessage());
+            System.exit(1);
+        } catch (ClassNotFoundException ex) {
+            System.err.println("Cannot find pipeline class " + className);
+            System.err.println(ex.getMessage());
+            System.exit(1);
+        }
     }
 
-    protected MessageSet loadMessages(String dateFormatString, File inputCSVFile) {
+    protected MessageSet loadMessages(File inputCSVFile) {
         MessageSet messages = new MessageSet();
-        messages.setDateFormat(new SimpleDateFormat(dateFormatString));
+        messages.setDateFormat(factory.constructDateFormat());
 
         try {
             System.out.println("Reading messages from " + inputCSVFile);
@@ -90,8 +92,8 @@ public abstract class Aloe {
         return messages;
     }
 
-    protected WekaModel loadModel(File inputModelFile) {
-        WekaModel model = new WekaModel();
+    protected Model loadModel(File inputModelFile) {
+        Model model = factory.constructModel();
         try {
             System.out.println("Reading model from " + inputModelFile);
             InputStream inputModel = new FileInputStream(inputModelFile);
@@ -172,7 +174,7 @@ public abstract class Aloe {
         }
     }
 
-    protected void saveModel(WekaModel model, File outputModelFile) {
+    protected void saveModel(Model model, File outputModelFile) {
         try {
             OutputStream outputModel = new FileOutputStream(outputModelFile);
             model.save(outputModel);
@@ -182,17 +184,6 @@ public abstract class Aloe {
             System.err.println("Error saving model to " + outputModelFile);
             System.err.println("\t" + e.getMessage());
         }
-    }
-
-    protected List<String> loadTermList(File emoticonFile) {
-        try {
-            return StringToDictionaryVector.readDictionaryFile(emoticonFile);
-        } catch (FileNotFoundException ex) {
-            System.err.println("Unable to read emoticon dictionary file " + emoticonFile);
-            System.err.println("\t" + ex.getMessage());
-            System.exit(1);
-        }
-        return null;
     }
 
     protected void saveTopFeatures(List<String> topFeatures, File outputTopFeaturesFile) {
@@ -232,7 +223,5 @@ public abstract class Aloe {
         }
     }
 
-    public abstract void printUsage();
-
-    public abstract void run();
+    public abstract void run(ModeOptions options);
 }
