@@ -37,8 +37,6 @@ import java.util.Date;
  */
 public class AloeSingle extends Aloe {
 
-    InteractiveOptions options;
-
     @Override
     public void run(ModeOptions modeOptions) {
         System.out.println("== Preparation ==");
