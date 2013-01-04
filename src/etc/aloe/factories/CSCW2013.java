@@ -77,8 +77,6 @@ public class CSCW2013 implements PipelineFactory {
             LabelOptionsImpl labelOpts = (LabelOptionsImpl) options;
             falseNegativeCost = labelOpts.falseNegativeCost;
             falsePositiveCost = labelOpts.falsePositiveCost;
-        } else {
-            throw new IllegalArgumentException("Options should be for Training or Labeling");
         }
 
         //Normalize the cost factors (sum to 2)
