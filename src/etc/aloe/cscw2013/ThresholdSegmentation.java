@@ -63,7 +63,7 @@ public class ThresholdSegmentation implements Segmentation {
      * @param original
      * @return
      */
-    private List<Message> sortByParticipant(List<Message> original) {
+    protected List<Message> sortByParticipant(List<Message> original) {
         List<Message> messages = new ArrayList<Message>(original);
 
         Collections.sort(messages, new Comparator<Message>() {
@@ -82,7 +82,7 @@ public class ThresholdSegmentation implements Segmentation {
      * @param original
      * @return
      */
-    private List<Message> sortByTime(List<Message> original) {
+    protected List<Message> sortByTime(List<Message> original) {
         List<Message> messages = new ArrayList<Message>(original);
 
         Collections.sort(messages, new Comparator<Message>() {

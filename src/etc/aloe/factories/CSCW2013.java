@@ -77,8 +77,6 @@ public class CSCW2013 implements PipelineFactory {
             LabelOptionsImpl labelOpts = (LabelOptionsImpl) options;
             falseNegativeCost = labelOpts.falseNegativeCost;
             falsePositiveCost = labelOpts.falsePositiveCost;
-        } else {
-            throw new IllegalArgumentException("Options should be for Training or Labeling");
         }
 
         //Normalize the cost factors (sum to 2)
@@ -303,18 +301,18 @@ public class CSCW2013 implements PipelineFactory {
         @Option(name = "--no-segmentation", usage = "disable segmentation (each message is in its own segment)")
         public boolean disableSegmentation = false;
         @Option(name = "--upsample", aliases = {"-us"}, usage = "upsample the minority class in training sets to match the cost ratio")
-        private boolean useUpsampling = false;
+        public boolean useUpsampling = false;
         @Option(name = "--reweight", aliases = {"-rw"}, usage = "reweight the training data")
-        private boolean useReweighting = false;
+        public boolean useReweighting = false;
         @Option(name = "--min-cost", usage = "train a classifier that uses the min-cost criterion")
-        private boolean useMinCost = false;
+        public boolean useMinCost = false;
         @Option(name = "--downsample", aliases = {"-ds"}, usage = "downsample the majority class in training sets to match the cost ratio")
-        private boolean useDownsampling = false;
+        public boolean useDownsampling = false;
         @Option(name = "--folds", aliases = {"-k"}, usage = "number of cross-validation folds (default 10, 0 to disable cross validation)", metaVar = "FOLDS")
-        private int crossValidationFolds = 10;
+        public int crossValidationFolds = 10;
         @Option(name = "--balance-test-set", usage = "apply balancing to the test set as well as the training set")
-        private boolean balanceTestSet = false;
+        public boolean balanceTestSet = false;
         @Option(name = "--emoticons", aliases = {"-e"}, usage = "emoticon dictionary file (default emoticons.txt)")
-        private File emoticonFile = new File("emoticons.txt");
+        public File emoticonFile = new File("emoticons.txt");
     }
 }
