@@ -39,13 +39,13 @@ import etc.aloe.processes.Segmentation;
  */
 public class AloeLabel extends Aloe {
 
-    LabelOptions options;
-
     @Override
     public void run(ModeOptions modeOptions) {
         System.out.println("== Preparation ==");
 
         if (modeOptions instanceof LabelOptions) {
+            LabelOptions options = (LabelOptions) modeOptions;
+
             //Set up the segmentation
             Segmentation segmentation = factory.constructSegmentation();
 

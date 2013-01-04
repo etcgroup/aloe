@@ -252,13 +252,13 @@ Your project directory should (minimally) have the following structure:
 * src/
 * lib/
     * nblibraries.properties
-    * weka.jar
-    * javacsv.jar
-    * args4j-2.0.21.jar
+    * [weka.jar](http://prdownloads.sourceforge.net/weka/weka-3-7-7.zip)
+    * [javacsv.jar](http://sourceforge.net/projects/javacsv/files/JavaCsv/JavaCsv%202.1/javacsv2.1.zip)
+    * [args4j-2.0.21.jar](http://maven.jenkins-ci.org/content/repositories/releases/args4j/args4j/2.0.21/args4j-2.0.21.jar)
     * junit_4/
-        * junit-4.10.jar
+        * junit-4.10.jar (included with NetBeans)
     * CopyLibs/
-        * org-netbeans-modules-java-j2seproject-copylibstask.jar
+        * org-netbeans-modules-java-j2seproject-copylibstask.jar (included with NetBeans)
 
 The `nblibraries.properties` file may also define links to source code for these libraries,
 but this shouldn't be required to build.

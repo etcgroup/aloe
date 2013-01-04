@@ -32,13 +32,13 @@ import etc.aloe.options.ModeOptions;
  */
 public class AloeInteractive extends Aloe {
 
-    InteractiveOptions options;
-
     @Override
     public void run(ModeOptions modeOptions) {
         System.out.println("== Preparation ==");
 
         if (modeOptions instanceof InteractiveOptions) {
+            InteractiveOptions options = (InteractiveOptions) modeOptions;
+
             InteractiveController interactiveController = new InteractiveController();
 
             //Provide implementations for the controller
