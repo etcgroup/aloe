@@ -35,7 +35,7 @@ public class TrainOptions extends ModeOptions {
     @Argument(index = 1, usage = "output directory (contents may be overwritten)", required = true, metaVar = "OUTPUT_DIR")
     private void setOutputDir(File dir) {
         this.outputDir = dir;
-        dir.mkdir();
+        dir.mkdirs();
 
         outputEvaluationReportFile = new File(dir, FileNames.OUTPUT_EVALUTION_REPORT_NAME);
         outputFeatureSpecFile = new File(dir, FileNames.OUTPUT_FEATURE_SPEC_NAME);
