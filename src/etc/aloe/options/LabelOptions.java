@@ -37,7 +37,7 @@ public class LabelOptions extends ModeOptions {
     @Argument(index = 1, usage = "output directory (contents may be overwritten)", required = true, metaVar = "OUTPUT_DIR")
     private void setOutputDir(File dir) {
         this.outputDir = dir;
-        dir.mkdir();
+        dir.mkdirs();
 
         outputCSVFile = new File(dir, FileNames.OUTPUT_CSV_NAME);
         outputEvaluationReportFile = new File(dir, FileNames.OUTPUT_EVALUTION_REPORT_NAME);
