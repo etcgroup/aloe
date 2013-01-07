@@ -22,11 +22,10 @@ import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.Model;
+import etc.aloe.data.Predictions;
 import etc.aloe.data.SegmentSet;
-import etc.aloe.processes.Evaluation;
 import etc.aloe.processes.FeatureExtraction;
 import etc.aloe.processes.LabelMapping;
-import java.util.List;
 
 /**
  * Class for using an existing model to label unlabeled data.
@@ -41,7 +40,8 @@ public class LabelingController {
     private Model model;
     private FeatureExtraction featureExtractionImpl;
     private LabelMapping mappingImpl;
-    private Evaluation evaluationImpl;
+    private double falsePositiveCost = 1;
+    private double falseNegativeCost = 1;
 
     public void setSegmentSet(SegmentSet segments) {
         this.segmentSet = segments;
@@ -68,15 +68,20 @@ public class LabelingController {
         ExampleSet examples = extraction.extractFeatures(segmentSet.getBasicExamples(), featureSpecification);
 
         //Predict the labels
-        List<Boolean> predictedLabels = this.model.getPredictedLabels(examples);
+        Predictions predictions = this.model.getPredictions(examples);
 
         //Map back onto messages
         LabelMapping mapping = getMappingImpl();
-        mapping.map(predictedLabels, segmentSet);
+        mapping.map(predictions, segmentSet);
 
         //Evaluate the model on labeled examples
-        Evaluation evaluation = getEvaluationImpl();
-        this.evaluationReport = evaluation.evaluate(predictedLabels, examples);
+        this.evaluationReport = new EvaluationReport("Unlabeled Data", falsePositiveCost, falseNegativeCost);
+        this.evaluationReport.addPredictions(predictions);
+    }
+
+    public void setCosts(double falsePositiveCost, double falseNegativeCost) {
+        this.falsePositiveCost = falsePositiveCost;
+        this.falseNegativeCost = falseNegativeCost;
     }
 
     public FeatureExtraction getFeatureExtractionImpl() {
@@ -93,13 +98,5 @@ public class LabelingController {
 
     public void setMappingImpl(LabelMapping mapping) {
         this.mappingImpl = mapping;
-    }
-
-    public Evaluation getEvaluationImpl() {
-        return this.evaluationImpl;
-    }
-
-    public void setEvaluationImpl(Evaluation evaluation) {
-        this.evaluationImpl = evaluation;
     }
 }
