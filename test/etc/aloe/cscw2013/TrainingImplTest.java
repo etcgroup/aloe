@@ -19,6 +19,7 @@
 package etc.aloe.cscw2013;
 
 import etc.aloe.data.ExampleSet;
+import etc.aloe.data.Predictions;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -36,6 +37,7 @@ import weka.core.Instances;
  * @author Michael Brooks <mjbrooks@uw.edu>
  */
 public class TrainingImplTest {
+
     private Instances testInstances;
     private Instances instances;
 
@@ -52,7 +54,7 @@ public class TrainingImplTest {
 
     @Before
     public void setUp() {
-                ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+        ArrayList<Attribute> attributes = new ArrayList<Attribute>();
 
         attributes.add(new Attribute("id"));
 
@@ -102,8 +104,17 @@ public class TrainingImplTest {
 
         //The test here is whether the model works
         Boolean[] expResult = new Boolean[]{true, true, false, false};
+        Double[] expConfidence = new Double[]{1.0, 1.0, 0.0, 0.0};
+
         ExampleSet examples = new ExampleSet(testInstances);
-        List<Boolean> result = model.getPredictedLabels(examples);
-        assertArrayEquals(expResult, result.toArray());
+        Predictions predictions = model.getPredictions(examples);
+
+        assertEquals(expResult.length, predictions.size());
+
+        for (int i = 0; i < expResult.length; i++) {
+            assertEquals(expResult[i], predictions.getPredictedLabel(i));
+            assertEquals(expConfidence[i], predictions.getPredictionConfidence(i));
+            assertEquals(testInstances.get(i).classValue(), predictions.getTrueLabel(i) ? 1.0 : 0.0, 0.0);
+        }
     }
 }

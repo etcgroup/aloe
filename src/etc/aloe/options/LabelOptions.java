@@ -41,14 +41,19 @@ public class LabelOptions extends ModeOptions {
 
         outputCSVFile = new File(dir, FileNames.OUTPUT_CSV_NAME);
         outputEvaluationReportFile = new File(dir, FileNames.OUTPUT_EVALUTION_REPORT_NAME);
+        outputROCFile = new File(dir, "roc" + FileNames.ROC_SUFFIX);
     }
     public File outputDir;
     public File outputCSVFile;
     public File outputEvaluationReportFile;
+    public File outputROCFile;
     @Option(name = "--model", aliases = {"-m"}, usage = "use an existing model file", required = true, metaVar = "MODEL_FILE")
     public File inputModelFile;
     @Option(name = "--features", aliases = {"-f"}, usage = "use an existing feature specification file", required = true, metaVar = "FEATURES_FILE")
     public File inputFeatureSpecFile;
+
+    @Option(name = "--roc", usage = "Export data for ROC curves")
+    public boolean makeROC;
 
     @Override
     public void printUsage() {

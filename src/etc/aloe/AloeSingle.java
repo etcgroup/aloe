@@ -59,9 +59,7 @@ public class AloeSingle extends Aloe {
             segmentSet.add(segment);
 
             LabelingController labelingController = new LabelingController();
-            labelingController.setFeatureExtractionImpl(factory.constructFeatureExtraction());
-            labelingController.setEvaluationImpl(factory.constructEvaluation());
-            labelingController.setMappingImpl(factory.constructLabelMapping());
+            factory.configureLabeling(labelingController);
 
             FeatureSpecification spec = this.loadFeatureSpecification(options.inputFeatureSpecFile);
             Model model = this.loadModel(options.inputModelFile);

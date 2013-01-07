@@ -19,6 +19,7 @@
 package etc.aloe.cscw2013;
 
 import etc.aloe.data.Message;
+import etc.aloe.data.Predictions;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.LabelMapping;
@@ -33,14 +34,18 @@ import java.util.List;
 public class LabelMappingImpl implements LabelMapping {
 
     @Override
-    public void map(List<Boolean> predictedLabels, SegmentSet segments) {
+    public void map(Predictions predictions, SegmentSet segments) {
         for (int s = 0; s < segments.size(); s++) {
             Segment segment = segments.get(s);
-            Boolean predictedLabel = predictedLabels.get(s);
+            Boolean predictedLabel = predictions.getPredictedLabel(s);
+            Double confidence = predictions.getPredictionConfidence(s);
 
             segment.setPredictedLabel(predictedLabel);
+            segment.setPredictionConfidence(confidence);
+
             for (Message message : segment.getMessages()) {
                 message.setPredictedLabel(predictedLabel);
+                message.setPredictionConfidence(confidence);
             }
         }
     }

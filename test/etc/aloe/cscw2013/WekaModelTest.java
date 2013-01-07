@@ -20,6 +20,7 @@ package etc.aloe.cscw2013;
 
 import etc.aloe.cscw2013.WekaModel;
 import etc.aloe.data.ExampleSet;
+import etc.aloe.data.Predictions;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -174,9 +175,18 @@ public class WekaModelTest {
         WekaModel instance = new WekaModel(classifier);
 
         Boolean[] expResult = new Boolean[]{true, true, false, false};
+        Double[] expConfidence = new Double[]{1.0, 1.0, 0.0, 0.0};
+
         ExampleSet examples = new ExampleSet(testInstances);
 
-        List<Boolean> result = instance.getPredictedLabels(examples);
-        assertArrayEquals(expResult, result.toArray());
+        Predictions predictions = instance.getPredictions(examples);
+
+        assertEquals(expResult.length, predictions.size());
+
+        for (int i = 0; i < expResult.length; i++) {
+            assertEquals(expResult[i], predictions.getPredictedLabel(i));
+            assertEquals(expConfidence[i], predictions.getPredictionConfidence(i));
+            assertEquals(testInstances.get(i).classValue(), predictions.getTrueLabel(i) ? 1.0 : 0.0, 0.0);
+        }
     }
 }

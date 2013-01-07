@@ -24,10 +24,12 @@ import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.MessageSet;
 import etc.aloe.data.Model;
+import etc.aloe.data.ROC;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.options.ModeOptions;
 import etc.aloe.options.TrainOptions;
 import etc.aloe.processes.Segmentation;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -87,6 +89,17 @@ public class AloeTrain extends Aloe {
                 System.out.println("Aggregated cross-validation report:");
                 System.out.println(evalReport);
                 System.out.println("---------");
+
+                if (options.makeROC) {
+                    options.outputROCDir.mkdirs();
+                    
+                    for (ROC roc : evalReport.getROCs()) {
+                        String fileName = roc.getName() + FileNames.ROC_SUFFIX;
+                        File outputFile = new File(options.outputROCDir, fileName);
+
+                        saveROC(roc, outputFile);
+                    }
+                }
             }
 
         } else {

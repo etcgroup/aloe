@@ -127,6 +127,8 @@ The input file must minimally contain columns for `id`, `participant`, `time`, `
 `OUTPUT_DIR` is a required path to a directory where ALOE's output files will be created. The output files that ALOE produces
 in "train" mode are described below. **Files in this directory may be overwritten.**
 
+Optional: Use the `--roc` option to generate a ROC curve for each fold of cross validation.
+
 #### Output
 
 Within the provided `OUTPUT_DIR`, ALOE will create the following files:
@@ -139,6 +141,7 @@ Within the provided `OUTPUT_DIR`, ALOE will create the following files:
 * *top_features.txt*: A human-readable ranked list of the top 10 most highly-weighted features.
 * *feature_weights.csv*: A CSV spreadsheet listing the weight that was assigned to each feature
    by the classifier.
+* *rocs/Fold N.csv*: If `--roc` was used, CSV spreadsheets containing the ROC curves for each fold of cross validation.
 
 **Files in the output directory may be overwritten.**
 
@@ -170,6 +173,8 @@ Required options:
 * `--model MODEL_FILE`, `-m MODEL_FILE`: Path to an existing model file (i.e. *model.model*),
    produced in "train" mode. **This must match the provided features file.**
 
+Optional: Use the `--roc` option to generate a ROC curve from any data that was already labeled.
+
 #### Output
 
 Within the provided `OUTPUT_DIR`, ALOE will create the following files:
@@ -177,6 +182,7 @@ Within the provided `OUTPUT_DIR`, ALOE will create the following files:
 * *report.txt*: A human-readable report about cross-validation results. This is only produced if some of the input
    data had ground-truth labels provided.
 * *labeled.csv*: A CSV spreadsheet containing the input data, with new `predicted` and `segment` columns.
+* *roc.csv*: A CSV spreadsheet containing the ROC curve, if `--roc` was used.
 
 **Files in the output directory may be overwritten.**
 
