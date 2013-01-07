@@ -23,6 +23,7 @@ import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.MessageSet;
 import etc.aloe.data.Model;
+import etc.aloe.data.ROC;
 import etc.aloe.factories.PipelineFactory;
 import etc.aloe.options.ModeOptions;
 import java.io.File;
@@ -158,6 +159,18 @@ public abstract class Aloe {
             System.out.println("Saved evaluation to " + outputEvaluationReportFile);
         } catch (IOException e) {
             System.err.println("Error saving evaluation report to " + outputEvaluationReportFile);
+            System.err.println("\t" + e.getMessage());
+        }
+    }
+
+    protected void saveROC(ROC roc, File outputROCFile) {
+        try {
+            OutputStream outputRoc = new FileOutputStream(outputROCFile);
+            roc.save(outputRoc);
+            outputRoc.close();
+            System.out.println("Saved ROC " + roc.getName() + " to " + outputROCFile);
+        } catch (IOException e) {
+            System.err.println("Error saving ROC " + roc.getName() + " to " + outputROCFile);
             System.err.println("\t" + e.getMessage());
         }
     }

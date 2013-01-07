@@ -20,14 +20,13 @@ package etc.aloe.cscw2013;
 
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.Model;
+import etc.aloe.data.Predictions;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import weka.classifiers.Classifier;
 
 /**
@@ -76,20 +75,26 @@ public class WekaModel implements Model {
      * @return
      */
     @Override
-    public List<Boolean> getPredictedLabels(ExampleSet examples) {
-        List<Boolean> results = new ArrayList<Boolean>();
+    public Predictions getPredictions(ExampleSet examples) {
+        Predictions predictions = new Predictions();
 
         for (int i = 0; i < examples.size(); i++) {
             try {
+                Boolean trueLabel = examples.getTrueLabel(i);
+
                 double classValue = classifier.classifyInstance(examples.get(i));
-                Boolean label = examples.getClassLabel(classValue);
-                results.add(label);
+                Boolean predictedLabel = examples.getClassLabel(classValue);
+
+                double[] distribution = classifier.distributionForInstance(examples.get(i));
+                Double confidence = examples.getConfidence(distribution);
+                predictions.add(predictedLabel, confidence, trueLabel);
+
             } catch (Exception ex) {
                 System.err.println("Classification error on instance " + i);
             }
         }
 
-        return results;
+        return predictions;
     }
 
     /**

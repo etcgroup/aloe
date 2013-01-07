@@ -29,6 +29,7 @@ public class TestLabelable implements LabelableItem {
 
     private Boolean trueLabel;
     private Boolean predictedLabel;
+    private Double predictionConfidence;
     private final String name;
 
     public TestLabelable(String name, Boolean trueLabel, Boolean predictedLabel) {
@@ -69,5 +70,20 @@ public class TestLabelable implements LabelableItem {
     @Override
     public boolean hasPredictedLabel() {
         return predictedLabel != null;
+    }
+
+    @Override
+    public Double getPredictionConfidence() {
+        return predictionConfidence;
+    }
+
+    @Override
+    public void setPredictionConfidence(Double predictionConfidence) {
+        this.predictionConfidence = predictionConfidence;
+    }
+
+    @Override
+    public boolean hasPredictionConfidence() {
+        return predictionConfidence != null;
     }
 }

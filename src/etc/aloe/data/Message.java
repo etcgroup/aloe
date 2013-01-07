@@ -33,6 +33,7 @@ public class Message implements Comparable<Message>, LabelableItem {
     private final String message;
     private Boolean trueLabel;
     private Boolean predictedLabel = null;
+    private Double predictionConfidence = Double.NaN;
     private int segmentId = -1;
 
     /**
@@ -184,6 +185,21 @@ public class Message implements Comparable<Message>, LabelableItem {
     @Override
     public boolean hasPredictedLabel() {
         return predictedLabel != null;
+    }
+
+    @Override
+    public Double getPredictionConfidence() {
+        return predictionConfidence;
+    }
+
+    @Override
+    public void setPredictionConfidence(Double predictionConfidence) {
+        this.predictionConfidence = predictionConfidence;
+    }
+
+    @Override
+    public boolean hasPredictionConfidence() {
+        return predictionConfidence != null;
     }
 
     @Override

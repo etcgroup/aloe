@@ -141,6 +141,15 @@ public class ExampleSet {
     }
 
     /**
+     * Gets the confidence in the positive class.
+     * @param classDistribution
+     * @return
+     */
+    public Double getConfidence(double[] classDistribution) {
+        return classDistribution[1];
+    }
+
+    /**
      * Set the underlying instances.
      *
      * @param instances

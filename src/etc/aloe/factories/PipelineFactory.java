@@ -19,6 +19,7 @@
 package etc.aloe.factories;
 
 import etc.aloe.controllers.CrossValidationController;
+import etc.aloe.controllers.LabelingController;
 import etc.aloe.controllers.TrainingController;
 import etc.aloe.data.Model;
 import etc.aloe.options.InteractiveOptions;
@@ -27,7 +28,6 @@ import etc.aloe.options.ModeOptions;
 import etc.aloe.options.SingleOptions;
 import etc.aloe.options.TrainOptions;
 import etc.aloe.processes.Balancing;
-import etc.aloe.processes.Evaluation;
 import etc.aloe.processes.FeatureExtraction;
 import etc.aloe.processes.FeatureGeneration;
 import etc.aloe.processes.FeatureWeighting;
@@ -48,8 +48,6 @@ public interface PipelineFactory {
 
     Balancing constructBalancing();
 
-    Evaluation constructEvaluation();
-
     FeatureExtraction constructFeatureExtraction();
 
     FeatureGeneration constructFeatureGeneration();
@@ -69,6 +67,8 @@ public interface PipelineFactory {
     void configureCrossValidation(CrossValidationController crossValidationController);
 
     void configureTraining(TrainingController trainingController);
+
+    void configureLabeling(LabelingController labelingController);
 
     DateFormat constructDateFormat();
 

@@ -58,7 +58,7 @@ public class EvaluationReportTest {
     public void testSave() throws Exception {
         System.out.println("save");
 
-        EvaluationReport eval = new EvaluationReport();
+        EvaluationReport eval = new EvaluationReport("testing");
         eval.setTrueNegativeCount(2);
         eval.setTruePositiveCount(1);
         eval.setFalseNegativeCount(3);
@@ -85,13 +85,13 @@ public class EvaluationReportTest {
     @Test
     public void testAddPartial() {
         System.out.println("addPartial");
-        EvaluationReport partial = new EvaluationReport();
+        EvaluationReport partial = new EvaluationReport("report 1");
         partial.setTrueNegativeCount(1);
         partial.setTruePositiveCount(2);
         partial.setFalseNegativeCount(3);
         partial.setFalsePositiveCount(4);
 
-        EvaluationReport instance = new EvaluationReport();
+        EvaluationReport instance = new EvaluationReport("report 2");
         instance.addPartial(partial);
 
         assertEquals(partial.getTrueNegativeCount(), instance.getTrueNegativeCount());
@@ -115,17 +115,26 @@ public class EvaluationReportTest {
     public void testRecordPrediction() {
         System.out.println("recordPrediction");
 
-        EvaluationReport instance = new EvaluationReport();
-        instance.recordPrediction(true, true);
+        Predictions predictions = new Predictions();
+
+        predictions.add(true, 1.0, true);
+        EvaluationReport instance = new EvaluationReport("report 1");
+        instance.addPredictions(predictions);
         assertEquals(1, instance.getTruePositiveCount());
 
-        instance.recordPrediction(true, false);
+        predictions.add(true, 1.0, false);
+        instance = new EvaluationReport("report 1");
+        instance.addPredictions(predictions);
         assertEquals(1, instance.getFalsePositiveCount());
 
-        instance.recordPrediction(false, false);
+        predictions.add(false, 0.0, false);
+        instance = new EvaluationReport("report 1");
+        instance.addPredictions(predictions);
         assertEquals(1, instance.getTrueNegativeCount());
 
-        instance.recordPrediction(false, true);
+        predictions.add(false, 0.0, true);
+        instance = new EvaluationReport("report 1");
+        instance.addPredictions(predictions);
         assertEquals(1, instance.getFalseNegativeCount());
 
     }
@@ -136,7 +145,7 @@ public class EvaluationReportTest {
     @Test
     public void testGetRecall() {
         System.out.println("getRecall");
-        EvaluationReport instance = new EvaluationReport();
+        EvaluationReport instance = new EvaluationReport("test");
         instance.setTrueNegativeCount(1);
         instance.setTruePositiveCount(2);
         instance.setFalseNegativeCount(3);
@@ -153,7 +162,7 @@ public class EvaluationReportTest {
     @Test
     public void testGetPrecision() {
         System.out.println("getPrecision");
-        EvaluationReport instance = new EvaluationReport();
+        EvaluationReport instance = new EvaluationReport("test");
         instance.setTrueNegativeCount(1);
         instance.setTruePositiveCount(2);
         instance.setFalseNegativeCount(3);
@@ -170,7 +179,7 @@ public class EvaluationReportTest {
     @Test
     public void testGetFMeasure() {
         System.out.println("getFMeasure");
-        EvaluationReport instance = new EvaluationReport();
+        EvaluationReport instance = new EvaluationReport("test");
         instance.setTrueNegativeCount(1);
         instance.setTruePositiveCount(2);
         instance.setFalseNegativeCount(3);
@@ -187,7 +196,7 @@ public class EvaluationReportTest {
     @Test
     public void testGetPercentCorrect() {
         System.out.println("getPercentCorrect");
-        EvaluationReport instance = new EvaluationReport();
+        EvaluationReport instance = new EvaluationReport("test");
         instance.setTrueNegativeCount(1);
         instance.setTruePositiveCount(2);
         instance.setFalseNegativeCount(3);
@@ -204,7 +213,7 @@ public class EvaluationReportTest {
     @Test
     public void testGetPercentIncorrect() {
         System.out.println("getPercentIncorrect");
-        EvaluationReport instance = new EvaluationReport();
+        EvaluationReport instance = new EvaluationReport("test");
         instance.setTrueNegativeCount(1);
         instance.setTruePositiveCount(2);
         instance.setFalseNegativeCount(3);
@@ -221,7 +230,7 @@ public class EvaluationReportTest {
     @Test
     public void testGetTotalCost_equalCost() {
         System.out.println("getTotalCost without equal cost");
-        EvaluationReport instance = new EvaluationReport();
+        EvaluationReport instance = new EvaluationReport("test");
         instance.setTrueNegativeCount(1);
         instance.setTruePositiveCount(2);
         instance.setFalseNegativeCount(3);
@@ -238,7 +247,7 @@ public class EvaluationReportTest {
     @Test
     public void testGetTotalCost_unequalCost() {
         System.out.println("getTotalCost with unequal cost");
-        EvaluationReport instance = new EvaluationReport(1, 2);
+        EvaluationReport instance = new EvaluationReport("test", 1, 2);
         instance.setTrueNegativeCount(1);
         instance.setTruePositiveCount(2);
         instance.setFalseNegativeCount(3);
@@ -255,7 +264,7 @@ public class EvaluationReportTest {
     @Test
     public void testGetAverageCost_equalCost() {
         System.out.println("getAverageCost with equal cost");
-        EvaluationReport instance = new EvaluationReport();
+        EvaluationReport instance = new EvaluationReport("test");
         instance.setTrueNegativeCount(1);
         instance.setTruePositiveCount(2);
         instance.setFalseNegativeCount(3);
@@ -272,7 +281,7 @@ public class EvaluationReportTest {
     @Test
     public void testGetAverageCost_unequalCost() {
         System.out.println("getAverageCost with unequal cost");
-        EvaluationReport instance = new EvaluationReport(1, 2);
+        EvaluationReport instance = new EvaluationReport("test", 1, 2);
         instance.setTrueNegativeCount(1);
         instance.setTruePositiveCount(2);
         instance.setFalseNegativeCount(3);
@@ -289,7 +298,7 @@ public class EvaluationReportTest {
     @Test
     public void testGetTotalExamples() {
         System.out.println("getTotalExamples");
-        EvaluationReport instance = new EvaluationReport();
+        EvaluationReport instance = new EvaluationReport("test");
         instance.setTrueNegativeCount(1);
         instance.setTruePositiveCount(2);
         instance.setFalseNegativeCount(3);

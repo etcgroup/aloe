@@ -19,10 +19,9 @@
 package etc.aloe.factories;
 
 import etc.aloe.controllers.CrossValidationController;
+import etc.aloe.controllers.LabelingController;
 import etc.aloe.controllers.TrainingController;
-import etc.aloe.cscw2013.CostTrainingImpl;
 import etc.aloe.cscw2013.DownsampleBalancing;
-import etc.aloe.cscw2013.EvaluationImpl;
 import etc.aloe.cscw2013.FeatureExtractionImpl;
 import etc.aloe.cscw2013.FeatureGenerationImpl;
 import etc.aloe.cscw2013.LabelMappingImpl;
@@ -41,7 +40,6 @@ import etc.aloe.options.ModeOptions;
 import etc.aloe.options.SingleOptions;
 import etc.aloe.options.TrainOptions;
 import etc.aloe.processes.Balancing;
-import etc.aloe.processes.Evaluation;
 import etc.aloe.processes.FeatureExtraction;
 import etc.aloe.processes.FeatureGeneration;
 import etc.aloe.processes.FeatureWeighting;
@@ -64,11 +62,12 @@ import org.kohsuke.args4j.Option;
 public class CSCW2013 implements PipelineFactory {
 
     public ModeOptions options;
-    private double falseNegativeCost = 1;
-    private double falsePositiveCost = 1;
 
     @Override
     public void initialize() {
+        double falseNegativeCost = 1;
+        double falsePositiveCost = 1;
+
         if (options instanceof TrainOptionsImpl) {
             TrainOptionsImpl trainOpts = (TrainOptionsImpl) options;
             falseNegativeCost = trainOpts.falseNegativeCost;
@@ -110,11 +109,6 @@ public class CSCW2013 implements PipelineFactory {
     @Override
     public Model constructModel() {
         return new WekaModel();
-    }
-
-    @Override
-    public Evaluation constructEvaluation() {
-        return new EvaluationImpl(falsePositiveCost, falseNegativeCost);
     }
 
     @Override
@@ -183,10 +177,19 @@ public class CSCW2013 implements PipelineFactory {
     public Training constructTraining() {
         if (options instanceof TrainOptionsImpl) {
             TrainOptionsImpl trainOpts = (TrainOptionsImpl) options;
-            Training trainingImpl = new TrainingImpl();
-            if (trainOpts.useMinCost || trainOpts.useReweighting) {
-                trainingImpl = new CostTrainingImpl(trainOpts.falsePositiveCost, trainOpts.falseNegativeCost, trainOpts.useReweighting);
+
+            TrainingImpl trainingImpl = new TrainingImpl();
+            if (trainOpts.makeROC) {
+                trainingImpl.setBuildLogisticModel(true);
             }
+
+            if (trainOpts.useMinCost || trainOpts.useReweighting) {
+                trainingImpl.setUseCostTraining(true);
+                trainingImpl.setFalsePositiveCost(trainOpts.falsePositiveCost);
+                trainingImpl.setFalseNegativeCost(trainOpts.falseNegativeCost);
+                trainingImpl.setUseReweighting(trainOpts.useReweighting);
+            }
+
             return trainingImpl;
         } else {
             throw new IllegalArgumentException("Options must be for Training");
@@ -210,6 +213,21 @@ public class CSCW2013 implements PipelineFactory {
     }
 
     @Override
+    public void configureLabeling(LabelingController labelingController) {
+        if (options instanceof LabelOptions) {
+            LabelOptionsImpl labelOpts = (LabelOptionsImpl) options;
+
+            //Options
+            labelingController.setCosts(labelOpts.falsePositiveCost, labelOpts.falseNegativeCost);
+
+            //Implementations
+            labelingController.setFeatureExtractionImpl(constructFeatureExtraction());
+            labelingController.setMappingImpl(constructLabelMapping());
+
+        }
+    }
+
+    @Override
     public void configureCrossValidation(CrossValidationController crossValidationController) {
         if (options instanceof TrainOptionsImpl) {
             TrainOptionsImpl trainOpts = (TrainOptionsImpl) options;
@@ -217,7 +235,6 @@ public class CSCW2013 implements PipelineFactory {
             crossValidationController.setFeatureGenerationImpl(this.constructFeatureGeneration());
             crossValidationController.setFeatureExtractionImpl(this.constructFeatureExtraction());
             crossValidationController.setTrainingImpl(this.constructTraining());
-            crossValidationController.setEvaluationImpl(this.constructEvaluation());
             crossValidationController.setBalancingImpl(this.constructBalancing());
 
             //Options

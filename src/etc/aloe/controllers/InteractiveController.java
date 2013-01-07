@@ -23,6 +23,7 @@ import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.Message;
 import etc.aloe.data.MessageSet;
 import etc.aloe.data.Model;
+import etc.aloe.data.Predictions;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.FeatureExtraction;
@@ -90,11 +91,11 @@ public class InteractiveController {
             ExampleSet examples = extraction.extractFeatures(segmentSet.getBasicExamples(), featureSpecification);
 
             //Predict the labels
-            List<Boolean> predictedLabels = this.model.getPredictedLabels(examples);
+            Predictions prediction = this.model.getPredictions(examples);
 
             //Map back onto messages
             LabelMapping mapping = getMappingImpl();
-            mapping.map(predictedLabels, segmentSet);
+            mapping.map(prediction, segmentSet);
 
 
             //Print out the label
