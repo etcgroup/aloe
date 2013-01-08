@@ -20,11 +20,6 @@ package etc.aloe.wt2013;
 
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
-import etc.aloe.filters.PronounRegexFilter;
-import etc.aloe.filters.PunctuationRegexFilter;
-import etc.aloe.filters.SimpleStringToWordVector;
-import etc.aloe.filters.SpecialRegexFilter;
-import etc.aloe.filters.SpellingRegexFilter;
 import etc.aloe.filters.StringToDictionaryVector;
 import etc.aloe.processes.FeatureGeneration;
 import java.util.List;
@@ -99,7 +94,7 @@ public class FrenchFeatureGenerationImpl implements FeatureGeneration {
      * @throws Exception
      */
     private Filter getSpecialWordsFilter(ExampleSet examples) throws Exception {
-        SpecialRegexFilter filter = new SpecialRegexFilter(ExampleSet.MESSAGE_ATTR_NAME);
+        FrSpecialRegexFilter filter = new FrSpecialRegexFilter(ExampleSet.MESSAGE_ATTR_NAME);
 
         filter.setInputFormat(examples.getInstances());
         Instances filtered = Filter.useFilter(examples.getInstances(), filter);
@@ -116,7 +111,7 @@ public class FrenchFeatureGenerationImpl implements FeatureGeneration {
      * @throws Exception
      */
     private Filter getSpellingFilter(ExampleSet examples) throws Exception {
-        SpellingRegexFilter filter = new SpellingRegexFilter(ExampleSet.MESSAGE_ATTR_NAME);
+        FrSpellingRegexFilter filter = new FrSpellingRegexFilter(ExampleSet.MESSAGE_ATTR_NAME);
         filter.setCountRegexLengths(COUNT_REGEX_LENGTHS);
 
         filter.setInputFormat(examples.getInstances());
@@ -134,7 +129,7 @@ public class FrenchFeatureGenerationImpl implements FeatureGeneration {
      * @throws Exception
      */
     private Filter getPunctuationFilter(ExampleSet examples) throws Exception {
-        PunctuationRegexFilter filter = new PunctuationRegexFilter(ExampleSet.MESSAGE_ATTR_NAME);
+        FrPunctuationRegexFilter filter = new FrPunctuationRegexFilter(ExampleSet.MESSAGE_ATTR_NAME);
         filter.setCountRegexLengths(COUNT_REGEX_LENGTHS);
 
         filter.setInputFormat(examples.getInstances());
@@ -152,7 +147,7 @@ public class FrenchFeatureGenerationImpl implements FeatureGeneration {
      * @throws Exception
      */
     private Filter getPronounsFilter(ExampleSet examples) throws Exception {
-        PronounRegexFilter filter = new PronounRegexFilter(ExampleSet.MESSAGE_ATTR_NAME);
+        FrPronounRegexFilter filter = new FrPronounRegexFilter(ExampleSet.MESSAGE_ATTR_NAME);
 
         filter.setInputFormat(examples.getInstances());
         Instances filtered = Filter.useFilter(examples.getInstances(), filter);
@@ -194,7 +189,7 @@ public class FrenchFeatureGenerationImpl implements FeatureGeneration {
      * @throws Exception
      */
     private Filter getBagOfWordsFilter(ExampleSet examples) throws Exception {
-        SimpleStringToWordVector filter = new SimpleStringToWordVector();
+        FrSimpleStringToWordVector filter = new FrSimpleStringToWordVector();
         filter.setAttributeNamePrefix(BAG_OF_WORDS_FEATURE_PREFIX);
         filter.setStringAttributeName(ExampleSet.MESSAGE_ATTR_NAME);
 
@@ -205,7 +200,7 @@ public class FrenchFeatureGenerationImpl implements FeatureGeneration {
         filter.setLowerCaseTokens(true);
 
         //use stemming and remove "nonsense"
-        filter.setStemmer(new SimpleStringToWordVector.NoNonsenseStemmer(true));
+        filter.setStemmer(new FrSimpleStringToWordVector.NoNonsenseStemmer(true));
 
         filter.setTFTransform(true);
         filter.setIDFTransform(true);
