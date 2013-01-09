@@ -19,7 +19,10 @@
 
 package etc.aloe.factories;
 
+import etc.aloe.cscw2013.NullSegmentation;
+import etc.aloe.cscw2013.ResolutionImpl;
 import etc.aloe.processes.Segmentation;
+import etc.aloe.wt2013.HeatSegmentation;
 
 /**
  * An experimental pipeline that segments chat data based on the 
@@ -36,7 +39,32 @@ public class HeatSegmentationPipeline extends CSCW2013 {
      */
     @Override
     public Segmentation constructSegmentation() {
-        //The most reliable method ever.
-        return null;  
+        //PROTO 
+        boolean disableSegmentation = false;
+        int segmentationThresholdSeconds = 30;
+        boolean ignoreParticipants = false;
+
+        if (options instanceof TrainOptionsImpl) {
+            TrainOptionsImpl trainOpts = (TrainOptionsImpl) options;
+            disableSegmentation = trainOpts.disableSegmentation;
+            segmentationThresholdSeconds = trainOpts.segmentationThresholdSeconds;
+            ignoreParticipants = trainOpts.ignoreParticipants;
+        } else if (options instanceof LabelOptionsImpl) {
+            LabelOptionsImpl labelOpts = (LabelOptionsImpl) options;
+            disableSegmentation = labelOpts.disableSegmentation;
+            segmentationThresholdSeconds = labelOpts.segmentationThresholdSeconds;
+            ignoreParticipants = labelOpts.ignoreParticipants;
+        } else {
+            throw new IllegalArgumentException("Options should be for Training or Labeling");
+        }
+
+        if (disableSegmentation) {
+            return new NullSegmentation();
+        } else {
+            Segmentation segmentation = new HeatSegmentation(segmentationThresholdSeconds,
+                    !ignoreParticipants);
+            segmentation.setSegmentResolution(new ResolutionImpl());
+            return segmentation;
+        }
     }
 }
