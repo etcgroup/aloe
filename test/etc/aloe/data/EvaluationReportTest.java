@@ -117,22 +117,22 @@ public class EvaluationReportTest {
 
         Predictions predictions = new Predictions();
 
-        predictions.add(true, 1.0, true);
+        predictions.add(Label.TRUE(), 1.0, Label.TRUE());
         EvaluationReport instance = new EvaluationReport("report 1");
         instance.addPredictions(predictions);
         assertEquals(1, instance.getTruePositiveCount());
 
-        predictions.add(true, 1.0, false);
+        predictions.add(Label.TRUE(), 1.0, Label.FALSE());
         instance = new EvaluationReport("report 1");
         instance.addPredictions(predictions);
         assertEquals(1, instance.getFalsePositiveCount());
 
-        predictions.add(false, 0.0, false);
+        predictions.add(Label.FALSE(), 0.0, Label.FALSE());
         instance = new EvaluationReport("report 1");
         instance.addPredictions(predictions);
         assertEquals(1, instance.getTrueNegativeCount());
 
-        predictions.add(false, 0.0, true);
+        predictions.add(Label.FALSE(), 0.0, Label.TRUE());
         instance = new EvaluationReport("report 1");
         instance.addPredictions(predictions);
         assertEquals(1, instance.getFalseNegativeCount());

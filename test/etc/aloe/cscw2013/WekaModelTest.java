@@ -18,7 +18,6 @@
  */
 package etc.aloe.cscw2013;
 
-import etc.aloe.cscw2013.WekaModel;
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.Predictions;
 import java.io.ByteArrayInputStream;
@@ -27,7 +26,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -186,7 +184,7 @@ public class WekaModelTest {
         for (int i = 0; i < expResult.length; i++) {
             assertEquals(expResult[i], predictions.getPredictedLabel(i));
             assertEquals(expConfidence[i], predictions.getPredictionConfidence(i));
-            assertEquals(testInstances.get(i).classValue(), predictions.getTrueLabel(i) ? 1.0 : 0.0, 0.0);
+            assertEquals(testInstances.get(i).classValue(), predictions.getTrueLabel(i).getNumber(), 0.0);
         }
     }
 }

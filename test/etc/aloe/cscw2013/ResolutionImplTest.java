@@ -18,6 +18,7 @@
  */
 package etc.aloe.cscw2013;
 
+import etc.aloe.data.Label;
 import etc.aloe.data.Message;
 import etc.aloe.data.Segment;
 import java.util.Date;
@@ -60,14 +61,14 @@ public class ResolutionImplTest {
     public void testResolveLabel_AllNegative() {
         System.out.println("resolveLabel_AllNegative");
         Segment segment = new Segment();
-        segment.add(new Message(1, new Date(), "Alice", "Hello", Boolean.FALSE));
-        segment.add(new Message(2, new Date(), "Bob", "Hello", Boolean.FALSE));
-        segment.add(new Message(3, new Date(), "Alice", "How are you", Boolean.FALSE));
-        segment.add(new Message(4, new Date(), "Bob", "Very well thanks", Boolean.FALSE));
-        segment.add(new Message(5, new Date(), "Alice", "Yay", Boolean.FALSE));
+        segment.add(new Message(1, new Date(), "Alice", "Hello", Label.FALSE()));
+        segment.add(new Message(2, new Date(), "Bob", "Hello", Label.FALSE()));
+        segment.add(new Message(3, new Date(), "Alice", "How are you", Label.FALSE()));
+        segment.add(new Message(4, new Date(), "Bob", "Very well thanks", Label.FALSE()));
+        segment.add(new Message(5, new Date(), "Alice", "Yay", Label.FALSE()));
 
         ResolutionImpl instance = new ResolutionImpl();
-        Boolean expResult = Boolean.FALSE;
+        Boolean expResult = Label.FALSE();
         Boolean result = instance.resolveLabel(segment);
         assertEquals(expResult, result);
     }
@@ -79,14 +80,14 @@ public class ResolutionImplTest {
     public void testResolveLabel_AllPositive() {
         System.out.println("resolveLabel_AllPositive");
         Segment segment = new Segment();
-        segment.add(new Message(1, new Date(), "Alice", "Hello", Boolean.TRUE));
-        segment.add(new Message(2, new Date(), "Bob", "Hello", Boolean.TRUE));
-        segment.add(new Message(3, new Date(), "Alice", "How are you", Boolean.TRUE));
-        segment.add(new Message(4, new Date(), "Bob", "Very well thanks", Boolean.TRUE));
-        segment.add(new Message(5, new Date(), "Alice", "Yay", Boolean.TRUE));
+        segment.add(new Message(1, new Date(), "Alice", "Hello", Label.TRUE()));
+        segment.add(new Message(2, new Date(), "Bob", "Hello", Label.TRUE()));
+        segment.add(new Message(3, new Date(), "Alice", "How are you", Label.TRUE()));
+        segment.add(new Message(4, new Date(), "Bob", "Very well thanks", Label.TRUE()));
+        segment.add(new Message(5, new Date(), "Alice", "Yay", Label.TRUE()));
 
         ResolutionImpl instance = new ResolutionImpl();
-        Boolean expResult = Boolean.TRUE;
+        Boolean expResult = Label.TRUE();
         Boolean result = instance.resolveLabel(segment);
         assertEquals(expResult, result);
     }
@@ -98,15 +99,15 @@ public class ResolutionImplTest {
     public void testResolveLabel_OnePositive() {
         System.out.println("resolveLabel_OnePositive");
         Segment segment = new Segment();
-        segment.add(new Message(1, new Date(), "Alice", "Hello", Boolean.FALSE));
-        segment.add(new Message(2, new Date(), "Bob", "Hello", Boolean.TRUE));
-        segment.add(new Message(3, new Date(), "Alice", "How are you", Boolean.FALSE));
-        segment.add(new Message(4, new Date(), "Bob", "Very well thanks", Boolean.FALSE));
-        segment.add(new Message(5, new Date(), "Alice", "Yay", Boolean.FALSE));
+        segment.add(new Message(1, new Date(), "Alice", "Hello", Label.FALSE()));
+        segment.add(new Message(2, new Date(), "Bob", "Hello", Label.TRUE()));
+        segment.add(new Message(3, new Date(), "Alice", "How are you", Label.FALSE()));
+        segment.add(new Message(4, new Date(), "Bob", "Very well thanks", Label.FALSE()));
+        segment.add(new Message(5, new Date(), "Alice", "Yay", Label.FALSE()));
 
         ResolutionImpl instance = new ResolutionImpl();
-        Boolean expResult = Boolean.TRUE;
-        Boolean result = instance.resolveLabel(segment);
+        Label expResult = Label.TRUE();
+        Label result = instance.resolveLabel(segment);
         assertEquals(expResult, result);
     }
 
@@ -117,15 +118,15 @@ public class ResolutionImplTest {
     public void testResolveLabel_OneNegative() {
         System.out.println("resolveLabel_OneNegative");
         Segment segment = new Segment();
-        segment.add(new Message(1, new Date(), "Alice", "Hello", Boolean.TRUE));
-        segment.add(new Message(2, new Date(), "Bob", "Hello", Boolean.TRUE));
-        segment.add(new Message(3, new Date(), "Alice", "How are you", Boolean.TRUE));
-        segment.add(new Message(4, new Date(), "Bob", "Very well thanks", Boolean.FALSE));
-        segment.add(new Message(5, new Date(), "Alice", "Yay", Boolean.TRUE));
+        segment.add(new Message(1, new Date(), "Alice", "Hello", Label.TRUE()));
+        segment.add(new Message(2, new Date(), "Bob", "Hello", Label.TRUE()));
+        segment.add(new Message(3, new Date(), "Alice", "How are you", Label.TRUE()));
+        segment.add(new Message(4, new Date(), "Bob", "Very well thanks", Label.FALSE()));
+        segment.add(new Message(5, new Date(), "Alice", "Yay", Label.TRUE()));
 
         ResolutionImpl instance = new ResolutionImpl();
-        Boolean expResult = Boolean.TRUE;
-        Boolean result = instance.resolveLabel(segment);
+        Label expResult = Label.TRUE();
+        Label result = instance.resolveLabel(segment);
         assertEquals(expResult, result);
     }
 
@@ -143,8 +144,8 @@ public class ResolutionImplTest {
         segment.add(new Message(5, new Date(), "Alice", "Yay", null));
 
         ResolutionImpl instance = new ResolutionImpl();
-        Boolean expResult = null;
-        Boolean result = instance.resolveLabel(segment);
+        Label expResult = null;
+        Label result = instance.resolveLabel(segment);
         assertEquals(expResult, result);
     }
 }

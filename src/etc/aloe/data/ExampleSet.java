@@ -117,7 +117,7 @@ public class ExampleSet {
      * @param i
      * @return
      */
-    public Boolean getTrueLabel(int i) {
+    public Label getTrueLabel(int i) {
         Instance instance = instances.get(i);
         return getClassLabel(instance.classValue());
     }
@@ -130,14 +130,14 @@ public class ExampleSet {
      * @param classValue
      * @return
      */
-    public Boolean getClassLabel(double classValue) {
+    public Label getClassLabel(double classValue) {
         if (Double.isNaN(classValue)) {
             return null;
         }
 
         Attribute classAttr = instances.classAttribute();
         String classValueStr = classAttr.value((int) classValue);
-        return Boolean.parseBoolean(classValueStr);
+        return Label.get(classValueStr);
     }
 
     /**

@@ -18,12 +18,12 @@
  */
 package etc.aloe.cscw2013;
 
+import etc.aloe.data.Label;
 import etc.aloe.data.Message;
 import etc.aloe.data.MessageSet;
 import etc.aloe.data.Predictions;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -42,7 +42,7 @@ public class LabelMappingImplTest {
 
     private MessageSet rawMessages;
     private SegmentSet segments;
-    private List<Boolean> messageLabels;
+    private List<Label> messageLabels;
     private Predictions predictions;
 
     public LabelMappingImplTest() {
@@ -94,16 +94,16 @@ public class LabelMappingImplTest {
         this.segments.add(seg);
 
         this.predictions = new Predictions();
-        predictions.add(Boolean.TRUE, 1.0);
-        predictions.add(Boolean.FALSE, 0.0);
-        predictions.add(Boolean.TRUE, 1.0);
-        predictions.add(Boolean.FALSE, 0.0);
+        predictions.add(Label.TRUE(), 1.0);
+        predictions.add(Label.FALSE(), 0.0);
+        predictions.add(Label.TRUE(), 1.0);
+        predictions.add(Label.FALSE(), 0.0);
 
-        this.messageLabels = Arrays.asList(new Boolean[] {
-            true,
-            false, false,
-            true, true, true,
-            false, false, false, false
+        this.messageLabels = Arrays.asList(new Label[] {
+            Label.TRUE(),
+            Label.FALSE(), Label.FALSE(),
+            Label.TRUE(), Label.TRUE(), Label.TRUE(),
+            Label.FALSE(), Label.FALSE(), Label.FALSE(), Label.FALSE()
         });
 
     }
@@ -123,8 +123,8 @@ public class LabelMappingImplTest {
 
         for (int m = 0; m < rawMessages.size(); m++) {
             Message message = rawMessages.get(m);
-            Boolean expected = messageLabels.get(m);
-            Boolean actual = message.getPredictedLabel();
+            Label expected = messageLabels.get(m);
+            Label actual = message.getPredictedLabel();
 
             assertTrue(expected == actual);
         }

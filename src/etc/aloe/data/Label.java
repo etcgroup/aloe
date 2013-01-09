@@ -100,4 +100,12 @@ public class Label {
         }
         return list;
     }
+
+    public static Label TRUE() {
+        return Label.get("true");
+    }
+
+    public static Label FALSE() {
+        return Label.get("false");
+    }
 }

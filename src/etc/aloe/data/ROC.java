@@ -98,7 +98,7 @@ public class ROC implements Saving {
         int totalPositives = predictions.getTruePositiveCount() + predictions.getFalseNegativeCount();
         int totalNegatives = predictions.getTrueNegativeCount() + predictions.getFalsePositiveCount();
         for (int i = 0; i < predictions.size(); i++) {
-            Boolean trueLabel = predictions.getTrueLabel(i);
+            Label trueLabel = predictions.getTrueLabel(i);
             Double confidence = predictions.getPredictionConfidence(i);
 
             if (trueLabel == null) {

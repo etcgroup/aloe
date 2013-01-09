@@ -178,10 +178,10 @@ public class MessageSetTest {
 
         MessageSet messages = new MessageSet();
         messages.setDateFormat(dateFormat);
-        messages.add(new Message(1, new Date(), "Alice", "hello", true, true));
-        messages.add(new Message(2, new Date(), "Bob", "goodbye", false, false, 2));
-        messages.add(new Message(3, new Date(), "Alice", "cow", null, true));
-        messages.add(new Message(4, new Date(), "Bob", "time", false, null, 4));
+        messages.add(new Message(1, new Date(), "Alice", "hello", Label.TRUE(), Label.TRUE()));
+        messages.add(new Message(2, new Date(), "Bob", "goodbye", Label.FALSE(), Label.FALSE(), 2));
+        messages.add(new Message(3, new Date(), "Alice", "cow", null, Label.TRUE()));
+        messages.add(new Message(4, new Date(), "Bob", "time", Label.FALSE(), null, 4));
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         messages.save(out);

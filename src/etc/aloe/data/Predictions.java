@@ -53,7 +53,7 @@ public class Predictions {
         this.falseNegativeCount = parent.falseNegativeCount;
     }
 
-    public Boolean getPredictedLabel(int index) {
+    public Label getPredictedLabel(int index) {
         return predictions.get(index).getPredictedLabel();
     }
 
@@ -61,7 +61,7 @@ public class Predictions {
         return predictions.get(index).getConfidence();
     }
 
-    public Boolean getTrueLabel(int index) {
+    public Label getTrueLabel(int index) {
         return predictions.get(index).getTrueLabel();
     }
 
@@ -91,7 +91,7 @@ public class Predictions {
      * @param predictedLabel
      * @param confidence
      */
-    public void add(Boolean predictedLabel, Double confidence) {
+    public void add(Label predictedLabel, Double confidence) {
         this.add(predictedLabel, confidence, null);
     }
 
@@ -103,7 +103,7 @@ public class Predictions {
      * @param trueLabel
      */
 
-    public void add(Boolean predictedLabel, Double confidence, Boolean trueLabel) {
+    public void add(Label predictedLabel, Double confidence, Label trueLabel) {
         this.predictions.add(new Prediction(predictedLabel, trueLabel, confidence));
 
         if (trueLabel != null) {
@@ -148,21 +148,21 @@ public class Predictions {
      */
     private class Prediction {
 
-        private final Boolean predictedLabel;
-        private final Boolean trueLabel;
+        private final Label predictedLabel;
+        private final Label trueLabel;
         private final Double confidence;
 
-        public Prediction(Boolean predictedLabel, Boolean trueLabel, Double confidence) {
+        public Prediction(Label predictedLabel, Label trueLabel, Double confidence) {
             this.predictedLabel = predictedLabel;
             this.trueLabel = trueLabel;
             this.confidence = confidence;
         }
 
-        public Boolean getPredictedLabel() {
+        public Label getPredictedLabel() {
             return predictedLabel;
         }
 
-        public Boolean getTrueLabel() {
+        public Label getTrueLabel() {
             return trueLabel;
         }
 

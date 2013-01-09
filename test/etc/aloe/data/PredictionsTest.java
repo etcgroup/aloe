@@ -58,13 +58,13 @@ public class PredictionsTest {
         System.out.println("getPredictedLabel");
 
         Predictions instance = new Predictions();
-        instance.add(Boolean.FALSE, Double.NaN);
-        instance.add(Boolean.TRUE, Double.NaN);
-        instance.add(Boolean.FALSE, Double.NaN);
+        instance.add(Label.FALSE(), Double.NaN);
+        instance.add(Label.TRUE(), Double.NaN);
+        instance.add(Label.FALSE(), Double.NaN);
 
-        assertEquals(Boolean.FALSE, instance.getPredictedLabel(0));
-        assertEquals(Boolean.TRUE, instance.getPredictedLabel(1));
-        assertEquals(Boolean.FALSE, instance.getPredictedLabel(2));
+        assertEquals(Label.FALSE(), instance.getPredictedLabel(0));
+        assertEquals(Label.TRUE(), instance.getPredictedLabel(1));
+        assertEquals(Label.FALSE(), instance.getPredictedLabel(2));
     }
 
     /**
@@ -75,9 +75,9 @@ public class PredictionsTest {
         System.out.println("getPredictionConfidence");
 
         Predictions instance = new Predictions();
-        instance.add(Boolean.FALSE, 0.0);
-        instance.add(Boolean.FALSE, 0.5);
-        instance.add(Boolean.FALSE, 1.0);
+        instance.add(Label.FALSE(), 0.0);
+        instance.add(Label.FALSE(), 0.5);
+        instance.add(Label.FALSE(), 1.0);
 
         assertEquals(0.0, instance.getPredictionConfidence(0), 0);
         assertEquals(0.5, instance.getPredictionConfidence(1), 0);
@@ -92,13 +92,13 @@ public class PredictionsTest {
         System.out.println("getTrueLabel");
 
         Predictions instance = new Predictions();
-        instance.add(Boolean.FALSE, Double.NaN, Boolean.TRUE);
-        instance.add(Boolean.TRUE, Double.NaN);
-        instance.add(Boolean.FALSE, Double.NaN, Boolean.FALSE);
+        instance.add(Label.FALSE(), Double.NaN, Label.TRUE());
+        instance.add(Label.TRUE(), Double.NaN);
+        instance.add(Label.FALSE(), Double.NaN, Label.FALSE());
 
-        assertEquals(Boolean.TRUE, instance.getTrueLabel(0));
+        assertEquals(Label.TRUE(), instance.getTrueLabel(0));
         assertEquals(null, instance.getTrueLabel(1));
-        assertEquals(Boolean.FALSE, instance.getTrueLabel(2));
+        assertEquals(Label.FALSE(), instance.getTrueLabel(2));
     }
 
     /**
@@ -112,9 +112,9 @@ public class PredictionsTest {
 
         assertEquals(0, instance.size());
 
-        instance.add(Boolean.FALSE, Double.NaN, Boolean.TRUE);
-        instance.add(Boolean.TRUE, Double.NaN);
-        instance.add(Boolean.FALSE, Double.NaN, Boolean.FALSE);
+        instance.add(Label.FALSE(), Double.NaN, Label.TRUE());
+        instance.add(Label.TRUE(), Double.NaN);
+        instance.add(Label.FALSE(), Double.NaN, Label.FALSE());
 
         assertEquals(3, instance.size());
     }
@@ -129,13 +129,13 @@ public class PredictionsTest {
         Predictions instance = new Predictions();
         assertEquals(0, instance.getTruePositiveCount());
 
-        instance.add(Boolean.TRUE, Double.NaN, Boolean.TRUE);
+        instance.add(Label.TRUE(), Double.NaN, Label.TRUE());
         assertEquals(1, instance.getTruePositiveCount());
 
-        instance.add(Boolean.FALSE, Double.NaN, Boolean.FALSE);
+        instance.add(Label.FALSE(), Double.NaN, Label.FALSE());
         assertEquals(1, instance.getTruePositiveCount());
 
-        instance.add(Boolean.TRUE, Double.NaN, Boolean.TRUE);
+        instance.add(Label.TRUE(), Double.NaN, Label.TRUE());
         assertEquals(2, instance.getTruePositiveCount());
     }
 
@@ -149,13 +149,13 @@ public class PredictionsTest {
         Predictions instance = new Predictions();
         assertEquals(0, instance.getTrueNegativeCount());
 
-        instance.add(Boolean.FALSE, Double.NaN, Boolean.FALSE);
+        instance.add(Label.FALSE(), Double.NaN, Label.FALSE());
         assertEquals(1, instance.getTrueNegativeCount());
 
-        instance.add(Boolean.TRUE, Double.NaN, Boolean.FALSE);
+        instance.add(Label.TRUE(), Double.NaN, Label.FALSE());
         assertEquals(1, instance.getTrueNegativeCount());
 
-        instance.add(Boolean.FALSE, Double.NaN, Boolean.FALSE);
+        instance.add(Label.FALSE(), Double.NaN, Label.FALSE());
         assertEquals(2, instance.getTrueNegativeCount());
     }
 
@@ -169,13 +169,13 @@ public class PredictionsTest {
         Predictions instance = new Predictions();
         assertEquals(0, instance.getFalsePositiveCount());
 
-        instance.add(Boolean.TRUE, Double.NaN, Boolean.TRUE);
+        instance.add(Label.TRUE(), Double.NaN, Label.TRUE());
         assertEquals(0, instance.getFalsePositiveCount());
 
-        instance.add(Boolean.TRUE, Double.NaN, Boolean.FALSE);
+        instance.add(Label.TRUE(), Double.NaN, Label.FALSE());
         assertEquals(1, instance.getFalsePositiveCount());
 
-        instance.add(Boolean.TRUE, Double.NaN, Boolean.FALSE);
+        instance.add(Label.TRUE(), Double.NaN, Label.FALSE());
         assertEquals(2, instance.getFalsePositiveCount());
     }
 
@@ -189,13 +189,13 @@ public class PredictionsTest {
         Predictions instance = new Predictions();
         assertEquals(0, instance.getFalseNegativeCount());
 
-        instance.add(Boolean.FALSE, Double.NaN, Boolean.TRUE);
+        instance.add(Label.FALSE(), Double.NaN, Label.TRUE());
         assertEquals(1, instance.getFalseNegativeCount());
 
-        instance.add(Boolean.FALSE, Double.NaN, Boolean.TRUE);
+        instance.add(Label.FALSE(), Double.NaN, Label.TRUE());
         assertEquals(2, instance.getFalseNegativeCount());
 
-        instance.add(Boolean.TRUE, Double.NaN, Boolean.TRUE);
+        instance.add(Label.TRUE(), Double.NaN, Label.TRUE());
         assertEquals(2, instance.getFalseNegativeCount());
     }
 
@@ -207,10 +207,10 @@ public class PredictionsTest {
         System.out.println("sortByConfidence");
 
         Predictions instance = new Predictions();
-        instance.add(Boolean.FALSE, 0.5, Boolean.FALSE);
-        instance.add(Boolean.FALSE, 0.4, Boolean.TRUE);
-        instance.add(Boolean.TRUE, 0.8, Boolean.FALSE);
-        instance.add(Boolean.TRUE, 0.6, Boolean.TRUE);
+        instance.add(Label.FALSE(), 0.5, Label.FALSE());
+        instance.add(Label.FALSE(), 0.4, Label.TRUE());
+        instance.add(Label.TRUE(), 0.8, Label.FALSE());
+        instance.add(Label.TRUE(), 0.6, Label.TRUE());
 
         Predictions result = instance.sortByConfidence();
 
@@ -219,14 +219,14 @@ public class PredictionsTest {
         assertEquals(0.6, result.getPredictionConfidence(2), 0.0);
         assertEquals(0.8, result.getPredictionConfidence(3), 0.0);
 
-        assertEquals(Boolean.FALSE, result.getPredictedLabel(0));
-        assertEquals(Boolean.FALSE, result.getPredictedLabel(1));
-        assertEquals(Boolean.TRUE, result.getPredictedLabel(2));
-        assertEquals(Boolean.TRUE, result.getPredictedLabel(3));
+        assertEquals(Label.FALSE(), result.getPredictedLabel(0));
+        assertEquals(Label.FALSE(), result.getPredictedLabel(1));
+        assertEquals(Label.TRUE(), result.getPredictedLabel(2));
+        assertEquals(Label.TRUE(), result.getPredictedLabel(3));
 
-        assertEquals(Boolean.TRUE, result.getTrueLabel(0));
-        assertEquals(Boolean.FALSE, result.getTrueLabel(1));
-        assertEquals(Boolean.TRUE, result.getTrueLabel(2));
-        assertEquals(Boolean.FALSE, result.getTrueLabel(3));
+        assertEquals(Label.TRUE(), result.getTrueLabel(0));
+        assertEquals(Label.FALSE(), result.getTrueLabel(1));
+        assertEquals(Label.TRUE(), result.getTrueLabel(2));
+        assertEquals(Label.FALSE(), result.getTrueLabel(3));
     }
 }

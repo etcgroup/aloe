@@ -18,7 +18,6 @@
  */
 package etc.aloe.data;
 
-import java.io.OutputStream;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -143,12 +142,12 @@ public class ROCTest {
         System.out.println("calculateCurve");
 
         Predictions predictions = new Predictions();
-        predictions.add(Boolean.FALSE, 0.1, Boolean.TRUE);
-        predictions.add(Boolean.TRUE, 0.9, Boolean.TRUE);
-        predictions.add(Boolean.TRUE, 0.7, Boolean.TRUE);
-        predictions.add(Boolean.FALSE, 0.12, Boolean.FALSE);
-        predictions.add(Boolean.FALSE, 0.4, Boolean.FALSE);
-        predictions.add(Boolean.TRUE, 0.5, Boolean.FALSE);
+        predictions.add(Label.FALSE(), 0.1, Label.TRUE());
+        predictions.add(Label.TRUE(), 0.9, Label.TRUE());
+        predictions.add(Label.TRUE(), 0.7, Label.TRUE());
+        predictions.add(Label.FALSE(), 0.12, Label.FALSE());
+        predictions.add(Label.FALSE(), 0.4, Label.FALSE());
+        predictions.add(Label.TRUE(), 0.5, Label.FALSE());
 
         ROC instance = new ROC("test");
         instance.calculateCurve(predictions);

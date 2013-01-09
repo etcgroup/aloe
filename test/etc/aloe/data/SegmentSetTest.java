@@ -119,12 +119,12 @@ public class SegmentSetTest {
         seg0.add(new Message(0, new Date(), "Alice", "it's"));
         seg0.add(new Message(1, new Date(), "Bob", "cow"));
         seg0.add(new Message(2, new Date(), "Alice", "time"));
-        seg0.setTrueLabel(Boolean.TRUE);
+        seg0.setTrueLabel(Label.TRUE());
         segments.add(seg0);
 
         Segment seg1 = new Segment();
         seg1.add(new Message(3, new Date(), "Bob", "noooooooo"));
-        seg1.setTrueLabel(Boolean.FALSE);
+        seg1.setTrueLabel(Label.FALSE());
         segments.add(seg1);
 
         ExampleSet examples = segments.getBasicExamples();
@@ -177,9 +177,9 @@ public class SegmentSetTest {
         System.out.println("onlyLabeled");
         SegmentSet segments = new SegmentSet();
 
-        Segment seg0 = new Segment(true, null);
+        Segment seg0 = new Segment(Label.TRUE(), null);
         Segment seg1 = new Segment(null, null);
-        Segment seg2 = new Segment(false, null);
+        Segment seg2 = new Segment(Label.FALSE(), null);
 
         segments.add(seg0);
         segments.add(seg1);
@@ -199,15 +199,15 @@ public class SegmentSetTest {
         System.out.println("getCountWithTrueLabel");
 
         SegmentSet segments = new SegmentSet();
-        segments.add(new Segment(true, null));
-        segments.add(new Segment(true, null));
-        segments.add(new Segment(false, null));
-        segments.add(new Segment(false, null));
-        segments.add(new Segment(false, null));
+        segments.add(new Segment(Label.TRUE(), null));
+        segments.add(new Segment(Label.TRUE(), null));
+        segments.add(new Segment(Label.FALSE(), null));
+        segments.add(new Segment(Label.FALSE(), null));
+        segments.add(new Segment(Label.FALSE(), null));
         segments.add(new Segment(null, null));
 
-        assertEquals(2, segments.getCountWithTrueLabel(true));
-        assertEquals(3, segments.getCountWithTrueLabel(false));
+        assertEquals(2, segments.getCountWithTrueLabel(Label.TRUE()));
+        assertEquals(3, segments.getCountWithTrueLabel(Label.FALSE()));
         assertEquals(1, segments.getCountWithTrueLabel(null));
     }
 }

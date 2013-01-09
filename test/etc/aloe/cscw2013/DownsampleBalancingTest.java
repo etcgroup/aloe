@@ -18,6 +18,7 @@
  */
 package etc.aloe.cscw2013;
 
+import etc.aloe.data.Label;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import java.util.ArrayList;
@@ -55,10 +56,10 @@ public class DownsampleBalancingTest {
     private SegmentSet generateTestSegments(int numPositive, int numNegative) {
         List<Segment> segments = new ArrayList<Segment>();
         for (int i = 0; i < numPositive; i++) {
-            segments.add(new Segment(true, null));
+            segments.add(new Segment(Label.TRUE(), null));
         }
         for (int i = 0; i < numNegative; i++) {
-            segments.add(new Segment(false, null));
+            segments.add(new Segment(Label.FALSE(), null));
         }
 
         Collections.shuffle(segments);
@@ -105,16 +106,16 @@ public class DownsampleBalancingTest {
 
             SegmentSet result = instance.balance(segmentSet);
 
-            int actualTrue = result.getCountWithTrueLabel(true);
-            int actualFalse = result.getCountWithTrueLabel(false);
+            int actualTrue = result.getCountWithTrueLabel(Label.TRUE());
+            int actualFalse = result.getCountWithTrueLabel(Label.FALSE());
 
             //Both are more than 0
             assertTrue(actualTrue > 0);
             assertTrue(actualFalse > 0);
 
             //Both are the same or reduced
-            assertTrue(actualTrue <= segmentSet.getCountWithTrueLabel(true));
-            assertTrue(actualFalse <= segmentSet.getCountWithTrueLabel(false));
+            assertTrue(actualTrue <= segmentSet.getCountWithTrueLabel(Label.TRUE()));
+            assertTrue(actualFalse <= segmentSet.getCountWithTrueLabel(Label.FALSE()));
 
             //Should have an equal number of true and false examples
             assertEquals(actualTrue, actualFalse);
@@ -153,16 +154,16 @@ public class DownsampleBalancingTest {
 
             SegmentSet result = instance.balance(segmentSet);
 
-            int actualTrue = result.getCountWithTrueLabel(true);
-            int actualFalse = result.getCountWithTrueLabel(false);
+            int actualTrue = result.getCountWithTrueLabel(Label.TRUE());
+            int actualFalse = result.getCountWithTrueLabel(Label.FALSE());
 
             //Both are more than 0
             assertTrue(actualTrue > 0);
             assertTrue(actualFalse > 0);
 
             //Both are the same or reduced
-            assertTrue(actualTrue <= segmentSet.getCountWithTrueLabel(true));
-            assertTrue(actualFalse <= segmentSet.getCountWithTrueLabel(false));
+            assertTrue(actualTrue <= segmentSet.getCountWithTrueLabel(Label.TRUE()));
+            assertTrue(actualFalse <= segmentSet.getCountWithTrueLabel(Label.FALSE()));
 
             //The ratio of false/true should be 2:1
             assertEquals(2.0, (double) actualFalse / actualTrue, 0.1);
@@ -182,16 +183,16 @@ public class DownsampleBalancingTest {
 
             SegmentSet result = instance.balance(segmentSet);
 
-            int actualTrue = result.getCountWithTrueLabel(true);
-            int actualFalse = result.getCountWithTrueLabel(false);
+            int actualTrue = result.getCountWithTrueLabel(Label.TRUE());
+            int actualFalse = result.getCountWithTrueLabel(Label.FALSE());
 
             //Both are more than 0
             assertTrue(actualTrue > 0);
             assertTrue(actualFalse > 0);
 
             //Both are the same or reduced
-            assertTrue(actualTrue <= segmentSet.getCountWithTrueLabel(true));
-            assertTrue(actualFalse <= segmentSet.getCountWithTrueLabel(false));
+            assertTrue(actualTrue <= segmentSet.getCountWithTrueLabel(Label.TRUE()));
+            assertTrue(actualFalse <= segmentSet.getCountWithTrueLabel(Label.FALSE()));
 
             //The ratio of false/true should be 1:2
             assertEquals(0.5, (double) actualFalse / actualTrue, 0.1);

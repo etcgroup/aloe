@@ -118,9 +118,9 @@ public class SegmentTest {
         Segment segment = new Segment();
 
         assertEquals(false, segment.hasTrueLabel());
-        segment.setTrueLabel(Boolean.TRUE);
+        segment.setTrueLabel(Label.TRUE());
         assertEquals(true, segment.hasTrueLabel());
-        segment.setTrueLabel(Boolean.FALSE);
+        segment.setTrueLabel(Label.FALSE());
         assertEquals(true, segment.hasTrueLabel());
         segment.setTrueLabel(null);
         assertEquals(false, segment.hasTrueLabel());
@@ -135,9 +135,9 @@ public class SegmentTest {
         Segment segment = new Segment();
 
         assertEquals(false, segment.hasPredictedLabel());
-        segment.setPredictedLabel(Boolean.TRUE);
+        segment.setPredictedLabel(Label.TRUE());
         assertEquals(true, segment.hasPredictedLabel());
-        segment.setPredictedLabel(Boolean.FALSE);
+        segment.setPredictedLabel(Label.FALSE());
         assertEquals(true, segment.hasPredictedLabel());
         segment.setPredictedLabel(null);
         assertEquals(false, segment.hasPredictedLabel());

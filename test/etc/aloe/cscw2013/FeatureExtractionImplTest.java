@@ -20,6 +20,7 @@ package etc.aloe.cscw2013;
 
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
+import etc.aloe.data.Label;
 import etc.aloe.data.Message;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
@@ -73,24 +74,24 @@ public class FeatureExtractionImplTest {
         seg0.add(new Message(0, new Date(), "Alice", "it's"));
         seg0.add(new Message(1, new Date(), "Bob", "cow"));
         seg0.add(new Message(2, new Date(), "Alice", "time"));
-        seg0.setTrueLabel(Boolean.TRUE);
+        seg0.setTrueLabel(Label.TRUE());
         segments.add(seg0);
 
         Segment seg1 = new Segment();
         seg1.add(new Message(3, new Date(), "Bob", "noooooooo"));
-        seg1.setTrueLabel(Boolean.FALSE);
+        seg1.setTrueLabel(Label.FALSE());
         segments.add(seg1);
 
         Segment seg2 = new Segment();
         seg2.add(new Message(4, new Date(), "Bob", "once"));
         seg2.add(new Message(5, new Date(), "Alice", "upon"));
-        seg2.setTrueLabel(Boolean.FALSE);
+        seg2.setTrueLabel(Label.FALSE());
         segments.add(seg2);
 
         Segment seg3 = new Segment();
         seg3.add(new Message(6, new Date(), "Bob", "a"));
         seg3.add(new Message(7, new Date(), "Alice", "time"));
-        seg3.setTrueLabel(Boolean.TRUE);
+        seg3.setTrueLabel(Label.TRUE());
         segments.add(seg3);
 
         Instances basicInstances = segments.getBasicExamples().getInstances();

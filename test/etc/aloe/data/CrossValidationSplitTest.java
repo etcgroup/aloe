@@ -52,18 +52,18 @@ public class CrossValidationSplitTest {
     @Before
     public void setUp() {
         TestLabelable[] itemsArray = new TestLabelable[]{
-            new TestLabelable("one", true, true),
-            new TestLabelable("two", false, true),
-            new TestLabelable("three", false, true),
-            new TestLabelable("four", true, true),
-            new TestLabelable("five", false, true),
-            new TestLabelable("six", true, true),
-            new TestLabelable("seven", true, true),
-            new TestLabelable("eight", true, true),
-            new TestLabelable("nine", false, true),
-            new TestLabelable("ten", false, true),
-            new TestLabelable("eleven", false, true),
-            new TestLabelable("twelve", true, true)
+            new TestLabelable("one", Label.TRUE(), Label.TRUE()),
+            new TestLabelable("two", Label.FALSE(), Label.TRUE()),
+            new TestLabelable("three", Label.FALSE(), Label.TRUE()),
+            new TestLabelable("four", Label.TRUE(), Label.TRUE()),
+            new TestLabelable("five", Label.FALSE(), Label.TRUE()),
+            new TestLabelable("six", Label.TRUE(), Label.TRUE()),
+            new TestLabelable("seven", Label.TRUE(), Label.TRUE()),
+            new TestLabelable("eight", Label.TRUE(), Label.TRUE()),
+            new TestLabelable("nine", Label.FALSE(), Label.TRUE()),
+            new TestLabelable("ten", Label.FALSE(), Label.TRUE()),
+            new TestLabelable("eleven", Label.FALSE(), Label.TRUE()),
+            new TestLabelable("twelve", Label.TRUE(), Label.TRUE())
         };
 
         this.originalItems = Arrays.asList(itemsArray);

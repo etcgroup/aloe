@@ -18,12 +18,12 @@
  */
 package etc.aloe.cscw2013;
 
+import etc.aloe.data.Label;
 import etc.aloe.data.Message;
 import etc.aloe.data.Predictions;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.LabelMapping;
-import java.util.List;
 
 /**
  * Given predicted labels, applies them to the given segments and their
@@ -37,7 +37,7 @@ public class LabelMappingImpl implements LabelMapping {
     public void map(Predictions predictions, SegmentSet segments) {
         for (int s = 0; s < segments.size(); s++) {
             Segment segment = segments.get(s);
-            Boolean predictedLabel = predictions.getPredictedLabel(s);
+            Label predictedLabel = predictions.getPredictedLabel(s);
             Double confidence = predictions.getPredictionConfidence(s);
 
             segment.setPredictedLabel(predictedLabel);

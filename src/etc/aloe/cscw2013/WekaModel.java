@@ -19,6 +19,7 @@
 package etc.aloe.cscw2013;
 
 import etc.aloe.data.ExampleSet;
+import etc.aloe.data.Label;
 import etc.aloe.data.Model;
 import etc.aloe.data.Predictions;
 import java.io.IOException;
@@ -80,10 +81,10 @@ public class WekaModel implements Model {
 
         for (int i = 0; i < examples.size(); i++) {
             try {
-                Boolean trueLabel = examples.getTrueLabel(i);
+                Label trueLabel = examples.getTrueLabel(i);
 
                 double classValue = classifier.classifyInstance(examples.get(i));
-                Boolean predictedLabel = examples.getClassLabel(classValue);
+                Label predictedLabel = examples.getClassLabel(classValue);
 
                 double[] distribution = classifier.distributionForInstance(examples.get(i));
                 Double confidence = examples.getConfidence(distribution);
