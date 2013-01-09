@@ -31,14 +31,14 @@ public interface LabelableItem {
      *
      * @return
      */
-    Boolean getTrueLabel();
+    Label getTrueLabel();
 
     /**
      * Set the gold-standard label of the item. Set to null to remove the label.
      *
      * @param truth
      */
-    void setTrueLabel(Boolean truth);
+    void setTrueLabel(Label truth);
 
     /**
      * True if the item has a gold-standard label.
@@ -52,14 +52,14 @@ public interface LabelableItem {
      *
      * @return
      */
-    Boolean getPredictedLabel();
+    Label getPredictedLabel();
 
     /**
      * Set the predicted label. Use null to remove the label.
      *
      * @param prediction
      */
-    void setPredictedLabel(Boolean prediction);
+    void setPredictedLabel(Label prediction);
 
     /**
      * True if the item has a predicted label.

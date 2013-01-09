@@ -31,8 +31,8 @@ public class Message implements Comparable<Message>, LabelableItem {
     private final Date timestamp;
     private final String participant;
     private final String message;
-    private Boolean trueLabel;
-    private Boolean predictedLabel = null;
+    private Label trueLabel;
+    private Label predictedLabel = null;
     private Double predictionConfidence = Double.NaN;
     private int segmentId = -1;
 
@@ -66,7 +66,7 @@ public class Message implements Comparable<Message>, LabelableItem {
             Date timestamp,
             String participant,
             String message,
-            Boolean trueLabel) {
+            Label trueLabel) {
         this(id, timestamp, participant, message, trueLabel, null, -1);
     }
 
@@ -86,8 +86,8 @@ public class Message implements Comparable<Message>, LabelableItem {
             Date timestamp,
             String participant,
             String message,
-            Boolean trueLabel,
-            Boolean predictedLabel) {
+            Label trueLabel,
+            Label predictedLabel) {
         this(id, timestamp, participant, message, trueLabel, predictedLabel, -1);
     }
 
@@ -108,8 +108,8 @@ public class Message implements Comparable<Message>, LabelableItem {
             Date timestamp,
             String participant,
             String message,
-            Boolean trueLabel,
-            Boolean predictedLabel,
+            Label trueLabel,
+            Label predictedLabel,
             int segmentId) {
 
         this.id = id;
@@ -158,12 +158,12 @@ public class Message implements Comparable<Message>, LabelableItem {
     }
 
     @Override
-    public Boolean getTrueLabel() {
+    public Label getTrueLabel() {
         return trueLabel;
     }
 
     @Override
-    public void setTrueLabel(Boolean truth) {
+    public void setTrueLabel(Label truth) {
         this.trueLabel = truth;
     }
 
@@ -173,12 +173,12 @@ public class Message implements Comparable<Message>, LabelableItem {
     }
 
     @Override
-    public Boolean getPredictedLabel() {
+    public Label getPredictedLabel() {
         return predictedLabel;
     }
 
     @Override
-    public void setPredictedLabel(Boolean prediction) {
+    public void setPredictedLabel(Label prediction) {
         this.predictedLabel = prediction;
     }
 

@@ -33,8 +33,8 @@ public class Segment implements LabelableItem {
     private static int ID_COUNTER = 0;
     private int id;
     private List<Message> messages;
-    private Boolean trueLabel;
-    private Boolean predictedLabel;
+    private Label trueLabel;
+    private Label predictedLabel;
     private Double predictionConfidence;
 
     /**
@@ -52,7 +52,7 @@ public class Segment implements LabelableItem {
      * @param trueLabel
      * @param predictedLabel
      */
-    public Segment(Boolean trueLabel, Boolean predictedLabel) {
+    public Segment(Label trueLabel, Label predictedLabel) {
         this();
         this.trueLabel = trueLabel;
         this.predictedLabel = predictedLabel;
@@ -106,12 +106,12 @@ public class Segment implements LabelableItem {
     }
 
     @Override
-    public Boolean getTrueLabel() {
+    public Label getTrueLabel() {
         return trueLabel;
     }
 
     @Override
-    public void setTrueLabel(Boolean truth) {
+    public void setTrueLabel(Label truth) {
         this.trueLabel = truth;
     }
 
@@ -121,12 +121,12 @@ public class Segment implements LabelableItem {
     }
 
     @Override
-    public Boolean getPredictedLabel() {
+    public Label getPredictedLabel() {
         return predictedLabel;
     }
 
     @Override
-    public void setPredictedLabel(Boolean prediction) {
+    public void setPredictedLabel(Label prediction) {
         this.predictedLabel = prediction;
     }
 
