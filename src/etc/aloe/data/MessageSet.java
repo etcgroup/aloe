@@ -161,28 +161,15 @@ public class MessageSet implements Loading, Saving {
                     throw new InvalidObjectException("Invalid value '" + timeText + "' for '" + TIME_COLUMN_NAME + "' on line " + lineNumber);
                 }
 
-                Boolean truth = null;
-                if (truthText.equals("1") || truthText.equals("true")) {
-                    truth = true;
+                Label truth = null;
+                if (!truthText.trim().isEmpty()) {
+                    truth = Label.get(truthText.trim());
                     numLabeled++;
-                } else if (truthText.equals("0") || truthText.equals("false")) {
-                    truth = false;
-                    numLabeled++;
-                } else if (truthText.equals("")) {
-                    truth = null;
-                } else {
-                    throw new InvalidObjectException("Invalid value '" + truthText + "' for '" + TRUTH_COLUMN_NAME + "' on line " + lineNumber);
                 }
 
-                Boolean prediction = null;
-                if (predictionText.equals("1") || predictionText.equals("true")) {
-                    prediction = true;
-                } else if (predictionText.equals("0") || predictionText.equals("false")) {
-                    prediction = false;
-                } else if (predictionText.equals("")) {
-                    prediction = null;
-                } else {
-                    throw new InvalidObjectException("Invalid value '" + predictionText + "' for '" + PREDICTION_COLUMN_NAME + "' on line " + lineNumber);
+                Label prediction = null;
+                if (!predictionText.trim().isEmpty()) {
+                    prediction = Label.get(predictionText.trim());
                 }
 
                 int segment = -1;
