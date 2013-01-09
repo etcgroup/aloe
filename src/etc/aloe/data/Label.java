@@ -45,6 +45,11 @@ public class Label {
         return number;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public static Label get(String name) {
         for (Label label : values) {
             if (label.getName().equals(name)) {
@@ -80,7 +85,7 @@ public class Label {
         if (number >= 0 && number < values.size()) {
             return true;
         }
-        
+
         return false;
     }
 }
