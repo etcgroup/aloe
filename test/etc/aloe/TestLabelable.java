@@ -18,6 +18,7 @@
  */
 package etc.aloe;
 
+import etc.aloe.data.Label;
 import etc.aloe.data.LabelableItem;
 
 /**
@@ -27,12 +28,12 @@ import etc.aloe.data.LabelableItem;
  */
 public class TestLabelable implements LabelableItem {
 
-    private Boolean trueLabel;
-    private Boolean predictedLabel;
+    private Label trueLabel;
+    private Label predictedLabel;
     private Double predictionConfidence;
     private final String name;
 
-    public TestLabelable(String name, Boolean trueLabel, Boolean predictedLabel) {
+    public TestLabelable(String name, Label trueLabel, Label predictedLabel) {
         this.name = name;
         this.trueLabel = trueLabel;
         this.predictedLabel = predictedLabel;
@@ -43,12 +44,12 @@ public class TestLabelable implements LabelableItem {
     }
 
     @Override
-    public Boolean getTrueLabel() {
+    public Label getTrueLabel() {
         return trueLabel;
     }
 
     @Override
-    public void setTrueLabel(Boolean truth) {
+    public void setTrueLabel(Label truth) {
         trueLabel = truth;
     }
 
@@ -58,12 +59,12 @@ public class TestLabelable implements LabelableItem {
     }
 
     @Override
-    public Boolean getPredictedLabel() {
+    public Label getPredictedLabel() {
         return predictedLabel;
     }
 
     @Override
-    public void setPredictedLabel(Boolean prediction) {
+    public void setPredictedLabel(Label prediction) {
         predictedLabel = prediction;
     }
 
