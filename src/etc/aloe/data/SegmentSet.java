@@ -89,7 +89,7 @@ public class SegmentSet {
 
         attributes.add(new Attribute(ExampleSet.ID_ATTR_NAME));
         attributes.add(new Attribute(ExampleSet.MESSAGE_ATTR_NAME, (List<String>) null));
-        attributes.add(new Attribute(ExampleSet.LABEL_ATTR_NAME, Arrays.asList(new String[]{"false", "true"})));
+        attributes.add(new Attribute(ExampleSet.LABEL_ATTR_NAME, Label.getNameList()));
         attributes.add(new Attribute(DURATION_ATTR_NAME));
         attributes.add(new Attribute(LENGTH_ATTR_NAME));
         attributes.add(new Attribute(CPS_ATTR_NAME));
@@ -116,7 +116,7 @@ public class SegmentSet {
             instance.setValue(idAttr, segment.getId());
             instance.setValue(messageAttr, messageStr);
             if (segment.hasTrueLabel()) {
-                instance.setValue(labelAttr, segment.getTrueLabel() ? "true" : "false");
+                instance.setValue(labelAttr, segment.getTrueLabel().getNumber());
             }
 
             computeRateValues(segment, instance, messageStr, durationAttr, lengthAttr, cpsAttr, rateAttr);
@@ -196,7 +196,7 @@ public class SegmentSet {
      * @param label
      * @return
      */
-    public int getCountWithTrueLabel(Boolean label) {
+    public int getCountWithTrueLabel(Label label) {
         int count = 0;
         for (Segment segment : segments) {
             if (segment.getTrueLabel() == label) {

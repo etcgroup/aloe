@@ -88,4 +88,16 @@ public class Label {
 
         return false;
     }
+
+    public static int getLabelCount() {
+        return values.size();
+    }
+
+    public static List<String> getNameList() {
+        List<String> list = new ArrayList<String>();
+        for (Label label : values) {
+            list.add(label.getName());
+        }
+        return list;
+    }
 }
