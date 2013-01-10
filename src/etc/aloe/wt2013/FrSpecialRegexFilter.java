@@ -80,12 +80,17 @@ public class FrSpecialRegexFilter extends FrAbstractRegexFilter {
         // Matches many swearwords
         new NamedRegex("swear", "(?<!\\w)("
         + "((?=\\p{Punct}*[@#$%^&*]\\p{Punct}*[@#$%^&*])([\\p{Punct}&&[^.]]{4,}))"
-        + "|crap(p?ed|s|p?ing|p?y)?"
-        + "|shit(s|t?ing|t?y)?"
-        + "|(god?)?dam(n|mit)?"
-        + "|(mother)?fuck(ed|ing|er)?"
-        + "|ass(hole)?"
-        + "|suck(y|s|ed)?"
+        + "|merde?s?"
+        + "|put(e|ain)?"
+        + "|fou(s|tre|tu)"
+        + "|con(nerie?s?|(ne)?s?|n?arde?s?|n?asses?)?"
+        + "|foire?(s|ons|ez|\u00E9s?|ant|er)?"
+        + "|cul"
+        + "|salop(ard|e)?"
+        + "|craint"
+        + "|casse-toi|cassez-vous"
+        + "|bordels?"
+        + "|mince"
         + ")(?!\\w)", Pattern.CASE_INSENSITIVE),
         // Matches lols, hehes, heehees, hahaas, and hohos (plus many others)
         new NamedRegex("names", "(?<!\\w)(" + toRegex(namesList) + ")", Pattern.CASE_INSENSITIVE)
