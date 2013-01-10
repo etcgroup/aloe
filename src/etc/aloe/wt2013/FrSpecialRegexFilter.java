@@ -75,6 +75,7 @@ public class FrSpecialRegexFilter extends FrAbstractRegexFilter {
         + "|casse-toi|cassez-vous"
         + "|bordels?"
         + "|mince"
+        + "|moche"
         + ")(?!\\w)", Pattern.CASE_INSENSITIVE),
         // Matches lols, hehes, heehees, hahaas, and hohos (plus many others)
         new NamedRegex("names", "(?<!\\w)(" + toRegex(namesList) + ")", Pattern.CASE_INSENSITIVE)

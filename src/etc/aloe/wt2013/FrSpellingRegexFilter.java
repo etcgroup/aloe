@@ -31,9 +31,9 @@ public class FrSpellingRegexFilter extends FrAbstractRegexFilter {
         // Capitalization
         new NamedRegex("caps", "[A-Z]{2,}"),
         // Matches many styles of hmm
-        new NamedRegex("hmm", "(?<!\\w)(h+|u+|m+)u*m+", Pattern.CASE_INSENSITIVE),
+        new NamedRegex("hmm", "(?<!\\w)(h+|u+|m+)u*m+|(h+|e+|u+)", Pattern.CASE_INSENSITIVE),
         // Matches lols, hehes, heehees, hahaas, and hohos (plus many others)
-        new NamedRegex("laughter", "(?<!\\w)(lol(ol)*|(h+e+){2,}h?|he(h+|e+)|(h+(a|o)+)+h*)(?!\\w)", Pattern.CASE_INSENSITIVE),
+        new NamedRegex("laughter", "(?<!\\w)(lol(ol)*|mdr|(h+e+){2,}h?|he(h+|e+)|(h+(a|o)+)+h*)(?!\\w)", Pattern.CASE_INSENSITIVE),
         // Matches letters repeated more than twice
         new NamedRegex("repetition", "(\\w)\\1{2,}", Pattern.CASE_INSENSITIVE)
     };
