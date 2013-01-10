@@ -105,6 +105,7 @@ public class SegmentSet {
         Attribute lengthAttr = instances.attribute(LENGTH_ATTR_NAME);
         Attribute cpsAttr = instances.attribute(CPS_ATTR_NAME);
         Attribute rateAttr = instances.attribute(RATE_ATTR_NAME);
+        //nothing
 
 
         for (int i = 0; i < size(); i++) {
