@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  */
 public class FrSpecialRegexFilter extends FrAbstractRegexFilter {
 
-    private final String[] contractedNegationForms = new String[]{
+    private final String[] contractedNegationForms = new String[]{ //these might not be necessary any more... check
         "n'?importe",
         "n'?est?",
         "n'?ai",
@@ -58,8 +58,8 @@ public class FrSpecialRegexFilter extends FrAbstractRegexFilter {
         "Rob"
     };
     private NamedRegex[] regexFeatures = new NamedRegex[]{
-        // Negation: no, not, cannot, can't/won't/whatever, cant/wont/whatever
-        // See http://www.englishclub.com/vocabulary/contractions-negative.htm
+        // French negation: non, ne, n', pas, and words that replace pas
+        // http://french.about.com/od/grammar/a/negation.htm
         new NamedRegex("negation", "(?<!\\w)(non|ne|pas|n'?|jamais|nul|aucun|rien|personne" + toRegex(contractedNegationForms, false) + ")(?!\\w)", Pattern.CASE_INSENSITIVE),
         // Matches many swearwords
         new NamedRegex("swear", "(?<!\\w)("
@@ -72,12 +72,12 @@ public class FrSpecialRegexFilter extends FrAbstractRegexFilter {
         + "|cul"
         + "|salop(ard|e)?"
         + "|craint"
-        + "|casse-toi|cassez-vous"
+        + "|casse-?\\s?toi|cassez-?\\s?vous"
         + "|bordels?"
         + "|mince"
         + "|moche"
         + ")(?!\\w)", Pattern.CASE_INSENSITIVE),
-        // Matches lols, hehes, heehees, hahaas, and hohos (plus many others)
+        //Matches known named
         new NamedRegex("names", "(?<!\\w)(" + toRegex(namesList) + ")", Pattern.CASE_INSENSITIVE)
     };
 
