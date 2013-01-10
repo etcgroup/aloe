@@ -21,6 +21,7 @@ package etc.aloe.wt2013;
 import etc.aloe.cscw2013.ThresholdSegmentation;
 import etc.aloe.data.Message;
 import etc.aloe.data.MessageSet;
+import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.SegmentResolution;
 import java.util.List;
@@ -69,7 +70,7 @@ public class HeatSegmentation extends ThresholdSegmentation {
     public SegmentSet segment(MessageSet messageSet) {
         
         System.out.println("Segmenting by heatmap with a rate threshold of " + rateThreshold 
-                + "messages per " + (timeResolution/60.0f) + "minutes.");
+                + " messages per " + (timeResolution/60.0f) + " minutes.");
         
         SegmentSet segments = new SegmentSet();
         
@@ -79,7 +80,9 @@ public class HeatSegmentation extends ThresholdSegmentation {
         int rIndex = 0; //Index of the right message
         int lIndex = 0; //Index of the left message
         
-        int messageRate = 1; //Current count of messages in the window, aka the rate per @timeResolution
+        int messageRate = 0; //Current count of messages in the window, aka the rate per @timeResolution
+        
+        Segment current = new Segment();
         
         //Calculate the message rate for each message
         while(rIndex < messages.size()) {
@@ -94,15 +97,15 @@ public class HeatSegmentation extends ThresholdSegmentation {
             //If the left message is out of the window, advance the left pointer
             if((rightMsgSeconds-leftMsgSeconds) > timeResolution) {
                 lIndex++;
-                rIndex--;
                 messageRate--;
+                //rIndex--;
+            } else { //Move the right index
+                rIndex++;
+                messageRate++;
             }
             
-            //Move the right index
-            rIndex++;
-            messageRate++;
-            
-            //Here the message rate is accurate for the iteration
+            //Here the message rate is accurate for this iteration
+            System.out.println("Message rate for " + right.getMessage() + "\n" + messageRate);
         }
         //Iterate over messages
             //Calculate the message rate at this point in time (Separate method)
