@@ -29,28 +29,12 @@ import java.util.regex.Pattern;
 public class FrSpecialRegexFilter extends FrAbstractRegexFilter {
 
     private final String[] contractedNegationForms = new String[]{
-        "aren'?t",
-        "can'?t",
-        "couldn'?t",
-        "daren'?t",
-        "didn'?t",
-        "doesn'?t",
-        "don'?t",
-        "hasn'?t",
-        "haven'?t",
-        "hadn'?t",
-        "isn'?t",
-        "mayn'?t",
-        "mightn'?t",
-        "mustn'?t",
-        "needn'?t",
-        "oughtn'?t",
-        "shan'?t",
-        "shouldn'?t",
-        "wasn'?t",
-        "weren'?t",
-        "won'?t",
-        "wouldn'?t"
+        "n'?importe",
+        "n'?est?",
+        "n'?ai",
+        "n'?as?",
+        "n'?y"
+        
     };
     private final String[] namesList = new String[]{
         "Ray",
@@ -76,7 +60,7 @@ public class FrSpecialRegexFilter extends FrAbstractRegexFilter {
     private NamedRegex[] regexFeatures = new NamedRegex[]{
         // Negation: no, not, cannot, can't/won't/whatever, cant/wont/whatever
         // See http://www.englishclub.com/vocabulary/contractions-negative.htm
-        new NamedRegex("negation", "(?<!\\w)(not?|cannot|" + toRegex(contractedNegationForms, false) + ")(?!\\w)", Pattern.CASE_INSENSITIVE),
+        new NamedRegex("negation", "(?<!\\w)(non|ne|pas|n'?|jamais|nul|aucun|rien|personne" + toRegex(contractedNegationForms, false) + ")(?!\\w)", Pattern.CASE_INSENSITIVE),
         // Matches many swearwords
         new NamedRegex("swear", "(?<!\\w)("
         + "((?=\\p{Punct}*[@#$%^&*]\\p{Punct}*[@#$%^&*])([\\p{Punct}&&[^.]]{4,}))"
