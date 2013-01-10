@@ -46,6 +46,10 @@ public class FrenchFeatureExtractionImpl implements FeatureExtraction {
         for (Filter filter : spec.getFilters()) {
             try {
                 Instances instances = Filter.useFilter(examples.getInstances(), filter);
+       //         if (filter instanceof FrPronounRegexFilter){
+       //             FrAbstractRegexFilter filt = (FrAbstractRegexFilter) filter;
+       //             System.out.println("hi");
+       //         }
                 examples = new ExampleSet(instances);
             } catch (Exception e) {
                 System.err.println("Unable to apply filter: " + filter.toString());
