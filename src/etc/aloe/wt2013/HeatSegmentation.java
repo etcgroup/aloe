@@ -18,14 +18,12 @@
  */
 package etc.aloe.wt2013;
 
-import etc.aloe.cscw2013.NullSegmentation;
 import etc.aloe.cscw2013.ThresholdSegmentation;
 import etc.aloe.data.Message;
 import etc.aloe.data.MessageSet;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.SegmentResolution;
 import java.util.List;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 /**
  * Segments chat data based on rate of message change, using an implicit 'heatmap'.
@@ -53,6 +51,12 @@ public class HeatSegmentation extends ThresholdSegmentation {
     private final boolean byParticipant;
     private SegmentResolution resolution;
     
+    //Messages per timeResolution seconds
+    private float timeResolution = 10.0f * 60.0f;
+    
+    //Boundary message rate - completely arbitrary, will be replaced with an actual metric
+    private float rateThreshold = 5.0f;
+    
     //PROTO
     public HeatSegmentation(int thresholdSeconds, boolean byParticipant) {
         super(thresholdSeconds, byParticipant);
@@ -63,21 +67,49 @@ public class HeatSegmentation extends ThresholdSegmentation {
     
     @Override
     public SegmentSet segment(MessageSet messageSet) {
-        float rateThreshold = 5.0f; //Completely arbitrary number, will be replaced with flag.
+        
+        System.out.println("Segmenting by heatmap with a rate threshold of " + rateThreshold 
+                + "messages per " + (timeResolution/60.0f) + "minutes.");
+        
         SegmentSet segments = new SegmentSet();
         
         //Sort the message set by time
         List<Message> messages = sortByTime(messageSet.getMessages());
         
-        //Find critical (inflection) points - we're not interested in where the data flattens, 
-        //only where it changes direcitons
+        int rIndex = 0; //Index of the right message
+        int lIndex = 0; //Index of the left message
         
+        int messageRate = 1; //Current count of messages in the window, aka the rate per @timeResolution
+        
+        //Calculate the message rate for each message
+        while(rIndex < messages.size()) {
+            //Get the messages
+            Message left = messages.get(lIndex); 
+            Message right = messages.get(rIndex);
+            
+            //Get the message times
+            long rightMsgSeconds = right.getTimestamp().getTime() / 1000;
+            long leftMsgSeconds = left.getTimestamp().getTime() / 1000;
+            
+            //If the left message is out of the window, advance the left pointer
+            if((rightMsgSeconds-leftMsgSeconds) > timeResolution) {
+                lIndex++;
+                rIndex--;
+                messageRate--;
+            }
+            
+            //Move the right index
+            rIndex++;
+            messageRate++;
+            
+            //Here the message rate is accurate for the iteration
+        }
         //Iterate over messages
             //Calculate the message rate at this point in time (Separate method)
             //Wherever the message rate crosses @rateThreshold
                 //Get the previous inflection point and cut there
         
-        System.out.println("Segmenting by heatmap with " + rateThreshold + " rate threshold.");
+        //!!EDGE CASE!!: If the neighboring point to the right is the same value, still cut.
         
         return segments;
     }
