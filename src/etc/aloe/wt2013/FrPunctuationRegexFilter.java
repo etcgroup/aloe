@@ -27,7 +27,7 @@ public class FrPunctuationRegexFilter extends FrAbstractRegexFilter {
 
     private NamedRegex[] regexFeatures = new NamedRegex[]{
         //Ellipses: at least two dots, optionally separated by single whitespace characters
-        new NamedRegex("pnct_elipsis", "(\\.\\s?){2,}"),
+        new NamedRegex("pnct_elipsis", "((\\.\\s?){2,})|((\\,\\s?){2,})"),
         //Question marks: simple
         new NamedRegex("pnct_question", "\\?+"),
         //Exclamation marks: simple
