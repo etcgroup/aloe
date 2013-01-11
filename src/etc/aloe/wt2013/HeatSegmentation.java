@@ -57,7 +57,7 @@ public class HeatSegmentation extends ThresholdSegmentation {
     private float timeResolution = 10.0f * 60.0f;
     
     //Boundary message rate - completely arbitrary, will be replaced with an actual metric
-    private float rateThreshold = 15.0f;
+    private float rateThreshold = 30.0f;
     
     //PROTO
     public HeatSegmentation(int thresholdSeconds, boolean byParticipant) {
@@ -118,7 +118,7 @@ public class HeatSegmentation extends ThresholdSegmentation {
             }
             
             if(!stepping) { //Here the message rate is accurate for this iteration
-                //System.out.println("Message rate for " + right.getMessage() + "\n" + messageRate);
+                System.out.println("Message rate for " + right.getMessage() + "\n" + messageRate);
                 messageRates.put(right.getId(), messageRate);
             }
         }
@@ -140,14 +140,14 @@ public class HeatSegmentation extends ThresholdSegmentation {
             if(rate > rateThreshold) { //Can't cut without crossing the threshold
                 wasAboveThresh = true;
             }
-            if(rate < rateThreshold && wasAboveThresh) { //We cut here
+            if((rate < rateThreshold && wasAboveThresh) || (rate > rateThreshold && !wasAboveThresh)) { //We cut here
                 wasAboveThresh = false;
                 newSegment = true;
             }
             
             //Blatant copy-paste
             if (newSegment) {
-                if (this.resolution != null) {
+                if (this.resolution != null) { //TODO
                     current.setTrueLabel(this.resolution.resolveLabel(current));
                     if (current.hasTrueLabel()) {
                         numLabeled++;
@@ -174,5 +174,10 @@ public class HeatSegmentation extends ThresholdSegmentation {
         
         System.out.println("Grouped messages into " + segments.size() + " segments (" + numLabeled + " labeled).");
         return segments;
+    }
+    
+    @Override
+    public void setSegmentResolution(SegmentResolution resolution) {
+        this.resolution = resolution;
     }
 }

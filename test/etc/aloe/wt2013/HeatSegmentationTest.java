@@ -18,10 +18,12 @@
  */
 package etc.aloe.wt2013;
 
+import etc.aloe.cscw2013.ResolutionImpl;
 import etc.aloe.data.Message;
 import etc.aloe.data.MessageSet;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
+import etc.aloe.processes.SegmentResolution;
 import java.util.Date;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -37,6 +39,7 @@ import static org.junit.Assert.*;
 public class HeatSegmentationTest {
     
     MessageSet messages;
+    SegmentResolution sr;
     
     public HeatSegmentationTest() {
     }
@@ -51,7 +54,6 @@ public class HeatSegmentationTest {
     
     @Before
     public void setUp() {
-        System.out.println("segment_byTimeAndParticipant");
         messages = new MessageSet();
 
         long now = new Date().getTime();
@@ -63,10 +65,12 @@ public class HeatSegmentationTest {
         messages.add(new Message(2, new Date(now + 2 * second), "Bob", "time"));
         messages.add(new Message(3, new Date(now + minute), "Bob", "noooooooo"));
         messages.add(new Message(4, new Date(now + minute + second), "Bob", "once"));
-        messages.add(new Message(5, new Date(now + 10 * minute), "Alice", "upon"));
-        messages.add(new Message(6, new Date(now + 20 * minute + second), "Alice", "a"));
-        messages.add(new Message(7, new Date(now + 23 * minute + 3 * second), "Alice", "time"));
-        messages.add(new Message(8, new Date(now + 25 * minute + 7 * second), "Alice", "CAT!"));
+        messages.add(new Message(5, new Date(now + 10 * minute), "Alice", "upon", true));
+        messages.add(new Message(6, new Date(now + 20 * minute + second), "Alice", "a", true));
+        messages.add(new Message(7, new Date(now + 23 * minute + 3 * second), "Alice", "time", true));
+        messages.add(new Message(8, new Date(now + 25 * minute + 7 * second), "Alice", "CAT!", true));
+        messages.add(new Message(9, new Date(now + 27 * minute + 20 * second), "Alice", "BAT!", true));
+        messages.add(new Message(10, new Date(now + 44 * minute), "Bob", "Sat?", true));
     }
     
     @After
@@ -80,20 +84,24 @@ public class HeatSegmentationTest {
     public void testSegment() {
         System.out.println("segment");
         
-        //Currently testing message rate calculation
         HeatSegmentation instance = new HeatSegmentation(30, true);
+        instance.setSegmentResolution( new ResolutionImpl() );
+        
         SegmentSet segments = instance.segment(messages);
         
-        //Expecting 2 segments
-        assertEquals(2, segments.size());
+        //Expecting 3 segments
+        assertEquals(3, segments.size());
 
         Segment seg0 = segments.get(0);
         Segment seg1 = segments.get(1);
+        Segment seg2 = segments.get(2);
 
         assertEquals(6, seg0.getMessages().size());
-        assertEquals(3, seg1.getMessages().size());
+        assertEquals(4, seg1.getMessages().size());
+        assertEquals(1, seg2.getMessages().size());
 
         assertEquals(messages.get(0), seg0.getMessages().get(0));
         assertEquals(messages.get(6), seg1.getMessages().get(0));
+        assertEquals(messages.get(10), seg2.getMessages().get(0));
     }
 }
