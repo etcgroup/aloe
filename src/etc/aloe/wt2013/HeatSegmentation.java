@@ -57,7 +57,7 @@ public class HeatSegmentation extends ThresholdSegmentation {
     private float timeResolution = 10.0f * 60.0f;
     
     //Boundary message rate - completely arbitrary, will be replaced with an actual metric
-    private float rateThreshold = 5.0f;
+    private float rateThreshold = 15.0f;
     
     //PROTO
     public HeatSegmentation(int thresholdSeconds, boolean byParticipant) {
@@ -69,6 +69,13 @@ public class HeatSegmentation extends ThresholdSegmentation {
     
     @Override
     public SegmentSet segment(MessageSet messageSet) {
+        
+        //Iterate over messages
+            //Calculate the message rate at this point in time (separate loop)
+            //Wherever the message rate crosses @rateThreshold
+                //Get the previous inflection point and cut there
+        
+        //!!EDGE CASE!!: If the neighboring point to the right is the same value, still cut.
         
         System.out.println("Segmenting by heatmap with a rate threshold of " + rateThreshold 
                 + " messages per " + (timeResolution/60.0f) + " minutes.");
@@ -111,7 +118,7 @@ public class HeatSegmentation extends ThresholdSegmentation {
             }
             
             if(!stepping) { //Here the message rate is accurate for this iteration
-                System.out.println("Message rate for " + right.getMessage() + "\n" + messageRate);
+                //System.out.println("Message rate for " + right.getMessage() + "\n" + messageRate);
                 messageRates.put(right.getId(), messageRate);
             }
         }
@@ -154,7 +161,7 @@ public class HeatSegmentation extends ThresholdSegmentation {
             current.add(m);
         }
         
-        //If it ain't baroque, don't fixe it!
+        //If it ain't baroque, don't fixe it?
         if (current.getMessages().size() > 0) {
             if (this.resolution != null) {
                 current.setTrueLabel(this.resolution.resolveLabel(current));
@@ -165,13 +172,7 @@ public class HeatSegmentation extends ThresholdSegmentation {
             segments.add(current);
         }
         
-        //Iterate over messages
-            //Calculate the message rate at this point in time (separate loop)
-            //Wherever the message rate crosses @rateThreshold
-                //Get the previous inflection point and cut there
-        
-        //!!EDGE CASE!!: If the neighboring point to the right is the same value, still cut.
-        
+        System.out.println("Grouped messages into " + segments.size() + " segments (" + numLabeled + " labeled).");
         return segments;
     }
 }
