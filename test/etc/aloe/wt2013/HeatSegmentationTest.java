@@ -65,9 +65,9 @@ public class HeatSegmentationTest {
         messages.add(new Message(2, new Date(now + 2 * second), "Bob", "time"));
         messages.add(new Message(3, new Date(now + minute), "Bob", "noooooooo"));
         messages.add(new Message(4, new Date(now + minute + second), "Bob", "once"));
-        messages.add(new Message(5, new Date(now + 10 * minute), "Alice", "upon", true));
-        messages.add(new Message(6, new Date(now + 20 * minute + second), "Alice", "a", true));
-        messages.add(new Message(7, new Date(now + 23 * minute + 3 * second), "Alice", "time", true));
+        messages.add(new Message(5, new Date(now + 10 * minute), "Alice", "upon"));
+        messages.add(new Message(6, new Date(now + 20 * minute + second), "Alice", "a"));
+        messages.add(new Message(7, new Date(now + 23 * minute + 3 * second), "Alice", "time"));
         messages.add(new Message(8, new Date(now + 25 * minute + 7 * second), "Alice", "CAT!", true));
         messages.add(new Message(9, new Date(now + 27 * minute + 20 * second), "Alice", "BAT!", true));
         messages.add(new Message(10, new Date(now + 44 * minute), "Bob", "Sat?", true));
@@ -84,7 +84,7 @@ public class HeatSegmentationTest {
     public void testSegment() {
         System.out.println("segment");
         
-        HeatSegmentation instance = new HeatSegmentation(30, true);
+        HeatSegmentation instance = new HeatSegmentation(10.0f * 60.0f, 3);
         instance.setSegmentResolution( new ResolutionImpl() );
         
         SegmentSet segments = instance.segment(messages);

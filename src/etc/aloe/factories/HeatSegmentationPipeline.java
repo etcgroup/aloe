@@ -35,7 +35,7 @@ public class HeatSegmentationPipeline extends CSCW2013 {
     /**
      * This method uses HeatSegmentation instead of ThresholdSegmenation.
      * 
-     * @return A Heatmap-based segmentation of the chatlog
+     * @return A Heatmap-based segmentation of the chatlog.
      */
     @Override
     public Segmentation constructSegmentation() {
@@ -61,8 +61,7 @@ public class HeatSegmentationPipeline extends CSCW2013 {
         if (disableSegmentation) {
             return new NullSegmentation();
         } else {
-            Segmentation segmentation = new HeatSegmentation(segmentationThresholdSeconds,
-                    !ignoreParticipants);
+            Segmentation segmentation = new HeatSegmentation();
             segmentation.setSegmentResolution(new ResolutionImpl());
             return segmentation;
         }

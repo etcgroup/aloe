@@ -24,14 +24,17 @@ import etc.aloe.data.MessageSet;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.SegmentResolution;
+import etc.aloe.processes.Segmentation;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 /**
  * Segments chat data based on rate of message change, using an implicit 'heatmap'.
  * In essence, we attempt to segment related portions of the chat by looking
- * at the message rate over time and grouping peaks together. Hopefully this is
- * helpful and not full of wrongness.
+ * at the message rate over time and grouping peaks together.
  * 
  *       messages/min
  * |
@@ -42,40 +45,64 @@ import java.util.List;
  * ^     ^        ^     ^
  *  [Segment Boundaries]
  * 
- * Currently prototyping, which is why this class is extending ThresholdSegmentation.
- * The final class will extend only Segmentation.
- * 
  * @author Dan Barella <dan.barella@gmail.com>
  */
-public class HeatSegmentation extends ThresholdSegmentation {
-    //PROTO
-    private final int thresholdSeconds;
-    private final boolean byParticipant;
+public class HeatSegmentation implements Segmentation {
+    
     private SegmentResolution resolution;
     
-    //Messages per timeResolution seconds
-    private float timeResolution = 10.0f * 60.0f;
+    /** Messages per timeResolution seconds */
+    private float timeResolution; // = 10.0f * 60.0f;
     
-    //Boundary message rate - completely arbitrary, will be replaced with an actual metric
-    private float rateThreshold = 30.0f;
+    /** 
+     * Boundary message rate - completely arbitrary, will be replaced with an actual metric.
+     * Units are messages per {@see timeResolution} seconds
+     */
+    private float rateThreshold; // = 30.0f;
     
-    //PROTO
-    public HeatSegmentation(int thresholdSeconds, boolean byParticipant) {
-        super(thresholdSeconds, byParticipant);
+    /**
+     * Unparameterized constructor - initializes timeResolution to 10 minutes 
+     * and rateThreshold to 30 messages/10 min. These values are arbitrary 
+     * but seem to give good results on initial runs.
+     */
+    public HeatSegmentation() {
+        this(10.0f * 60.0f, 30.0f);
+    }
+    
+    /**
+     * Parameterized constructor.
+     * @param timeResolution The window of time from which message rate will be calculated, in seconds.
+     *                       i.e. messages per timeResolution seconds
+     * @param rateThreshold The message rate threshold after which segmentation occurs,
+     *                       in messages per timeResolution seconds.
+     */ 
+    public HeatSegmentation(float timeResolution, float rateThreshold) {
         
-        this.thresholdSeconds = thresholdSeconds;
-        this.byParticipant = byParticipant;
+        this.timeResolution = timeResolution;
+        this.rateThreshold = rateThreshold;
+    }
+    
+    /**
+     * Return a list of messages sorted by time (ascending).
+     *
+     * @param original Unsorted message list
+     * @return The sorted message list.
+     */
+    protected List<Message> sortByTime(List<Message> original) {
+        List<Message> messages = new ArrayList<Message>(original);
+
+        Collections.sort(messages, new Comparator<Message>() {
+            @Override
+            public int compare(Message o1, Message o2) {
+                return o1.getTimestamp().compareTo(o2.getTimestamp());
+            }
+        });
+
+        return messages;
     }
     
     @Override
     public SegmentSet segment(MessageSet messageSet) {
-        
-        //Iterate over messages
-            //Calculate the message rate at this point in time (separate loop)
-            //Wherever the message rate crosses @rateThreshold
-                //Get the previous inflection point and cut there
-        
-        //!!EDGE CASE!!: If the neighboring point to the right is the same value, still cut.
         
         System.out.println("Segmenting by heatmap with a rate threshold of " + rateThreshold 
                 + " messages per " + (timeResolution/60.0f) + " minutes.");
@@ -147,7 +174,7 @@ public class HeatSegmentation extends ThresholdSegmentation {
             
             //Blatant copy-paste
             if (newSegment) {
-                if (this.resolution != null) { //TODO
+                if (this.resolution != null) {
                     current.setTrueLabel(this.resolution.resolveLabel(current));
                     if (current.hasTrueLabel()) {
                         numLabeled++;
