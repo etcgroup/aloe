@@ -21,6 +21,7 @@ package etc.aloe.options;
 import etc.aloe.FileNames;
 import java.io.File;
 import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.Option;
 
 /**
  * Defines options for all training runs, regardless of pipeline implementation.
@@ -37,6 +38,7 @@ public class TrainOptions extends ModeOptions {
         this.outputDir = dir;
         dir.mkdirs();
 
+        outputROCDir = new File(dir, FileNames.OUTPUT_ROC_DIR_NAME);
         outputEvaluationReportFile = new File(dir, FileNames.OUTPUT_EVALUTION_REPORT_NAME);
         outputFeatureSpecFile = new File(dir, FileNames.OUTPUT_FEATURE_SPEC_NAME);
         outputModelFile = new File(dir, FileNames.OUTPUT_MODEL_NAME);
@@ -44,11 +46,15 @@ public class TrainOptions extends ModeOptions {
         outputFeatureWeightsFile = new File(dir, FileNames.OUTPUT_FEATURE_WEIGHTS_NAME);
     }
     public File outputDir;
+    public File outputROCDir;
     public File outputEvaluationReportFile;
     public File outputFeatureSpecFile;
     public File outputModelFile;
     public File outputTopFeaturesFile;
     public File outputFeatureWeightsFile;
+
+    @Option(name="--roc", usage="Export data for ROC curves")
+    public boolean makeROC;
 
     @Override
     public void printUsage() {

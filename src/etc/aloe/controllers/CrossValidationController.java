@@ -22,16 +22,15 @@ import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.Model;
+import etc.aloe.data.Predictions;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.Balancing;
 import etc.aloe.processes.CrossValidationPrep;
 import etc.aloe.processes.CrossValidationSplit;
-import etc.aloe.processes.Evaluation;
 import etc.aloe.processes.FeatureExtraction;
 import etc.aloe.processes.FeatureGeneration;
 import etc.aloe.processes.Training;
-import java.util.List;
 
 /**
  * Class that performs cross validation on segmented data and and produces an
@@ -47,7 +46,6 @@ public class CrossValidationController {
     private FeatureGeneration featureGenerationImpl;
     private FeatureExtraction featureExtractionImpl;
     private Training trainingImpl;
-    private Evaluation evaluationImpl;
     private Balancing balancingImpl;
     private double falsePositiveCost = 1;
     private double falseNegativeCost = 1;
@@ -87,7 +85,7 @@ public class CrossValidationController {
             validationPrep.randomize(segmentSet.getSegments());
             segmentSet.setSegments(validationPrep.stratify(segmentSet.getSegments(), folds));
 
-            evaluationReport = new EvaluationReport(falsePositiveCost, falseNegativeCost);
+            evaluationReport = new EvaluationReport(this.folds + " Cross Validation", falsePositiveCost, falseNegativeCost);
             for (int foldIndex = 0; foldIndex < this.folds; foldIndex++) {
                 System.out.println("- Starting fold " + (foldIndex + 1));
                 //Split the data
@@ -118,9 +116,9 @@ public class CrossValidationController {
                 Training training = getTrainingImpl();
                 Model model = training.train(trainingSet);
 
-                List<Boolean> predictions = model.getPredictedLabels(testingSet);
-                Evaluation evaluation = getEvaluationImpl();
-                EvaluationReport report = evaluation.evaluate(predictions, testingSet);
+                Predictions predictions = model.getPredictions(testingSet);
+                EvaluationReport report = new EvaluationReport("Fold " + (foldIndex + 1), falsePositiveCost, falseNegativeCost);
+                report.addPredictions(predictions);
 
                 evaluationReport.addPartial(report);
                 int numCorrect = report.getTrueNegativeCount() + report.getTruePositiveCount();
@@ -154,14 +152,6 @@ public class CrossValidationController {
 
     public void setTrainingImpl(Training training) {
         this.trainingImpl = training;
-    }
-
-    public Evaluation getEvaluationImpl() {
-        return this.evaluationImpl;
-    }
-
-    public void setEvaluationImpl(Evaluation evaluation) {
-        this.evaluationImpl = evaluation;
     }
 
     public Balancing getBalancingImpl() {

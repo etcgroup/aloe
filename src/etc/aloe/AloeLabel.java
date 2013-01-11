@@ -23,6 +23,7 @@ import etc.aloe.data.EvaluationReport;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.MessageSet;
 import etc.aloe.data.Model;
+import etc.aloe.data.ROC;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.options.LabelOptions;
 import etc.aloe.options.ModeOptions;
@@ -53,9 +54,7 @@ public class AloeLabel extends Aloe {
             LabelingController labelingController = new LabelingController();
 
             //Provide implementations of the needed processes
-            labelingController.setFeatureExtractionImpl(factory.constructFeatureExtraction());
-            labelingController.setEvaluationImpl(factory.constructEvaluation());
-            labelingController.setMappingImpl(factory.constructLabelMapping());
+            factory.configureLabeling(labelingController);
 
             //Process the input messages
             MessageSet messages = this.loadMessages(options.inputCSVFile);
@@ -76,6 +75,11 @@ public class AloeLabel extends Aloe {
             System.out.println("== Saving Output ==");
 
             saveEvaluationReport(evalReport, options.outputEvaluationReportFile);
+            if (options.makeROC) {
+                ROC roc = evalReport.getROCs().get(0);
+                saveROC(roc, options.outputROCFile);
+            }
+            
             saveMessages(messages, options.outputCSVFile);
 
             System.out.println("Testing Report:");

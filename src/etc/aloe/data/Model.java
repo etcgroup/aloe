@@ -24,11 +24,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.OutputStream;
-import java.util.List;
 
 /**
  * A Model has the ability to learn from examples and label unlabeled examples.
- * 
+ *
  * @author Michael Brooks <mjbrooks@uw.edu>
  */
 public interface Model extends Loading, Saving {
@@ -36,13 +35,13 @@ public interface Model extends Loading, Saving {
     /**
      * Attempt to label each example in the example set according to the model.
      *
-     * Returns the list of generated labels. Order corresponds to the order of
+     * Returns the list of generated labels and confidences. Order corresponds to the order of
      * examples.
      *
      * @param examples
      * @return
      */
-    List<Boolean> getPredictedLabels(ExampleSet examples);
+    Predictions getPredictions(ExampleSet examples);
 
     boolean load(InputStream source) throws InvalidObjectException;
 

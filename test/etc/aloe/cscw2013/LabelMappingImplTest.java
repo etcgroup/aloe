@@ -20,6 +20,7 @@ package etc.aloe.cscw2013;
 
 import etc.aloe.data.Message;
 import etc.aloe.data.MessageSet;
+import etc.aloe.data.Predictions;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import java.util.ArrayList;
@@ -41,8 +42,8 @@ public class LabelMappingImplTest {
 
     private MessageSet rawMessages;
     private SegmentSet segments;
-    private List<Boolean> predictedLabels;
     private List<Boolean> messageLabels;
+    private Predictions predictions;
 
     public LabelMappingImplTest() {
     }
@@ -92,11 +93,11 @@ public class LabelMappingImplTest {
         seg.add(rawMessages.get(9));
         this.segments.add(seg);
 
-        this.predictedLabels = new ArrayList<Boolean>();
-        this.predictedLabels.add(Boolean.TRUE);
-        this.predictedLabels.add(Boolean.FALSE);
-        this.predictedLabels.add(Boolean.TRUE);
-        this.predictedLabels.add(Boolean.FALSE);
+        this.predictions = new Predictions();
+        predictions.add(Boolean.TRUE, 1.0);
+        predictions.add(Boolean.FALSE, 0.0);
+        predictions.add(Boolean.TRUE, 1.0);
+        predictions.add(Boolean.FALSE, 0.0);
 
         this.messageLabels = Arrays.asList(new Boolean[] {
             true,
@@ -118,7 +119,7 @@ public class LabelMappingImplTest {
         public void testMap() {
         System.out.println("predict");
         LabelMappingImpl instance = new LabelMappingImpl();
-        instance.map(predictedLabels, this.segments);
+        instance.map(predictions, this.segments);
 
         for (int m = 0; m < rawMessages.size(); m++) {
             Message message = rawMessages.get(m);
