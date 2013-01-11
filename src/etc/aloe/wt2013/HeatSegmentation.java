@@ -24,6 +24,7 @@ import etc.aloe.data.MessageSet;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.SegmentResolution;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -72,19 +73,20 @@ public class HeatSegmentation extends ThresholdSegmentation {
         System.out.println("Segmenting by heatmap with a rate threshold of " + rateThreshold 
                 + " messages per " + (timeResolution/60.0f) + " minutes.");
         
-        SegmentSet segments = new SegmentSet();
-        
         //Sort the message set by time
         List<Message> messages = sortByTime(messageSet.getMessages());
+        
+        //---
+        //Calculate the message rate
         
         int rIndex = 0; //Index of the right message
         int lIndex = 0; //Index of the left message
         
+        boolean stepping = false; //@true if the window is currently being adjusted, @false otherwise
         int messageRate = 0; //Current count of messages in the window, aka the rate per @timeResolution
         
-        Segment current = new Segment();
+        HashMap<Integer, Integer> messageRates = new HashMap<Integer, Integer>(); //We'll map the message's ID to the rate at its position in time
         
-        //Calculate the message rate for each message
         while(rIndex < messages.size()) {
             //Get the messages
             Message left = messages.get(lIndex); 
@@ -96,19 +98,75 @@ public class HeatSegmentation extends ThresholdSegmentation {
             
             //If the left message is out of the window, advance the left pointer
             if((rightMsgSeconds-leftMsgSeconds) > timeResolution) {
+                stepping = true;
+                
                 lIndex++;
                 messageRate--;
                 //rIndex--;
             } else { //Move the right index
+                stepping = false;
+                
                 rIndex++;
                 messageRate++;
             }
             
-            //Here the message rate is accurate for this iteration
-            System.out.println("Message rate for " + right.getMessage() + "\n" + messageRate);
+            if(!stepping) { //Here the message rate is accurate for this iteration
+                System.out.println("Message rate for " + right.getMessage() + "\n" + messageRate);
+                messageRates.put(right.getId(), messageRate);
+            }
         }
+        
+        //---
+        //Begin segmentation
+        
+        SegmentSet segments = new SegmentSet();
+        Segment current = new Segment();
+        
+        boolean wasAboveThresh = false;
+        boolean newSegment = false;
+        
+        int numLabeled = 0;
+        
+        //TODO: Check second derivative. This currently cuts right at the threshold.
+        for(Message m : messages) {
+            int rate = messageRates.get(m.getId());
+            if(rate > rateThreshold) { //Can't cut without crossing the threshold
+                wasAboveThresh = true;
+            }
+            if(rate < rateThreshold && wasAboveThresh) { //We cut here
+                wasAboveThresh = false;
+                newSegment = true;
+            }
+            
+            //Blatant copy-paste
+            if (newSegment) {
+                if (this.resolution != null) {
+                    current.setTrueLabel(this.resolution.resolveLabel(current));
+                    if (current.hasTrueLabel()) {
+                        numLabeled++;
+                    }
+                }
+                segments.add(current);
+                current = new Segment();
+                newSegment = false;
+            }
+            
+            current.add(m);
+        }
+        
+        //If it ain't baroque, don't fixe it!
+        if (current.getMessages().size() > 0) {
+            if (this.resolution != null) {
+                current.setTrueLabel(this.resolution.resolveLabel(current));
+                if (current.hasTrueLabel()) {
+                    numLabeled++;
+                }
+            }
+            segments.add(current);
+        }
+        
         //Iterate over messages
-            //Calculate the message rate at this point in time (Separate method)
+            //Calculate the message rate at this point in time (separate loop)
             //Wherever the message rate crosses @rateThreshold
                 //Get the previous inflection point and cut there
         
