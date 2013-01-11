@@ -18,7 +18,6 @@
  */
 package etc.aloe.wt2013;
 
-import etc.aloe.cscw2013.ThresholdSegmentation;
 import etc.aloe.data.Message;
 import etc.aloe.data.MessageSet;
 import etc.aloe.data.Segment;
@@ -51,6 +50,9 @@ public class HeatSegmentation implements Segmentation {
     
     private SegmentResolution resolution;
     
+    /** We map the message's ID to the message rate at its position in time. */
+    HashMap<Integer, Integer> messageRates;
+    
     /** Messages per timeResolution seconds */
     private float timeResolution; // = 10.0f * 60.0f;
     
@@ -60,13 +62,16 @@ public class HeatSegmentation implements Segmentation {
      */
     private float rateThreshold; // = 30.0f;
     
+    //PROTO
+    private float avgMessageRate = 0.0f;
+    
     /**
      * Unparameterized constructor - initializes timeResolution to 10 minutes 
      * and rateThreshold to 30 messages/10 min. These values are arbitrary 
      * but seem to give good results on initial runs.
      */
     public HeatSegmentation() {
-        this(10.0f * 60.0f, 30.0f);
+        this(10.0f * 60.0f, 20.0f);
     }
     
     /**
@@ -77,9 +82,10 @@ public class HeatSegmentation implements Segmentation {
      *                       in messages per timeResolution seconds.
      */ 
     public HeatSegmentation(float timeResolution, float rateThreshold) {
-        
         this.timeResolution = timeResolution;
         this.rateThreshold = rateThreshold;
+        
+        messageRates = new HashMap<Integer, Integer>();
     }
     
     /**
@@ -119,8 +125,6 @@ public class HeatSegmentation implements Segmentation {
         boolean stepping = false; //@true if the window is currently being adjusted, @false otherwise
         int messageRate = 0; //Current count of messages in the window, aka the rate per @timeResolution
         
-        HashMap<Integer, Integer> messageRates = new HashMap<Integer, Integer>(); //We'll map the message's ID to the rate at its position in time
-        
         while(rIndex < messages.size()) {
             //Get the messages
             Message left = messages.get(lIndex); 
@@ -145,10 +149,16 @@ public class HeatSegmentation implements Segmentation {
             }
             
             if(!stepping) { //Here the message rate is accurate for this iteration
-                System.out.println("Message rate for " + right.getMessage() + "\n" + messageRate);
+                //System.out.println("Message rate for " + right.getMessage() + "\n" + messageRate);
                 messageRates.put(right.getId(), messageRate);
             }
         }
+        
+        //PROTO
+        int totalMessages = messages.size();
+        float timeDifference = (messages.get(totalMessages-1).getTimestamp().getTime() 
+                - messages.get(0).getTimestamp().getTime()) / (1000*60);
+        avgMessageRate = ((float) totalMessages) / timeDifference;
         
         //---
         //Begin segmentation
@@ -167,7 +177,7 @@ public class HeatSegmentation implements Segmentation {
             if(rate > rateThreshold) { //Can't cut without crossing the threshold
                 wasAboveThresh = true;
             }
-            if((rate < rateThreshold && wasAboveThresh) || (rate > rateThreshold && !wasAboveThresh)) { //We cut here
+            if(/*isLocalMin(m) && */(rate < rateThreshold && wasAboveThresh) || (rate > rateThreshold && !wasAboveThresh)) { //We cut here
                 wasAboveThresh = false;
                 newSegment = true;
             }
@@ -200,7 +210,32 @@ public class HeatSegmentation implements Segmentation {
         }
         
         System.out.println("Grouped messages into " + segments.size() + " segments (" + numLabeled + " labeled).");
+        System.out.println("Average message rate was " + avgMessageRate + " messages per minute.");
         return segments;
+    }
+    
+    /**
+     * Determines if a message is a local minimum.
+     * @return @true if the message is a local minimum, @false otherwise.
+     */
+    private boolean isLocalMin(Message m) {
+        int mRate = messageRates.get(m.getId());
+        int lRate; int rRate;
+        
+        try {
+            lRate = messageRates.get(m.getId()-1);
+            rRate = messageRates.get(m.getId()+1);
+            
+            return mRate <= lRate && mRate <= rRate;
+        } catch(NullPointerException e) {
+            //This can only occur at the endpoints of the message set, so we ignore it.
+        }
+        
+        return false;
+    }
+    
+    private float getAvgMessageRate() {
+        return avgMessageRate;
     }
     
     @Override
