@@ -66,7 +66,7 @@ public class FrSimpleStringToWordVector extends StringToWordVector {
 
         public NoNonsenseStemmer(boolean useSnowball) {
             if (useSnowball) {
-                this.snowball = new SnowballStemmer();//this is where I need to put in the name of a different stemmer
+                this.snowball = new SnowballStemmer("french");//this is where I need to put in the name of a different stemmer
             }
 
             this.nonsensePattern = Pattern.compile("^[\\p{Digit}\\p{Punct}]*$");

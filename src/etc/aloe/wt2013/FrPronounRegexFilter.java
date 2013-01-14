@@ -30,9 +30,9 @@ public class FrPronounRegexFilter extends FrAbstractRegexFilter {
 
     private NamedRegex[] regexFeatures = new NamedRegex[]{
         // first person singular pronouns
-        new NamedRegex("prn_first_sng", "(?<!\\w)(moi|je|mon|ma|mes|mien(ne)?(s)?|(moi\\s?-?(meme)|(m\u00EAme)))(?!\\w)", Pattern.CASE_INSENSITIVE),//self for all of these
+        new NamedRegex("prn_first_sng", "(?<!\\w)(moi|je|j'?|mon|ma|mes|mien(ne)?(s)?|(moi\\s?-?(meme)|(m\u00EAme)))(?!\\w)", Pattern.CASE_INSENSITIVE),//self for all of these
         // second person singular pronouns
-        new NamedRegex("prn_second_sng", "(?<!\\w)(tu|toi|ton|ta|tes|tien(ne)?(s)?|(toi\\s?-?(meme)|(m\u00EAme)))(?!\\w)", Pattern.CASE_INSENSITIVE),
+        new NamedRegex("prn_second_sng", "(?<!\\w)(tu|toi|t'?|ton|ta|tes|tien(ne)?(s)?|(toi\\s?-?(meme)|(m\u00EAme)))(?!\\w)", Pattern.CASE_INSENSITIVE),
         // third person singular pronouns
         new NamedRegex("prn_third_sng", "(?<!\\w)(il|lui|sien(ne)?(s)?|elle)(?!\\w|(soi\\s?-?(meme)|(m\u00EAme)))", Pattern.CASE_INSENSITIVE),//how to handle le/la as pronouns? how to handle on?
         // first person plural pronouns
