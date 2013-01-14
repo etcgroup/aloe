@@ -84,7 +84,7 @@ public class HeatSegmentationTest {
     public void testSegment() {
         System.out.println("segment");
         
-        HeatSegmentation instance = new HeatSegmentation(10.0f * 60.0f, 3);
+        HeatSegmentation instance = new HeatSegmentation(10.0f * 60.0f, 2);
         instance.setSegmentResolution( new ResolutionImpl() );
         
         SegmentSet segments = instance.segment(messages);

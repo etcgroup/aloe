@@ -41,19 +41,27 @@ public class HeatSegmentationPipeline extends CSCW2013 {
     public Segmentation constructSegmentation() {
         //PROTO 
         boolean disableSegmentation = false;
-        int segmentationThresholdSeconds = 30;
-        boolean ignoreParticipants = false;
+        float timeResolution = 30.0f;
+        float rateThreshold = 3.0f;
+        //int segmentationThresholdSeconds = 30;
+        //boolean ignoreParticipants = false;
 
         if (options instanceof TrainOptionsImpl) {
             TrainOptionsImpl trainOpts = (TrainOptionsImpl) options;
             disableSegmentation = trainOpts.disableSegmentation;
-            segmentationThresholdSeconds = trainOpts.segmentationThresholdSeconds;
-            ignoreParticipants = trainOpts.ignoreParticipants;
+            timeResolution = trainOpts.timeResolution;
+            rateThreshold = trainOpts.rateThreshold;
+            
+            //segmentationThresholdSeconds = trainOpts.segmentationThresholdSeconds;
+            //ignoreParticipants = trainOpts.ignoreParticipants;
         } else if (options instanceof LabelOptionsImpl) {
             LabelOptionsImpl labelOpts = (LabelOptionsImpl) options;
             disableSegmentation = labelOpts.disableSegmentation;
-            segmentationThresholdSeconds = labelOpts.segmentationThresholdSeconds;
-            ignoreParticipants = labelOpts.ignoreParticipants;
+            timeResolution = labelOpts.timeResolution;
+            rateThreshold = labelOpts.rateThreshold;
+            
+            //segmentationThresholdSeconds = labelOpts.segmentationThresholdSeconds;
+            //ignoreParticipants = labelOpts.ignoreParticipants;
         } else {
             throw new IllegalArgumentException("Options should be for Training or Labeling");
         }
@@ -61,7 +69,7 @@ public class HeatSegmentationPipeline extends CSCW2013 {
         if (disableSegmentation) {
             return new NullSegmentation();
         } else {
-            Segmentation segmentation = new HeatSegmentation();
+            Segmentation segmentation = new HeatSegmentation(timeResolution, rateThreshold);
             segmentation.setSegmentResolution(new ResolutionImpl());
             return segmentation;
         }

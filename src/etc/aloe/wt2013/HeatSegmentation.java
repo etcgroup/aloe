@@ -63,15 +63,17 @@ public class HeatSegmentation implements Segmentation {
     private float rateThreshold; // = 30.0f;
     
     //PROTO
-    private float avgMessageRate = 0.0f;
+    private float meanMessageRateOverTimeInt = 0.0f;
+    private float meanMessageRateWithinSet = 0.0f;
     
+    //TODO - this isn't needed anymore
     /**
      * Unparameterized constructor - initializes timeResolution to 10 minutes 
      * and rateThreshold to 30 messages/10 min. These values are arbitrary 
      * but seem to give good results on initial runs.
      */
     public HeatSegmentation() {
-        this(10.0f * 60.0f, 20.0f);
+        this(0.5f * 60.0f, 2.0f);
     }
     
     /**
@@ -111,7 +113,7 @@ public class HeatSegmentation implements Segmentation {
     public SegmentSet segment(MessageSet messageSet) {
         
         System.out.println("Segmenting by heatmap with a rate threshold of " + rateThreshold 
-                + " messages per " + (timeResolution/60.0f) + " minutes.");
+                + " messages per " + (timeResolution/*/60.0f*/) + " seconds.");
         
         //Sort the message set by time
         List<Message> messages = sortByTime(messageSet.getMessages());
@@ -149,7 +151,12 @@ public class HeatSegmentation implements Segmentation {
             }
             
             if(!stepping) { //Here the message rate is accurate for this iteration
-                //System.out.println("Message rate for " + right.getMessage() + "\n" + messageRate);
+                //System.out.println(/*"Message rate for " + right.getMessage() + "\n" + */messageRate);
+                System.out.println("Timestamp: " + right.getTimestamp() + " | Current rate: " + messageRate);
+                
+                //PROTO
+                meanMessageRateWithinSet += messageRate;
+                
                 messageRates.put(right.getId(), messageRate);
             }
         }
@@ -157,8 +164,10 @@ public class HeatSegmentation implements Segmentation {
         //PROTO
         int totalMessages = messages.size();
         float timeDifference = (messages.get(totalMessages-1).getTimestamp().getTime() 
-                - messages.get(0).getTimestamp().getTime()) / (1000*60);
-        avgMessageRate = ((float) totalMessages) / timeDifference;
+                - messages.get(0).getTimestamp().getTime()) / (1000);
+        
+        meanMessageRateOverTimeInt = ((float) totalMessages) / timeDifference;
+        meanMessageRateWithinSet = ((float) meanMessageRateWithinSet)/messages.size();
         
         //---
         //Begin segmentation
@@ -177,7 +186,7 @@ public class HeatSegmentation implements Segmentation {
             if(rate > rateThreshold) { //Can't cut without crossing the threshold
                 wasAboveThresh = true;
             }
-            if(/*isLocalMin(m) && */(rate < rateThreshold && wasAboveThresh) || (rate > rateThreshold && !wasAboveThresh)) { //We cut here
+            if(/*isLocalMin(m) && */(rate <= rateThreshold && wasAboveThresh) /*|| (rate >= rateThreshold && !wasAboveThresh)*/) { //We cut here
                 wasAboveThresh = false;
                 newSegment = true;
             }
@@ -210,7 +219,8 @@ public class HeatSegmentation implements Segmentation {
         }
         
         System.out.println("Grouped messages into " + segments.size() + " segments (" + numLabeled + " labeled).");
-        System.out.println("Average message rate was " + avgMessageRate + " messages per minute.");
+        System.out.println("Mean message rate over the entire time interval is " + meanMessageRateOverTimeInt + " messages per second."
+                + "\nMean message rate within the set is: " + meanMessageRateWithinSet);
         return segments;
     }
     
@@ -235,7 +245,7 @@ public class HeatSegmentation implements Segmentation {
     }
     
     private float getAvgMessageRate() {
-        return avgMessageRate;
+        return meanMessageRateOverTimeInt;
     }
     
     @Override

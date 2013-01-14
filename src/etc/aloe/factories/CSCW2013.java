@@ -303,6 +303,12 @@ public class CSCW2013 implements PipelineFactory {
         public int segmentationThresholdSeconds = 30;
         @Option(name = "--no-segmentation", usage = "disable segmentation (each message is in its own segment)")
         public boolean disableSegmentation = false;
+        
+        //Heat Segmentation Options
+        @Option(name="--timeResolution", aliases={"-tRes"}, usage="Time resolution for segmentation in seconds (default = 30 seconds)")
+        public float timeResolution = 30.0f;
+        @Option(name="--rateThreshold", aliases={"-rThresh"}, usage="Rate threshold for segmentation in messages per second (default = 3 msg/sec)")
+        public float rateThreshold = 3.0f;
     }
 
     static class TrainOptionsImpl extends TrainOptions {
@@ -331,5 +337,11 @@ public class CSCW2013 implements PipelineFactory {
         public boolean balanceTestSet = false;
         @Option(name = "--emoticons", aliases = {"-e"}, usage = "emoticon dictionary file (default emoticons.txt)")
         public File emoticonFile = new File("emoticons.txt");
+        
+        //Heat Segmentation Options
+        @Option(name="--timeResolution", aliases={"-tRes"}, usage="Time resolution for segmentation in seconds (default = 30 seconds)")
+        public float timeResolution = 30.0f;
+        @Option(name="--rateThreshold", aliases={"-rThresh"}, usage="Rate threshold for segmentation in messages per second (default = 3 msg/sec)")
+        public float rateThreshold = 3.0f;
     }
 }
