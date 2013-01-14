@@ -305,10 +305,12 @@ public class CSCW2013 implements PipelineFactory {
         public boolean disableSegmentation = false;
         
         //Heat Segmentation Options
-        @Option(name="--timeResolution", aliases={"-tRes"}, usage="Time resolution for segmentation in seconds (default = 30 seconds)")
-        public float timeResolution = 30.0f;
-        @Option(name="--rateThreshold", aliases={"-rThresh"}, usage="Rate threshold for segmentation in messages per second (default = 3 msg/sec)")
-        public float rateThreshold = 3.0f;
+        @Option(name="--infer-occurrences", aliases={"-inf-occ"}, usage="Use the mean occurence for segmentation instead of a user-specified value.")
+        public boolean inferOccurrences = false;
+        @Option(name="--time-window", aliases={"-t-win"}, usage="Time window for segmentation in seconds (default = 30 seconds)")
+        public float timeWindow = 30.0f;
+        @Option(name="--occurrence-threshold", aliases={"-o-thr"}, usage="Message occurrence threshold for segmentation (default = 3 messages within the time window)")
+        public float occurrenceThreshold = 0;
     }
 
     static class TrainOptionsImpl extends TrainOptions {
@@ -339,9 +341,11 @@ public class CSCW2013 implements PipelineFactory {
         public File emoticonFile = new File("emoticons.txt");
         
         //Heat Segmentation Options
-        @Option(name="--timeResolution", aliases={"-tRes"}, usage="Time resolution for segmentation in seconds (default = 30 seconds)")
-        public float timeResolution = 30.0f;
-        @Option(name="--rateThreshold", aliases={"-rThresh"}, usage="Rate threshold for segmentation in messages per second (default = 3 msg/sec)")
-        public float rateThreshold = 3.0f;
+        @Option(name="--infer-occurrences", aliases={"-inf-occ"}, usage="Use the mean occurence for segmentation instead of a user-specified value.")
+        public boolean inferOccurrences = false;
+        @Option(name="--time-window", aliases={"-t-win"}, usage="Time window for segmentation in seconds (default = 30 seconds)")
+        public float timeWindow = 30.0f;
+        @Option(name="--occurrence-threshold", aliases={"-o-thr"}, usage="Message occurrence threshold for segmentation (default = 3 messages within the time window)")
+        public float occurrenceThreshold = 0;
     }
 }

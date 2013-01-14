@@ -41,35 +41,36 @@ public class HeatSegmentationPipeline extends CSCW2013 {
     public Segmentation constructSegmentation() {
         //PROTO 
         boolean disableSegmentation = false;
-        float timeResolution = 30.0f;
-        float rateThreshold = 3.0f;
-        //int segmentationThresholdSeconds = 30;
-        //boolean ignoreParticipants = false;
+        boolean inferOccurrences = false;
+        float timeWindow = 30.0f;
+        float occurrenceThreshold = 3.0f;
 
         if (options instanceof TrainOptionsImpl) {
             TrainOptionsImpl trainOpts = (TrainOptionsImpl) options;
             disableSegmentation = trainOpts.disableSegmentation;
-            timeResolution = trainOpts.timeResolution;
-            rateThreshold = trainOpts.rateThreshold;
             
-            //segmentationThresholdSeconds = trainOpts.segmentationThresholdSeconds;
-            //ignoreParticipants = trainOpts.ignoreParticipants;
+            inferOccurrences = trainOpts.inferOccurrences;
+            timeWindow = trainOpts.timeWindow;
+            occurrenceThreshold = trainOpts.occurrenceThreshold;
         } else if (options instanceof LabelOptionsImpl) {
             LabelOptionsImpl labelOpts = (LabelOptionsImpl) options;
             disableSegmentation = labelOpts.disableSegmentation;
-            timeResolution = labelOpts.timeResolution;
-            rateThreshold = labelOpts.rateThreshold;
             
-            //segmentationThresholdSeconds = labelOpts.segmentationThresholdSeconds;
-            //ignoreParticipants = labelOpts.ignoreParticipants;
+            inferOccurrences = labelOpts.inferOccurrences;
+            timeWindow = labelOpts.timeWindow;
+            occurrenceThreshold = labelOpts.occurrenceThreshold;
         } else {
             throw new IllegalArgumentException("Options should be for Training or Labeling");
         }
 
         if (disableSegmentation) {
             return new NullSegmentation();
+        } else if (inferOccurrences || occurrenceThreshold == 0) {
+            Segmentation segmentation = new HeatSegmentation(timeWindow);
+            segmentation.setSegmentResolution(new ResolutionImpl());
+            return segmentation;
         } else {
-            Segmentation segmentation = new HeatSegmentation(timeResolution, rateThreshold);
+            Segmentation segmentation = new HeatSegmentation(timeWindow, occurrenceThreshold);
             segmentation.setSegmentResolution(new ResolutionImpl());
             return segmentation;
         }
