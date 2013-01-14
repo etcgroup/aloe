@@ -102,6 +102,25 @@ public class HeatSegmentation implements Segmentation {
     }
     
     /**
+     * Return a list of messages sorted by participant name (ascending).
+     *
+     * @param original
+     * @return
+     */
+    protected List<Message> sortByParticipant(List<Message> original) {
+        List<Message> messages = new ArrayList<Message>(original);
+
+        Collections.sort(messages, new Comparator<Message>() {
+            @Override
+            public int compare(Message o1, Message o2) {
+                return o1.getParticipant().compareTo(o2.getParticipant());
+            }
+        });
+
+        return messages;
+    }
+    
+    /**
      * Return a list of messages sorted by time (ascending).
      *
      * @param original Unsorted message list
@@ -167,18 +186,11 @@ public class HeatSegmentation implements Segmentation {
         }
     }
     
-    @Override
-    public SegmentSet segment(MessageSet messageSet) {
-        
-        //Sort the message set by time
-        List<Message> messages = sortByTime(messageSet.getMessages());
-        
-        //Build the occurence count hashmap, if it hasn't been done already
-        if(messageOccurrences == null) {
-            calculateOccurrences(messages);
-        }
-        
-        //PROTO - calculate mean values
+    /**
+     * Calculate mean values.
+     * @param messages messages sorted by time (ascending)
+     */
+    private void calcMeanValues(List<Message> messages) {
         int totalMessages = messages.size();
         float timeDifference = (messages.get(totalMessages-1).getTimestamp().getTime() 
                 - messages.get(0).getTimestamp().getTime()) / (1000);
@@ -189,6 +201,23 @@ public class HeatSegmentation implements Segmentation {
         if(inferOccurrences) { //If specified, use the mean values as the threshold
             occurrenceThreshold = meanMessageOccurrence;
         }
+    }
+    
+    @Override
+    public SegmentSet segment(MessageSet messageSet) {
+        
+        //Sort the message set by time
+        List<Message> messages = sortByTime(messageSet.getMessages());
+        
+        //PROTO - Sort by participant too just for shits and giggles.
+        //messages = sortByParticipant(messages);
+        
+        //Build the occurence count hashmap, if it hasn't been done already
+        if(messageOccurrences == null) {
+            calculateOccurrences(messages);
+        }
+        
+        calcMeanValues(messages);
         
         //---
         //Begin segmentation
