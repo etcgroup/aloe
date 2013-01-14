@@ -51,20 +51,20 @@ public class HeatSegmentation implements Segmentation {
     private SegmentResolution resolution;
     
     /** We map the message's ID to the message rate at its position in time. */
-    HashMap<Integer, Integer> messageRates;
+    HashMap<Integer, Integer> messageOccurrences;
     
-    /** Messages per timeResolution seconds */
-    private float timeResolution; // = 10.0f * 60.0f;
+    /** Messages within the last timeWindow seconds */
+    private float timeWindow; // = 10.0f * 60.0f;
     
     /** 
      * Boundary message rate - completely arbitrary, will be replaced with an actual metric.
-     * Units are messages per {@see timeResolution} seconds
+     * Units are messages per timeWindow seconds
      */
     private float rateThreshold; // = 30.0f;
     
     //PROTO
-    private float meanMessageRateOverTimeInt = 0.0f;
-    private float meanMessageRateWithinSet = 0.0f;
+    private float meanMessageRate = 0.0f;
+    private float meanMessageOccurrence = 0.0f;
     
     //TODO - this isn't needed anymore
     /**
@@ -76,18 +76,22 @@ public class HeatSegmentation implements Segmentation {
         this(0.5f * 60.0f, 2.0f);
     }
     
+    public HeatSegmentation(float timeWindow) {
+        
+    }
+    
     /**
      * Parameterized constructor.
-     * @param timeResolution The window of time from which message rate will be calculated, in seconds.
+     * @param timeWindow The window of time from which message rate will be calculated, in seconds.
      *                       i.e. messages per timeResolution seconds
      * @param rateThreshold The message rate threshold after which segmentation occurs,
      *                       in messages per timeResolution seconds.
      */ 
-    public HeatSegmentation(float timeResolution, float rateThreshold) {
-        this.timeResolution = timeResolution;
+    public HeatSegmentation(float timeWindow, float rateThreshold) {
+        this.timeWindow = timeWindow;
         this.rateThreshold = rateThreshold;
         
-        messageRates = new HashMap<Integer, Integer>();
+        messageOccurrences = new HashMap<Integer, Integer>();
     }
     
     /**
@@ -112,8 +116,8 @@ public class HeatSegmentation implements Segmentation {
     @Override
     public SegmentSet segment(MessageSet messageSet) {
         
-        System.out.println("Segmenting by heatmap with a rate threshold of " + rateThreshold 
-                + " messages per " + (timeResolution/*/60.0f*/) + " seconds.");
+        System.out.println("Segmenting by heatmap with an occurrence threshold of " + rateThreshold 
+                + " messages within the last " + (timeWindow/*/60.0f*/) + " seconds.");
         
         //Sort the message set by time
         List<Message> messages = sortByTime(messageSet.getMessages());
@@ -125,7 +129,7 @@ public class HeatSegmentation implements Segmentation {
         int lIndex = 0; //Index of the left message
         
         boolean stepping = false; //@true if the window is currently being adjusted, @false otherwise
-        int messageRate = 0; //Current count of messages in the window, aka the rate per @timeResolution
+        int messageOccurrence = -1; //Current count of messages in the window, aka the occurrence within the time window.
         
         while(rIndex < messages.size()) {
             //Get the messages
@@ -137,27 +141,27 @@ public class HeatSegmentation implements Segmentation {
             long leftMsgSeconds = left.getTimestamp().getTime() / 1000;
             
             //If the left message is out of the window, advance the left pointer
-            if((rightMsgSeconds-leftMsgSeconds) > timeResolution) {
+            if((rightMsgSeconds-leftMsgSeconds) > timeWindow) {
                 stepping = true;
                 
                 lIndex++;
-                messageRate--;
+                messageOccurrence--;
                 //rIndex--;
             } else { //Move the right index
                 stepping = false;
                 
                 rIndex++;
-                messageRate++;
+                messageOccurrence++;
             }
             
             if(!stepping) { //Here the message rate is accurate for this iteration
                 //System.out.println(/*"Message rate for " + right.getMessage() + "\n" + */messageRate);
-                System.out.println("Timestamp: " + right.getTimestamp() + " | Current rate: " + messageRate);
+                System.out.println("Timestamp: " + right.getTimestamp() + " | Current occurrences: " + messageOccurrence);
                 
                 //PROTO
-                meanMessageRateWithinSet += messageRate;
+                meanMessageOccurrence += messageOccurrence;
                 
-                messageRates.put(right.getId(), messageRate);
+                messageOccurrences.put(right.getId(), messageOccurrence);
             }
         }
         
@@ -166,8 +170,8 @@ public class HeatSegmentation implements Segmentation {
         float timeDifference = (messages.get(totalMessages-1).getTimestamp().getTime() 
                 - messages.get(0).getTimestamp().getTime()) / (1000);
         
-        meanMessageRateOverTimeInt = ((float) totalMessages) / timeDifference;
-        meanMessageRateWithinSet = ((float) meanMessageRateWithinSet)/messages.size();
+        meanMessageRate = ((float) totalMessages) / timeDifference;
+        meanMessageOccurrence = ((float) meanMessageOccurrence)/messages.size();
         
         //---
         //Begin segmentation
@@ -182,7 +186,7 @@ public class HeatSegmentation implements Segmentation {
         
         //TODO: Check second derivative. This currently cuts right at the threshold.
         for(Message m : messages) {
-            int rate = messageRates.get(m.getId());
+            int rate = messageOccurrences.get(m.getId());
             if(rate > rateThreshold) { //Can't cut without crossing the threshold
                 wasAboveThresh = true;
             }
@@ -219,8 +223,9 @@ public class HeatSegmentation implements Segmentation {
         }
         
         System.out.println("Grouped messages into " + segments.size() + " segments (" + numLabeled + " labeled).");
-        System.out.println("Mean message rate over the entire time interval is " + meanMessageRateOverTimeInt + " messages per second."
-                + "\nMean message rate within the set is: " + meanMessageRateWithinSet);
+        System.out.println("Mean message rate over the entire time interval is " + meanMessageRate + " messages per second."
+                + "\nMean message occurrence within the set is " + meanMessageOccurrence 
+                + " messages within a " + timeWindow + " second window.");
         return segments;
     }
     
@@ -229,12 +234,12 @@ public class HeatSegmentation implements Segmentation {
      * @return @true if the message is a local minimum, @false otherwise.
      */
     private boolean isLocalMin(Message m) {
-        int mRate = messageRates.get(m.getId());
+        int mRate = messageOccurrences.get(m.getId());
         int lRate; int rRate;
         
         try {
-            lRate = messageRates.get(m.getId()-1);
-            rRate = messageRates.get(m.getId()+1);
+            lRate = messageOccurrences.get(m.getId()-1);
+            rRate = messageOccurrences.get(m.getId()+1);
             
             return mRate <= lRate && mRate <= rRate;
         } catch(NullPointerException e) {
@@ -244,8 +249,12 @@ public class HeatSegmentation implements Segmentation {
         return false;
     }
     
-    private float getAvgMessageRate() {
-        return meanMessageRateOverTimeInt;
+    private float getMeanMessageRate() {
+        return meanMessageRate;
+    }
+    
+    private float getMeanMessageOccurrence() {
+        return meanMessageOccurrence;
     }
     
     @Override
