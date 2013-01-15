@@ -173,7 +173,7 @@ public class SegmentSet {
         if (length <= 1) {
             double averageCharPerSecond = 35.0 * 5.0 / 60.0;
             //[seconds] = [chars] / ([chars]/[seconds])
-            duration = messageStr.length() / averageCharPerSecond;
+            duration = (1 + messageStr.length()) / averageCharPerSecond;
         }
 
         if (duration > 100000) {

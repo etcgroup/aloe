@@ -134,12 +134,13 @@ public class TrainingImpl implements Training {
             System.out.print("Training SMO on " + examples.size() + " examples... ");
             classifier.buildClassifier(examples.getInstances());
             System.out.println("done.");
+
+            WekaModel model = new WekaModel(classifier);
+            return model;
         } catch (Exception ex) {
             System.err.println("Unable to train SMO.");
             System.err.println("\t" + ex.getMessage());
+            return null;
         }
-
-        WekaModel model = new WekaModel(classifier);
-        return model;
     }
 }
