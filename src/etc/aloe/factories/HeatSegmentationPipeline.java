@@ -43,7 +43,7 @@ public class HeatSegmentationPipeline extends CSCW2013 {
         boolean disableSegmentation = false;
         boolean inferOccurrences = false;
         float timeWindow = 30.0f;
-        float occurrenceThreshold = 3.0f;
+        float occurrenceThreshold = -1;
 
         if (options instanceof TrainOptionsImpl) {
             TrainOptionsImpl trainOpts = (TrainOptionsImpl) options;
@@ -65,7 +65,7 @@ public class HeatSegmentationPipeline extends CSCW2013 {
 
         if (disableSegmentation) {
             return new NullSegmentation();
-        } else if (inferOccurrences || occurrenceThreshold == 0) {
+        } else if (inferOccurrences || occurrenceThreshold == -1) {
             Segmentation segmentation = new HeatSegmentation(timeWindow);
             segmentation.setSegmentResolution(new ResolutionImpl());
             return segmentation;

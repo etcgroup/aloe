@@ -310,7 +310,7 @@ public class CSCW2013 implements PipelineFactory {
         @Option(name="--time-window", aliases={"-t-win"}, usage="Time window for segmentation in seconds (default = 30 seconds)")
         public float timeWindow = 30.0f;
         @Option(name="--occurrence-threshold", aliases={"-o-thr"}, usage="Message occurrence threshold for segmentation (default = 3 messages within the time window)")
-        public float occurrenceThreshold = 0;
+        public float occurrenceThreshold = -1;
     }
 
     static class TrainOptionsImpl extends TrainOptions {
@@ -346,6 +346,6 @@ public class CSCW2013 implements PipelineFactory {
         @Option(name="--time-window", aliases={"-t-win"}, usage="Time window for segmentation in seconds (default = 30 seconds)")
         public float timeWindow = 30.0f;
         @Option(name="--occurrence-threshold", aliases={"-o-thr"}, usage="Message occurrence threshold for segmentation (default = 3 messages within the time window)")
-        public float occurrenceThreshold = 0;
+        public float occurrenceThreshold = -1;
     }
 }

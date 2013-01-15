@@ -163,7 +163,7 @@ public class HeatSegmentation implements Segmentation {
             long leftMsgSeconds = left.getTimestamp().getTime() / 1000;
             
             //If the left message is out of the window, advance the left pointer
-            if((rightMsgSeconds-leftMsgSeconds) > timeWindow) {
+            if(Math.abs(rightMsgSeconds-leftMsgSeconds) > timeWindow) {
                 stepping = true;
                 
                 lIndex++;
@@ -221,11 +221,6 @@ public class HeatSegmentation implements Segmentation {
         
         //---
         //Begin segmentation
-        
-        System.out.println("Mean message rate over the entire time interval is " + meanMessageRate + " messages per second."
-                + "\nMean message occurrence within the set is " + meanMessageOccurrence 
-                + " messages within a " + timeWindow + " second window.");
-        
         System.out.println("Segmenting by heatmap with an occurrence threshold of " + occurrenceThreshold 
                 + " messages within a " + (timeWindow/*/60.0f*/) + " second window.");
         
@@ -243,10 +238,13 @@ public class HeatSegmentation implements Segmentation {
             if(currOccurrences > occurrenceThreshold) { //Can't cut without crossing the threshold
                 wasAboveThresh = true;
             }
-            if(/*isLocalMin(m) && */(currOccurrences <= occurrenceThreshold && wasAboveThresh) /*|| (rate >= rateThreshold && !wasAboveThresh)*/) { //We cut here
+            if(/*isLocalMin(m) &&*/ (currOccurrences <= occurrenceThreshold && wasAboveThresh) /*|| (rate >= rateThreshold && !wasAboveThresh)*/) { //We cut here
                 wasAboveThresh = false;
                 newSegment = true;
+                System.out.println("--- Begin new segment (timestamp: " + m.getTimestamp() + ")");
             }
+            
+            System.out.println(m.getTimestamp()); //DEBUG
             
             //Begin blatant copy-paste
             if (newSegment) {
@@ -275,6 +273,10 @@ public class HeatSegmentation implements Segmentation {
         } //End blatant copy-paste
         
         System.out.println("Grouped messages into " + segments.size() + " segments (" + numLabeled + " labeled).");
+        
+        System.out.println("Mean message rate over the entire time interval is " + meanMessageRate + " messages per second."
+                + "\nMean message occurrence within the set is " + meanMessageOccurrence 
+                + " messages within a " + timeWindow + " second window.");
         
         return segments;
     }

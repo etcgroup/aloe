@@ -56,9 +56,10 @@ public class HeatSegmentationTest {
     public void setUp() {
         messages = new MessageSet();
 
-        long now = new Date().getTime();
+        long now = new Date(0).getTime();//new Date().getTime();
         long second = 1 * 1000;
         long minute = 60 * 1000;
+        long hour = 60 * minute;
 
         messages.add(new Message(0, new Date(now), "Alice", "it's"));
         messages.add(new Message(1, new Date(now + second), "Bob", "cow"));
@@ -71,6 +72,7 @@ public class HeatSegmentationTest {
         messages.add(new Message(8, new Date(now + 25 * minute + 7 * second), "Alice", "CAT!", true));
         messages.add(new Message(9, new Date(now + 27 * minute + 20 * second), "Alice", "BAT!", true));
         messages.add(new Message(10, new Date(now + 44 * minute), "Bob", "Sat?", true));
+        //messages.add(new Message(11, new Date(now + 24 * hour), "Jane", "Is anyone there?", true));
     }
     
     @After
@@ -84,7 +86,7 @@ public class HeatSegmentationTest {
     public void testSegment() {
         System.out.println("segment");
         
-        HeatSegmentation instance = new HeatSegmentation(10.0f * 60.0f, 2);
+        HeatSegmentation instance = new HeatSegmentation(10*60, 2);
         instance.setSegmentResolution( new ResolutionImpl() );
         
         SegmentSet segments = instance.segment(messages);
