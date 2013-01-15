@@ -56,7 +56,7 @@ public class HeatSegmentationTest {
     public void setUp() {
         messages = new MessageSet();
 
-        long now = new Date(0).getTime();//new Date().getTime();
+        long now = new Date().getTime();
         long second = 1 * 1000;
         long minute = 60 * 1000;
         long hour = 60 * minute;

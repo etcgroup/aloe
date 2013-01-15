@@ -48,6 +48,9 @@ import java.util.List;
  */
 public class HeatSegmentation implements Segmentation {
     
+    //Hack hack hack
+    private static boolean DEBUG = false;
+    
     private SegmentResolution resolution;
     
     /** We map the message's ID to the message rate at its position in time. */
@@ -203,6 +206,26 @@ public class HeatSegmentation implements Segmentation {
         }
     }
     
+    /**
+     * Checks if the difference between a message and the message immediately before
+     * is outside the time window.
+     * @param m
+     * @return 
+     */
+    private boolean isOutsideWindow(List<Message> messages, Message m) {
+        int mID = m.getId();
+        if(mID<=0 || mID+1>=messages.size()) {
+            return false;
+        }
+        
+        long tDiff = Math.abs((messages.get(mID).getTimestamp().getTime() / 1000)
+                - (messages.get(mID+1).getTimestamp().getTime() / 1000));
+        
+        //System.out.println(tDiff);
+        
+        return tDiff > timeWindow;
+    }
+    
     @Override
     public SegmentSet segment(MessageSet messageSet) {
         
@@ -238,13 +261,20 @@ public class HeatSegmentation implements Segmentation {
             if(currOccurrences > occurrenceThreshold) { //Can't cut without crossing the threshold
                 wasAboveThresh = true;
             }
-            if(/*isLocalMin(m) &&*/ (currOccurrences <= occurrenceThreshold && wasAboveThresh) /*|| (rate >= rateThreshold && !wasAboveThresh)*/) { //We cut here
+            if(isOutsideWindow(messages, m) /*PROTO*/ 
+                    || (currOccurrences <= occurrenceThreshold/* && wasAboveThresh*/) 
+                    /*|| (currOccurrences >= occurrenceThreshold && !wasAboveThresh)*/
+                    /*|| isLocalMin(m) &&*/) { //We cut here
                 wasAboveThresh = false;
                 newSegment = true;
-                System.out.println("--- Begin new segment (timestamp: " + m.getTimestamp() + ")");
+                if(DEBUG) {
+                    System.out.println("--- Begin new segment (timestamp: " + m.getTimestamp() + ")");
+                }
             }
             
-            System.out.println(m.getTimestamp()); //DEBUG
+            if(DEBUG) {
+                System.out.println(m.getTimestamp() + " | precalculated occurrences: " + currOccurrences);
+            }
             
             //Begin blatant copy-paste
             if (newSegment) {
