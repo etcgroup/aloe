@@ -7,6 +7,9 @@ This script can be used in conjunction with the cat utility to compound an archi
 for data analysis in spreadsheet software. Note that this is written in Python 3.
 """
 
+import sys
+import fileinput
+
 __status__ = "Prototype"
 __author__ = "Daniel Barella"
 __email__ = "dan.barella@gmail.com"
@@ -25,3 +28,9 @@ Perhaps a bit later in development I can have this make a file, but then it'd be
 batch processes.
 """
 
+if(len(sys.argv) < 2):
+  print("Usage: python3 generate_csv_from_report.py < Report.txt | cat > out.csv")
+  sys.exit(1)
+
+csv = [line.split(':')[1].strip() for line in fileinput.input()]
+print(",".join(csv))
