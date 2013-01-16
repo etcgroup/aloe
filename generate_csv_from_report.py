@@ -41,7 +41,7 @@ if(len(sys.argv) != 2):
   sys.exit(1)
 
 #For each line, get the strings following each semicolon (whitespace stripped)
-csv = [line.split(':')[1].strip() for line in fileinput.input()]
+csv = [line.split(':')[1].strip() for line in fileinput.input() if '-' not in line]
 
 #Print to stdout with comma separation
 print(",".join(csv))
