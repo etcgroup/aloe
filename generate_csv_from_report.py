@@ -6,6 +6,23 @@ This is a script that takes an ALOE report file and generates a CSV row of the s
 This script can be used in conjunction with the cat utility to compound an archive of results
 for data analysis in spreadsheet software. It is up to the user to provide the proper headings.
 Note that this is written in Python 3.
+
+Incidentally,
+--- 
+This file is part of ALOE.
+
+ALOE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ALOE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ALOE.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import sys
