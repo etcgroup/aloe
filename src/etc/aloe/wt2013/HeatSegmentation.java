@@ -71,12 +71,12 @@ public class HeatSegmentation implements Segmentation {
     
     private boolean inferOccurrences = false;
     
-    //TODO - this isn't needed anymore
     /**
      * Unparameterized constructor - initializes timeResolution to 10 minutes 
      * and rateThreshold to 30 messages/10 min. These values are arbitrary 
      * but seem to give good results on initial runs.
      */
+    @Deprecated //Cute
     public HeatSegmentation() {
         this(0.5f * 60.0f, 2.0f);
     }
@@ -153,7 +153,7 @@ public class HeatSegmentation implements Segmentation {
         int rIndex = 0; //Index of the right message
         int lIndex = 0; //Index of the left message
         
-        boolean stepping = false; //@true if the window is currently being adjusted, @false otherwise
+        boolean stepping = false; //true if the window is currently being adjusted, false otherwise
         int messageOccurrence = -1; //Current count of messages in the window, aka the occurrence within the time window.
         
         while(rIndex < messages.size()) {
@@ -232,9 +232,6 @@ public class HeatSegmentation implements Segmentation {
         //Sort the message set by time
         List<Message> messages = sortByTime(messageSet.getMessages());
         
-        //PROTO - Sort by participant too just for shits and giggles.
-        //messages = sortByParticipant(messages);
-        
         //Build the occurence count hashmap, if it hasn't been done already
         if(messageOccurrences == null) {
             calculateOccurrences(messages);
@@ -244,6 +241,11 @@ public class HeatSegmentation implements Segmentation {
         
         //---
         //Begin segmentation
+        System.out.println("HeatSegmentation:"
+                + "\nMean message rate over the entire time interval is " + meanMessageRate + " messages per second."
+                + "\nMean message occurrence within the set is " + meanMessageOccurrence 
+                + " messages within a " + timeWindow + " second window.");
+        
         System.out.println("Segmenting by heatmap with an occurrence threshold of " + occurrenceThreshold 
                 + " messages within a " + (timeWindow/*/60.0f*/) + " second window.");
         
@@ -255,24 +257,24 @@ public class HeatSegmentation implements Segmentation {
         
         int numLabeled = 0;
         
-        //TODO: Check second derivative. This currently cuts right at the threshold.
         for(Message m : messages) {
             int currOccurrences = messageOccurrences.get(m.getId());
             if(currOccurrences > occurrenceThreshold) { //Can't cut without crossing the threshold
                 wasAboveThresh = true;
             }
-            if(isOutsideWindow(messages, m) /*PROTO*/ 
-                    || (currOccurrences <= occurrenceThreshold/* && wasAboveThresh*/) 
-                    /*|| (currOccurrences >= occurrenceThreshold && !wasAboveThresh)*/
-                    /*|| isLocalMin(m) &&*/) { //We cut here
-                wasAboveThresh = false;
+            if(/**/currOccurrences == 0 /*No extra processing needed*/ 
+                    || ((currOccurrences <= occurrenceThreshold && wasAboveThresh/**/) 
+                    || (currOccurrences >= occurrenceThreshold && !wasAboveThresh)/**/
+                    /**/ || isLocalMin(m) /**/)) { //We cut here
+                wasAboveThresh = (wasAboveThresh ? false : true); //Switch this variable
                 newSegment = true;
+                
                 if(DEBUG) {
                     System.out.println("--- Begin new segment (timestamp: " + m.getTimestamp() + ")");
                 }
             }
             
-            if(DEBUG) {
+            if(DEBUG && !newSegment) {
                 System.out.println(m.getTimestamp() + " | precalculated occurrences: " + currOccurrences);
             }
             
@@ -304,10 +306,6 @@ public class HeatSegmentation implements Segmentation {
         
         System.out.println("Grouped messages into " + segments.size() + " segments (" + numLabeled + " labeled).");
         
-        System.out.println("Mean message rate over the entire time interval is " + meanMessageRate + " messages per second."
-                + "\nMean message occurrence within the set is " + meanMessageOccurrence 
-                + " messages within a " + timeWindow + " second window.");
-        
         return segments;
     }
     
@@ -326,9 +324,17 @@ public class HeatSegmentation implements Segmentation {
             return mRate <= lRate && mRate <= rRate;
         } catch(NullPointerException e) {
             //This can only occur at the endpoints of the message set, so we ignore it.
-        }
-        
+         }
+         
         return false;
+//        if(m.getId()-1 <= 0 || m.getId()+1 >= messageOccurrences.size()) {
+//            return false;
+//        }
+//        
+//        lRate = messageOccurrences.get(m.getId()-1);
+//        rRate = messageOccurrences.get(m.getId()+1);
+//
+//        return mRate <= lRate && mRate <= rRate;
     }
     
     private float getMeanMessageRate() {
