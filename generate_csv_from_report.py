@@ -35,13 +35,23 @@ __copyright__ = "Copyright (c) 2013 SCCL, University of Washington (http://depts
 __license__ = "GPL"
 __version__ = "0.1"
 
-#Work on exactly one report file
-if(len(sys.argv) != 2):
-  sys.stderr.write("Usage: python3 generate_csv_from_report.py Report.txt >> out.csv\n")
-  sys.exit(1)
+def gen_csv():
+  #For each line, get the strings following each semicolon (whitespace stripped)
+  csv = [line.split(':')[1].strip() for line in fileinput.input() if '-' not in line]
+  
+  #Return the list as a comma-separated string
+  return (",".join(csv))
 
-#For each line, get the strings following each semicolon (whitespace stripped)
-csv = [line.split(':')[1].strip() for line in fileinput.input() if '-' not in line]
+def main():
+  #Work on exactly one report file
+  if(len(sys.argv) != 2):
+    #Printing to stderr prevents concatenating error messages to the output file
+    sys.stderr.write("Usage: python3 generate_csv_from_report.py Report.txt >> out.csv\n")
+    sys.exit(1)
+  
+  #Print to stdout
+  print(gen_csv())
 
-#Print to stdout with comma separation
-print(",".join(csv))
+if(__name__ == "__main__"):
+  main()
+
