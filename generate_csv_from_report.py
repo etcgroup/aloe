@@ -1,11 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 This is a script that takes an ALOE report file and generates a CSV row of the statistics values. 
 
 This script can be used in conjunction with the redirect utility to compound an archive of results
 for data analysis in spreadsheet software. It is up to the user to provide the proper headings.
-Note that this is written in Python 3.
+Note that this script is written in Python 3.
 
 Incidentally,
 --- 
