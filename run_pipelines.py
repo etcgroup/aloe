@@ -32,9 +32,64 @@ __copyright__ = "Copyright (c) 2013 SCCL, University of Washington (http://depts
 __license__ = "GPL"
 __version__ = "0.1"
 
+import os
 import sys
 import argparse
 import subprocess
+from datetime import datetime
+
+#Determines if the program makes any changes to the filesystem.
+#This should be set to True when using the script, False when debugging
+FILE_OPS = False
+
+def parse_args():
+  """
+  Parse the necessary command-line arguments. The ALOE, input, and output directories are required.
+  
+  It's not great form to require any number of arguments, 
+  but it's much safer than assuming directory locations.
+  """
+  parser = argparse.ArgumentParser(description="Run ALOE pipeline over a set of files and options,"
+                                             + " generating a csv output file of tabulated test results.")
+  
+  #ALOE directory
+  parser.add_argument('-aloe', '--aloe-dir', type=str, required=True,
+                       help='The top-level ALOE directory')
+  
+  #Input directory
+  parser.add_argument('-in', '--input-dir', type=str, required=True,
+                       help='The location of the affect code chatlog dumps')
+  
+  #Output directory
+  parser.add_argument('-out', '--output-dir', type=str, required=True,
+                       help='Directory to which ALOE will output')
+  
+  #Pipeline arguments
+  parser.add_argument('-p', '--pipelines', type=str, nargs='+', 
+                      default=['CSCW2013'], 
+                      help='Name(s) of the pipelines to be run')
+  
+  #TODO: Mode - currently only does train
+  
+  #Global pipeline flags
+  parser.add_argument('-gf', '--global-flags', type=str, nargs='?', 
+                      help='Global pipeline flags to be run with all specified pipelines. '
+                         + 'Omit the leading \'--\'. Ex: \"downsample balance-test-set\"')
+  
+  #TODO: Special pipeline flags
+  #parser.add_argument('-sf', '--special-flags', type=str, nargs='+', 
+  #                    help='Special pipeline flags to be run with only one pipeline')
+  
+  return parser.parse_args()
+
+def make_file(name, directory):
+  """
+  Create a file with the specified name in the specified directory
+  """
+  
+  file = open(directory + '/' + name, 'w')
+  #file.write('')
+  file.close()
 
 def main():
   """
@@ -58,30 +113,15 @@ def main():
    call gen_csv on the generated report file, prepend the returned string with the affect, pipe and options
   """
   
-  parser = argparse.ArgumentParser(description="Run ALOE pipeline over a set of files and options,"
-                                             + " generating a csv output file of tabulated test results.")
-  #Pipeline arguments
-  parser.add_argument('-p', '--pipelines', type=str, nargs='+', 
-                      default=['CSCW2013', 'HeatSegmentationPipeline'], 
-                      help='Name(s) of the pipelines to be run')
+  args = parse_args()
+  print("Registered args: " + args.__repr__())
   
-  #ALOE directory
-  parser.add_argument('-aloe', '--aloe-dir', type=str, nargs=1,
-                       required=True,
-                       help='The top-level ALOE directory')
+  output_folder_name = "Output at " + datetime.now().strftime("%H-%M-%S on %d-%m-%Y")
+  print('Creating output folder \'' + output_folder_name + '\' inside ' + args.output_dir) 
   
-  #Input directory
-  parser.add_argument('-in', '--input-dir', type=str, nargs=1,
-                       required=True,
-                       help='The location of the affect code chatlog dumps')
-  
-  #Output directory
-  parser.add_argument('-out', '--output-dir', type=str, nargs=1,
-                       required=True,
-                       help='Directory to which ALOE will output')
-  
-  args = parser.parse_args()
-  print(args)
+  if FILE_OPS:
+    os.makedirs(args.output_dir + "/" + output_folder_name)
+    make_file("out.csv", args.output_dir)
 
 if __name__ == "__main__":
   main()
