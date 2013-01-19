@@ -5,7 +5,8 @@ This is a batch script that runs the ALOE classifier with the
 CSCW2013 and HeatSegmentation pipelines on a set of data files.
 It then runs the report files through a python script to generate
 a csv data file, prepended with the affect code and pipeline.
-Note that this script is written in Python 3.
+Note that this script is written in Python 3.3, which now supports
+non-destructive file creation.
 
 Incidentally,
 --- 
@@ -36,6 +37,7 @@ import os
 import sys
 import argparse
 import subprocess
+import shlex
 from datetime import datetime
 
 #Determines if the program makes any changes to the filesystem.
@@ -87,9 +89,19 @@ def make_file(name, directory):
   Create a file with the specified name in the specified directory
   """
   
-  file = open(directory + '/' + name, 'w')
-  #file.write('')
-  file.close()
+  abs_path = directory + '/' + name
+  
+  try:
+    file = open(abs_path, 'x')
+    file.close()
+  except FileExistsError:
+    print("The file " + abs_path + " already exists.")
+
+def escape_spaces(string):
+  """
+  Returns a string where all space characters are escaped by '\'.
+  """
+  return r'\ '.join(shlex.split(string))
 
 def main():
   """
@@ -117,11 +129,28 @@ def main():
   print("Registered args: " + args.__repr__())
   
   output_folder_name = "Output at " + datetime.now().strftime("%H-%M-%S on %d-%m-%Y")
-  print('Creating output folder \'' + output_folder_name + '\' inside ' + args.output_dir) 
   
+  #Create output folder and csv file
+  output_abs_path = args.output_dir + "/" + output_folder_name
   if FILE_OPS:
-    os.makedirs(args.output_dir + "/" + output_folder_name)
-    make_file("out.csv", args.output_dir)
+    print('Creating output folder \'' + output_folder_name + '\' inside ' + args.output_dir) 
+    os.makedirs(output_abs_path)
+    
+    print('Creating out.csv inside ' + output_abs_path) 
+    make_file("out.csv", output_abs_path)
+  
+  #Loop through the files in the input directory
+  #TODO: Special pipe options
+  for filename in os.listdir(args.input_dir):
+    print(filename)
+    for pipename in args.pipelines:
+      affect_name = filename.split(('_'))[2].split('.')[0] #This is 100% filename specific
+      
+      print("java -jar " + escape_spaces(os.path.join(args.aloe_dir,"dist/aloe.jar")) + " " + pipename + " train " #ALOE call
+            + escape_spaces(os.path.join(args.input_dir, filename)) + " " #ALOE input directory
+            + escape_spaces(os.path.join(output_folder_name, affect_name) + "_" + pipename) #ALOE output directory
+           )
+  
 
 if __name__ == "__main__":
   main()
