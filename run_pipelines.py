@@ -187,7 +187,8 @@ def main():
         output_csv_path = shlex.quote(os.path.join(script_output_path, 'out.csv'))
         
         #Run the CSV-generator on the output
-        command = ('python3 ' + gen_csv_script_path + " " + report_file_path + ' >> ' + output_csv_path)
+        command = ('python3 ' + gen_csv_script_path + ' ' + report_file_path + ' ' 
+                   + affect_name + '_' + pipename + ' >> ' + output_csv_path)
         subprocess.call(command, shell=True)
   
 

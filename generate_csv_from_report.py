@@ -37,16 +37,19 @@ __version__ = "0.1"
 
 def gen_csv():
   #For each line, make a list of the data strings following each semicolon (whitespace stripped)
-  csv = [line.split(':')[1].strip() for line in fileinput.input() if ':' in line]
+  with open(sys.argv[1]) as file:
+    csv = [line.split(':')[1].strip() for line in file if ':' in line]
   
   #Return the list as a comma-separated string
+  if len(sys.argv) == 3:
+    return sys.argv[2] + "," + (",".join(csv))
   return (",".join(csv))
 
 def main():
   #Work on exactly one report file
-  if(len(sys.argv) != 2):
+  if(len(sys.argv) not in (2, 3)):
     #Printing to stderr prevents concatenating error messages to the output file
-    sys.stderr.write("Usage: python3 generate_csv_from_report.py report.txt >> out.csv\n")
+    sys.stderr.write("Usage: python3 generate_csv_from_report.py report.txt (optional: affect name) >> out.csv\n")
     sys.exit(1)
   
   #Print to stdout
