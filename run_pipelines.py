@@ -41,8 +41,12 @@ import shlex
 from datetime import datetime
 
 #Determines if the program makes any changes to the filesystem.
-#This should be set to True when using the script, False when debugging
+#Set to True for standard runs, False when debugging
 FILE_OPS = False
+
+#Controls extraneous print statements.
+#Set to False for standard runs, True when debugging
+DEBUG = True
 
 def parse_args():
   """
@@ -86,12 +90,14 @@ def parse_args():
 
 def make_file(name, directory):
   """
-  Create a file with the specified name in the specified directory
+  Create a file with the specified name in the specified directory.
+  This method will not overwrite files of the same name.
   """
   
-  abs_path = directory + '/' + name
+  abs_path = os.path.join(directory, name)
   
   try:
+    #The 'x' flag was introduced in Python 3.3 - so lower versions are not supported
     file = open(abs_path, 'x')
     file.close()
   except FileExistsError:
@@ -99,7 +105,8 @@ def make_file(name, directory):
 
 def escape_spaces(string):
   """
-  Returns a string where all space characters are escaped by '\'.
+  Returns a pseudo shell-parseable string where all space characters are escaped by '\'.
+  This is purely for debug statements, and should not be used for actual shell calls.
   """
   return r'\ '.join(shlex.split(string))
 
@@ -122,34 +129,44 @@ def main():
     (i.e. running HeatSeg with a different time window)
    
    run the process, output to the subdir
-   call gen_csv on the generated report file, prepend the returned string with the affect, pipe and options
+   call gen_csv on the generated report file, prepend the returned string with the affect, 
+    pipe and options
   """
   
   args = parse_args()
-  print("Registered args: " + args.__repr__())
+  if DEBUG:
+    print("Registered args: " + args.__repr__())
   
   output_folder_name = "Output at " + datetime.now().strftime("%H-%M-%S on %d-%m-%Y")
-  
-  #Create output folder and csv file
-  output_abs_path = args.output_dir + "/" + output_folder_name
+  output_abs_path = os.path.join(args.output_dir, output_folder_name)
   if FILE_OPS:
-    print('Creating output folder \'' + output_folder_name + '\' inside ' + args.output_dir) 
+    #Create output folder
+    print('Creating output folder \'' + output_folder_name + '\' at ' + output_abs_path) 
     os.makedirs(output_abs_path)
     
+    #Create output CSV file
     print('Creating out.csv inside ' + output_abs_path) 
     make_file("out.csv", output_abs_path)
+  
+  #ALOE gets grumpy if we're not in its directory
+  print("Switching to top-level ALOE directory: " + os.getcwd())
+  os.chdir(args.aloe_dir)
   
   #Loop through the files in the input directory
   #TODO: Special pipe options
   for filename in os.listdir(args.input_dir):
-    print(filename)
+    #print(filename)
     for pipename in args.pipelines:
       affect_name = filename.split(('_'))[2].split('.')[0] #This is 100% filename specific
       
-      print("java -jar " + escape_spaces(os.path.join(args.aloe_dir,"dist/aloe.jar")) + " " + pipename + " train " #ALOE call
-            + escape_spaces(os.path.join(args.input_dir, filename)) + " " #ALOE input directory
-            + escape_spaces(os.path.join(output_folder_name, affect_name) + "_" + pipename) #ALOE output directory
-           )
+      if DEBUG:
+        print("java -jar " + escape_spaces(os.path.join(args.aloe_dir,"dist/aloe.jar")) + " " + pipename + " train " #ALOE call
+              + escape_spaces(os.path.join(args.input_dir, filename)) + " " #ALOE input directory
+              + escape_spaces(os.path.join(output_folder_name, affect_name) + "_" + pipename) #ALOE output directory
+             )
+      
+      if FILE_OPS:
+        subprocess.popen()
   
 
 if __name__ == "__main__":
