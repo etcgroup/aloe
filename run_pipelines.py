@@ -140,6 +140,8 @@ def main():
   if DEBUG:
     print("Registered args: " + args.__repr__())
   
+  script_original_dir = os.getcwd()
+  
   script_output_folder_name = "Output at " + datetime.now().strftime("%H-%M-%S on %d-%m-%Y")
   script_output_path = os.path.join(args.output_dir, script_output_folder_name)
   if FILE_OPS:
@@ -166,9 +168,9 @@ def main():
       curr_output_dir = os.path.join(script_output_folder_name, affect_name) + "_" + pipename
       
       #Here's a goddamn hack to rule them all
-      command = ("java -jar " + escape_spaces(os.path.join(args.aloe_dir,"dist/aloe.jar")) + " " + pipename + " train " #ALOE call
-                 + escape_spaces(input_file_path) + " " #ALOE input CSV
-                 + escape_spaces(curr_output_dir) #ALOE output directory
+      command = ("java -jar " + shlex.quote(os.path.join(args.aloe_dir,"dist/aloe.jar")) + " " + pipename + " train " #ALOE call
+                 + shlex.quote(input_file_path) + " " #ALOE input CSV
+                 + shlex.quote(curr_output_dir) #ALOE output directory
                  + ''.join([' --' + global_flag for global_flag in args.global_flags]) #Global test flags
                 )
       
@@ -176,11 +178,17 @@ def main():
         print(command)
       
       if FILE_OPS:
-        subprocess.call(command)
+        #Run ALOE
+        subprocess.call(command, shell=True)
         
-        report_file_path = os.path.join(curr_output_dir, 'report.txt')
-        output_csv_path = os.path.join(script_output_path, 'out.csv')
-        subprocess.call(['python3', 'generate_csv_file.py', report_file_path, '>>', output_csv_path])
+        #Do some directory building
+        gen_csv_script_path = shlex.quote(os.path.join(script_original_dir, 'generate_csv_from_report.py'))
+        report_file_path = shlex.quote(os.path.join(curr_output_dir, 'report.txt'))
+        output_csv_path = shlex.quote(os.path.join(script_output_path, 'out.csv'))
+        
+        #Run the CSV-generator on the output
+        command = ('python3 ' + gen_csv_script_path + " " + report_file_path + ' >> ' + output_csv_path)
+        subprocess.call(command, shell=True)
   
 
 if __name__ == "__main__":
