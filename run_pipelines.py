@@ -36,13 +36,13 @@ __version__ = "0.1"
 import os
 import sys
 import argparse
-import subprocess
 import shlex
+import subprocess
 from datetime import datetime
 
 #Determines if the program makes any changes to the filesystem.
 #Set to True for standard runs, False when debugging
-FILE_OPS = False
+FILE_OPS = True
 
 #Controls extraneous print statements.
 #Set to False for standard runs, True when debugging
@@ -78,9 +78,12 @@ def parse_args():
   #TODO: Mode - currently only does train
   
   #Global pipeline flags
-  parser.add_argument('-gf', '--global-flags', type=str, nargs='?', 
+  parser.add_argument('-gf', '--global-flags', type=str, nargs='+', 
                       help='Global pipeline flags to be run with all specified pipelines. '
                          + 'Omit the leading \'--\'. Ex: \"downsample balance-test-set\"')
+  
+  parser.add_argument('-l', '--file-limit', type=int, 
+                      help='Optionally limit the number of files to be processed')
   
   #TODO: Special pipeline flags
   #parser.add_argument('-sf', '--special-flags', type=str, nargs='+', 
@@ -137,36 +140,47 @@ def main():
   if DEBUG:
     print("Registered args: " + args.__repr__())
   
-  output_folder_name = "Output at " + datetime.now().strftime("%H-%M-%S on %d-%m-%Y")
-  output_abs_path = os.path.join(args.output_dir, output_folder_name)
+  script_output_folder_name = "Output at " + datetime.now().strftime("%H-%M-%S on %d-%m-%Y")
+  script_output_path = os.path.join(args.output_dir, script_output_folder_name)
   if FILE_OPS:
     #Create output folder
-    print('Creating output folder \'' + output_folder_name + '\' at ' + output_abs_path) 
-    os.makedirs(output_abs_path)
+    print('Creating output folder \'' + script_output_folder_name + '\' at ' + script_output_path) 
+    os.makedirs(script_output_path)
     
     #Create output CSV file
-    print('Creating out.csv inside ' + output_abs_path) 
-    make_file("out.csv", output_abs_path)
+    print('Creating out.csv inside ' + script_output_path) 
+    make_file("out.csv", script_output_path)
   
   #ALOE gets grumpy if we're not in its directory
-  print("Switching to top-level ALOE directory: " + os.getcwd())
   os.chdir(args.aloe_dir)
+  print("Switched to top-level ALOE directory: " + os.getcwd())
   
   #Loop through the files in the input directory
   #TODO: Special pipe options
-  for filename in os.listdir(args.input_dir):
+  for filename in os.listdir(args.input_dir)[:args.file_limit]:
     #print(filename)
     for pipename in args.pipelines:
       affect_name = filename.split(('_'))[2].split('.')[0] #This is 100% filename specific
       
+      input_file_path = os.path.join(args.input_dir, filename)
+      curr_output_dir = os.path.join(script_output_folder_name, affect_name) + "_" + pipename
+      
+      #Here's a goddamn hack to rule them all
+      command = ("java -jar " + escape_spaces(os.path.join(args.aloe_dir,"dist/aloe.jar")) + " " + pipename + " train " #ALOE call
+                 + escape_spaces(input_file_path) + " " #ALOE input CSV
+                 + escape_spaces(curr_output_dir) #ALOE output directory
+                 + ''.join([' --' + global_flag for global_flag in args.global_flags]) #Global test flags
+                )
+      
       if DEBUG:
-        print("java -jar " + escape_spaces(os.path.join(args.aloe_dir,"dist/aloe.jar")) + " " + pipename + " train " #ALOE call
-              + escape_spaces(os.path.join(args.input_dir, filename)) + " " #ALOE input directory
-              + escape_spaces(os.path.join(output_folder_name, affect_name) + "_" + pipename) #ALOE output directory
-             )
+        print(command)
       
       if FILE_OPS:
-        subprocess.popen()
+        subprocess.call(command)
+        
+        report_file_path = os.path.join(curr_output_dir, 'report.txt')
+        output_csv_path = os.path.join(script_output_path, 'out.csv')
+        subprocess.call(['python3', 'generate_csv_file.py', report_file_path, '>>', output_csv_path])
   
 
 if __name__ == "__main__":
