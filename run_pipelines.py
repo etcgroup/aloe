@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
 """ 
-This is a batch script that runs the ALOE classifier with the 
-CSCW2013 and HeatSegmentation pipelines on a set of data files.
-It then runs the report files through a python script to generate
-a csv data file, prepended with the affect code and pipeline.
+This is a batch script that runs the ALOE classifier using a set of 
+user-specified pipelines on a set of data files.
+
+It then runs the report files through a separate python script to generate
+an output.csv data file, prepended with the affect code and pipeline name.
 Note that this script is written in Python 3.3, which now supports
 non-destructive file creation.
 
@@ -75,8 +76,6 @@ def parse_args():
                       default=['CSCW2013'], 
                       help='Name(s) of the pipelines to be run')
   
-  #TODO: Mode - currently only does train
-  
   #Global pipeline flags
   parser.add_argument('-gf', '--global-flags', type=str, nargs='+', 
                       help='Global pipeline flags to be run with all specified pipelines. '
@@ -95,16 +94,20 @@ def make_file(name, directory):
   """
   Create a file with the specified name in the specified directory.
   This method will not overwrite files of the same name.
+  
+  Returns the path to the file - this is not guaranteed to be an absolute path!
   """
   
-  abs_path = os.path.join(directory, name)
+  path = os.path.join(directory, name)
   
   try:
     #The 'x' flag was introduced in Python 3.3 - so lower versions are not supported
-    file = open(abs_path, 'x')
+    file = open(path, 'x')
     file.close()
   except FileExistsError:
-    print("The file " + abs_path + " already exists.")
+    print("The file " + path + " already exists.")
+  
+  return path
 
 def escape_spaces(string):
   """
@@ -140,37 +143,38 @@ def main():
   if DEBUG:
     print("Registered args: " + args.__repr__())
   
-  script_original_dir = os.getcwd()
+  script_origin_dir = os.getcwd()
   
   script_output_folder_name = "Output at " + datetime.now().strftime("%H-%M-%S on %d-%m-%Y")
-  script_output_path = os.path.join(args.output_dir, script_output_folder_name)
+  script_output_folder = os.path.join(args.output_dir, script_output_folder_name)
   if FILE_OPS:
     #Create output folder
-    print('Creating output folder \'' + script_output_folder_name + '\' at ' + script_output_path) 
-    os.makedirs(script_output_path)
+    print('Creating output folder \'' + script_output_folder + '\'') 
+    os.makedirs(script_output_folder)
     
     #Create output CSV file
-    print('Creating out.csv inside ' + script_output_path) 
-    make_file("out.csv", script_output_path)
+    print('Creating out.csv inside ' + script_output_folder) 
+    make_file("out.csv", script_output_folder)
   
-  #ALOE gets grumpy if we're not in its directory
+  #Changing to the ALOE directory eliminates issues such as sourcing the emoticons file
   os.chdir(args.aloe_dir)
   print("Switched to top-level ALOE directory: " + os.getcwd())
   
-  #Loop through the files in the input directory
   #TODO: Special pipe options
-  for filename in os.listdir(args.input_dir)[:args.file_limit]:
-    #print(filename)
-    for pipename in args.pipelines:
-      affect_name = filename.split(('_'))[2].split('.')[0] #This is 100% filename specific
+  
+  #For each pipe, run on the each affect file in the input directory
+  for pipename in args.pipelines:
+    #Note the file limit in this loop - this is a user-controlled option
+    for filename in os.listdir(args.input_dir)[:args.file_limit]:
+      affect_name = filename.split(('_'))[2].split('.')[0] #!!NOTE!!: This is 100% filename specific!
       
       input_file_path = os.path.join(args.input_dir, filename)
-      curr_output_dir = os.path.join(script_output_folder_name, affect_name) + "_" + pipename
+      curr_output_subdir = os.path.join(script_output_folder, affect_name) + "_" + pipename
       
       #Here's a goddamn hack to rule them all
       command = ("java -jar " + shlex.quote(os.path.join(args.aloe_dir,"dist/aloe.jar")) + " " + pipename + " train " #ALOE call
                  + shlex.quote(input_file_path) + " " #ALOE input CSV
-                 + shlex.quote(curr_output_dir) #ALOE output directory
+                 + shlex.quote(curr_output_subdir) #ALOE output directory
                  + ''.join([' --' + global_flag for global_flag in args.global_flags]) #Global test flags
                 )
       
@@ -182,9 +186,9 @@ def main():
         subprocess.call(command, shell=True)
         
         #Do some directory building
-        gen_csv_script_path = shlex.quote(os.path.join(script_original_dir, 'generate_csv_from_report.py'))
-        report_file_path = shlex.quote(os.path.join(curr_output_dir, 'report.txt'))
-        output_csv_path = shlex.quote(os.path.join(script_output_path, 'out.csv'))
+        gen_csv_script_path = shlex.quote(os.path.join(script_origin_dir, 'generate_csv_from_report.py'))
+        report_file_path = shlex.quote(os.path.join(curr_output_subdir, 'report.txt'))
+        output_csv_path = shlex.quote(os.path.join(script_output_folder, 'out.csv'))
         
         #Run the CSV-generator on the output
         command = ('python3 ' + gen_csv_script_path + ' ' + report_file_path + ' ' 
