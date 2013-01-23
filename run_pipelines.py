@@ -81,8 +81,13 @@ def parse_args():
                       help='Global pipeline flags to be run with all specified pipelines. '
                          + 'Omit the leading \'--\'. Ex: \"downsample balance-test-set\"')
   
+  #File limit
   parser.add_argument('-l', '--file-limit', type=int, 
                       help='Optionally limit the number of files to be processed')
+  
+  #Debug statement output
+  parser.add_argument('-dbg', '--debug', action='store_true', default=False,
+                      help='Print debug information to stdout')
   
   #TODO: Special pipeline flags
   #parser.add_argument('-sf', '--special-flags', type=str, nargs='+', 
@@ -139,7 +144,14 @@ def main():
     pipe and options
   """
   
+  #Require Python 3.3 or above
+  if sys.version_info[0] < 3 or sys.version_info[1] < 3:
+    print('This script requires Python 3.3 or above.')
+    sys.exit(1)
+  
   args = parse_args()
+  DEBUG = args.debug
+  
   if DEBUG:
     print("Registered args: " + args.__repr__())
   
@@ -149,7 +161,7 @@ def main():
   script_output_folder = os.path.join(args.output_dir, script_output_folder_name)
   if FILE_OPS:
     #Create output folder
-    print('Creating output folder \'' + script_output_folder + '\'') 
+    print('Creating output folder: ' + script_output_folder) 
     os.makedirs(script_output_folder)
     
     #Create output CSV file
@@ -175,7 +187,7 @@ def main():
       command = ("java -jar " + shlex.quote(os.path.join(args.aloe_dir,"dist/aloe.jar")) + " " + pipename + " train " #ALOE call
                  + shlex.quote(input_file_path) + " " #ALOE input CSV
                  + shlex.quote(curr_output_subdir) #ALOE output directory
-                 + ''.join([' --' + global_flag for global_flag in args.global_flags]) #Global test flags
+                 + ''.join([' --' + flag if not flag.isnumeric() else ' ' + flag for flag in args.global_flags]) #Global test flags
                 )
       
       if DEBUG:
