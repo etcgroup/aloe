@@ -2,9 +2,12 @@
 
 """
 This is a script that takes an ALOE report file and generates a CSV row of the statistics values. 
+The user can specify an optional prefix string to be prepended to the CSV row.
+
+  Usage: python3 generate_csv_from_report.py report.txt [optional: affect_name] >> out.csv
 
 This script can be used in conjunction with the redirect utility to compound an archive of results
-for data analysis in spreadsheet software. It is up to the user to provide the proper headings.
+for data analysis in spreadsheet software. It is up to the user to provide the proper column headings.
 Note that this script is written in Python 3.
 
 Incidentally,
@@ -28,31 +31,28 @@ along with ALOE.  If not, see <http://www.gnu.org/licenses/>.
 import sys
 import fileinput
 
-__status__ = "Prototype"
+__status__ = "Alpha"
 __author__ = "Daniel Barella"
 __email__ = "dan.barella@gmail.com"
 __copyright__ = "Copyright (c) 2013 SCCL, University of Washington (http://depts.washington.edu/sccl)"
 __license__ = "GPL"
-__version__ = "0.1"
+__version__ = "0.2"
 
 def gen_csv():
-  #For each line, make a list of the data strings following each semicolon (whitespace stripped)
+  #For each line, make a list of the data values following each semicolon (whitespace stripped)
   with open(sys.argv[1]) as file:
     csv = [line.split(':')[1].strip() for line in file if ':' in line]
   
-  #Return the list as a comma-separated string
-  if len(sys.argv) == 3:
-    return sys.argv[2] + "," + (",".join(csv))
-  return (",".join(csv))
+  #Return the list as a comma-separated string, optionally with the prefix from sys.argv[2]
+  return sys.argv[2] + "," + (",".join(csv)) if len(sys.argv) == 3 else (",".join(csv))
 
 def main():
-  #Work on exactly one report file
   if(len(sys.argv) not in (2, 3)):
     #Printing to stderr prevents concatenating error messages to the output file
-    sys.stderr.write("Usage: python3 generate_csv_from_report.py report.txt (optional: affect name) >> out.csv\n")
+    sys.stderr.write("Usage: python3 generate_csv_from_report.py report.txt [optional: affect_name] >> out.csv\n")
     sys.exit(1)
   
-  #Print to stdout
+  #Print comma-separated string to stdout
   print(gen_csv())
 
 if(__name__ == "__main__"):
