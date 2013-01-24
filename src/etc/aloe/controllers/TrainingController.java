@@ -29,6 +29,7 @@ import etc.aloe.processes.FeatureWeighting;
 import etc.aloe.processes.Training;
 import java.util.List;
 import java.util.Map;
+import weka.core.Attribute;
 
 /**
  * Class that trains a model on some segmented data.

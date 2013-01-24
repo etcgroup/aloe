@@ -22,30 +22,33 @@ import etc.aloe.cscw2013.*;
 import etc.aloe.data.ExampleSet;
 import etc.aloe.processes.Training;
 import weka.classifiers.Classifier;
-import weka.classifiers.trees.DecisionStump;
+import weka.classifiers.bayes.HMM;
+import weka.core.Attribute;
 import weka.core.Utils;
 
 /**
- * Performs basic training of a linear support vector machine classifier.
+ * Performs basic training of an HMM classifier.
  *
  * @author Michael Brooks <mjbrooks@uw.edu>
+ * @authort Eli Rose <erose@oberlin.edu>
  */
-public class TrainingImplDecisionStump implements Training {
-    public TrainingImplDecisionStump() {
+public class TrainingImplHMM implements Training {
+
+    public TrainingImplHMM() {
     }
 
     @Override
     public WekaModel train(ExampleSet examples) {
-        DecisionStump stump = new DecisionStump();
-
-        Classifier classifier = stump;
+        HMM hmm = new HMM();
+        Classifier classifier = hmm;
 
         try {
-            System.out.print("Training decision tree on " + examples.size() + " examples... ");
+            System.out.print("Training HMM on " + examples.size() + " examples... ");
+
             classifier.buildClassifier(examples.getInstances());
             System.out.println("done.");
         } catch (Exception ex) {
-            System.err.println("Unable to train decision tree.");
+            System.err.println("Unable to train HMM.");
             System.err.println("\t" + ex.getMessage());
         }
 

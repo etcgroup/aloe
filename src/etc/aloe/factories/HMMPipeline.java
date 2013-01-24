@@ -18,11 +18,10 @@
  */
 package etc.aloe.factories;
 
-import etc.aloe.cscw2013.SMOFeatureWeighting;
 import etc.aloe.processes.FeatureWeighting;
-import etc.aloe.wt2013.TrainingImplDecisionStump;
+import etc.aloe.wt2013.TrainingImplHMM;
 import etc.aloe.processes.Training;
-import etc.aloe.wt2013.DecisionStumpFeatureWeighting;
+import etc.aloe.wt2013.HMMFeatureWeighting;
 
 /**
  *
@@ -34,7 +33,7 @@ public class HMMPipeline extends CSCW2013 {
     public Training constructTraining() {
         if (options instanceof TrainOptionsImpl) {
             TrainOptionsImpl trainOpts = (TrainOptionsImpl) options;
-            Training trainingImpl = new TrainingImplDecisionStump();
+            Training trainingImpl = new TrainingImplHMM();
             return trainingImpl;
         } else {
             throw new IllegalArgumentException("Options must be for Training");
@@ -43,6 +42,6 @@ public class HMMPipeline extends CSCW2013 {
     
     @Override
     public FeatureWeighting constructFeatureWeighting() {
-        return new DecisionStumpFeatureWeighting();
+        return new HMMFeatureWeighting();
     }
 }

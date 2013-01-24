@@ -1,18 +1,18 @@
-Examples: 8591
+Examples: 0
 FP Cost: 1.0
 FN Cost: 1.0
 ------------------
-TP: 1956
-FP: 423
-TN: 6009
-FN: 203
+TP: 0
+FP: 0
+TN: 0
+FN: 0
 ------------------
-Precision: 0.8221941992433796
-Recall: 0.9059749884205651
-FMeasure: 0.8620537681798149
+Precision: NaN
+Recall: NaN
+FMeasure: NaN
 ------------------
-% Correct: 0.9271330462111512
-% Incorrect: 0.07286695378884879
+% Correct: NaN
+% Incorrect: NaN
 ------------------
-Total Cost: 626.0
-Avg Cost: 0.07286695378884879
+Total Cost: 0.0
+Avg Cost: NaN

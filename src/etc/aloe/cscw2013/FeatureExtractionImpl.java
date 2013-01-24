@@ -22,8 +22,12 @@ import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
 import etc.aloe.processes.FeatureExtraction;
 import etc.aloe.processes.Loggable.Verbosity;
+import java.util.Arrays;
+import weka.core.Attribute;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Add;
 
 /**
  * Applies an existing feature specification to a data set to get a new data set
@@ -45,11 +49,16 @@ public class FeatureExtractionImpl implements FeatureExtraction {
 
         for (Filter filter : spec.getFilters()) {
             try {
+                System.out.println(examples.size());
                 Instances instances = Filter.useFilter(examples.getInstances(), filter);
                 examples = new ExampleSet(instances);
+
+                
+
             } catch (Exception e) {
                 System.err.println("Unable to apply filter: " + filter.toString());
                 System.err.println("\t" + e.getMessage());
+                e.printStackTrace();
                 return null;
             }
         }

@@ -58,7 +58,7 @@ public class AloeTrain extends Aloe {
 
             //Run cross validation
             crossValidationController.setSegmentSet(segments);
-            crossValidationController.run();
+            //crossValidationController.run();
 
             //Create a training controller for making the final model
             TrainingController trainingController = new TrainingController();

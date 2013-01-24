@@ -20,6 +20,7 @@ package etc.aloe.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -38,6 +39,7 @@ public class SegmentSet {
     public static final String LENGTH_ATTR_NAME = "length";
     public static final String CPS_ATTR_NAME = "cps";
     public static final String RATE_ATTR_NAME = "rate";
+    public static final String ORDER_ATTR_NAME = "order";
     private List<Segment> segments = new ArrayList<Segment>();
 
     /**
@@ -94,6 +96,7 @@ public class SegmentSet {
         attributes.add(new Attribute(LENGTH_ATTR_NAME));
         attributes.add(new Attribute(CPS_ATTR_NAME));
         attributes.add(new Attribute(RATE_ATTR_NAME));
+        attributes.add(new Attribute(ORDER_ATTR_NAME));
 
         Instances instances = new Instances("BasicExamples", attributes, 0);
         instances.setClassIndex(2);
@@ -105,8 +108,8 @@ public class SegmentSet {
         Attribute lengthAttr = instances.attribute(LENGTH_ATTR_NAME);
         Attribute cpsAttr = instances.attribute(CPS_ATTR_NAME);
         Attribute rateAttr = instances.attribute(RATE_ATTR_NAME);
-        //nothing
-
+        Attribute orderAttr = instances.attribute(ORDER_ATTR_NAME);
+        
 
         for (int i = 0; i < size(); i++) {
             Segment segment = get(i);
@@ -114,6 +117,7 @@ public class SegmentSet {
 
             String messageStr = segment.concatMessages();
 
+            instance.setValue(orderAttr, (double) i);
             instance.setValue(idAttr, segment.getId());
             instance.setValue(messageAttr, messageStr);
             if (segment.hasTrueLabel()) {

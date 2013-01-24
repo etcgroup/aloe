@@ -7,15 +7,14 @@ package etc.aloe.wt2013;
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.Model;
 import etc.aloe.processes.FeatureWeighting;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  *
- * @author erose
+ * @author Eli Rose <erose@oberlin.edu>
  */
-public class DecisionStumpFeatureWeighting implements FeatureWeighting{
+public class HMMFeatureWeighting implements FeatureWeighting{
 
     @Override
     public List<String> getTopFeatures(ExampleSet trainingExamples, Model model, int topN) {

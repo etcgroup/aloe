@@ -20,6 +20,7 @@ package etc.aloe.cscw2013;
 
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
+import etc.aloe.filters.AddRelationalAttributeFilter;
 import etc.aloe.filters.PronounRegexFilter;
 import etc.aloe.filters.PunctuationRegexFilter;
 import etc.aloe.filters.SimpleStringToWordVector;
@@ -28,8 +29,11 @@ import etc.aloe.filters.SpecialRegexFilter;
 import etc.aloe.filters.SpellingRegexFilter;
 import etc.aloe.filters.StringToDictionaryVector;
 import etc.aloe.processes.FeatureGeneration;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
+import weka.core.Attribute;
+import weka.core.DenseInstance;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.SelectedTag;
 import weka.filters.Filter;
@@ -77,14 +81,18 @@ public class FeatureGenerationImpl implements FeatureGeneration {
 
             spec.addFilter(getEmoticonsFilter(examples));
             spec.addFilter(getBagOfWordsFilter(examples));
-            Filter finalFilter = getRemoveIDFilter(examples);
+            spec.addFilter(getRemoveIDFilter(examples));
+            Filter finalFilter = getAddRelationalAttributeFilter(examples);
             spec.addFilter(finalFilter);
 
             Instances output = finalFilter.getOutputFormat();
             int numAttrs = output.numAttributes();
+            
             System.out.println("generated " + (numAttrs - 1) + " features.");
+
         } catch (Exception e) {
             System.err.println("Error generating features.");
+            e.printStackTrace();
             System.err.println("\t" + e.getMessage());
         }
 
@@ -153,6 +161,23 @@ public class FeatureGenerationImpl implements FeatureGeneration {
      */
     private Filter getPronounsFilter(ExampleSet examples) throws Exception {
         PronounRegexFilter filter = new PronounRegexFilter(ExampleSet.MESSAGE_ATTR_NAME);
+
+        filter.setInputFormat(examples.getInstances());
+        Instances filtered = Filter.useFilter(examples.getInstances(), filter);
+        examples.setInstances(filtered);
+
+        return filter;
+    }
+    
+        /**
+     * Configure the pronouns filter to work with the provided data.
+     *
+     * @param examples
+     * @return
+     * @throws Exception
+     */
+    private Filter getAddRelationalAttributeFilter(ExampleSet examples) throws Exception {
+        AddRelationalAttributeFilter filter = new AddRelationalAttributeFilter();
 
         filter.setInputFormat(examples.getInstances());
         Instances filtered = Filter.useFilter(examples.getInstances(), filter);

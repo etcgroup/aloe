@@ -19,7 +19,10 @@
 package etc.aloe;
 
 import etc.aloe.options.ModeOptions;
+import etc.aloe.wt2013.HmmTest;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -38,6 +41,14 @@ public class Main {
         System.err.println("List of modes: ");
         for (ModeName cmd : ModeName.values()) {
             System.err.println("\t" + cmd.name());
+        }
+    }
+
+    private void runHMMTest(String[] args) {
+        try{
+        HmmTest.main(args);
+        } catch(Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -103,17 +114,17 @@ public class Main {
         CmdLineParser parser = new CmdLineParser(main);
 
 
-        if (args.length < 1) {
-            System.err.println("PIPELINE_CLASS is required.");
-            main.printUsage();
-            return;
-        }
+        /*if (args.length < 1) {
+         System.err.println("PIPELINE_CLASS is required.");
+         main.printUsage();
+         return;
+         }
 
-        if (args.length < 2) {
-            System.err.println("MODE is required.");
-            main.printUsage();
-            return;
-        }
+         if (args.length < 2) {
+         System.err.println("MODE is required.");
+         main.printUsage();
+         return;
+         }*/
 
         //Separate the first argument from the rest of the arguments
         String[] restOfArgs = Arrays.copyOfRange(args, 2, args.length);
@@ -128,6 +139,7 @@ public class Main {
         }
 
         //And go!
+        //main.runHMMTest(restOfArgs);
         main.run(restOfArgs);
     }
 }
