@@ -43,7 +43,7 @@ from datetime import datetime
 
 #Determines if the program makes any changes to the filesystem.
 #Set to True for standard runs, False when debugging
-FILE_OPS = True
+DISABLE_FILE_OPS = False
 
 #Controls extraneous print statements.
 #Set to False for standard runs, True when debugging
@@ -85,13 +85,20 @@ def parse_args():
   parser.add_argument('-l', '--file-limit', type=int, 
                       help='Optionally limit the number of files to be processed')
   
-  #Debug statement output
-  parser.add_argument('-dbg', '--debug', action='store_true', default=False,
-                      help='Print debug information to stdout')
-  
   #TODO: Special pipeline flags
   #parser.add_argument('-sf', '--special-flags', type=str, nargs='+', 
   #                    help='Special pipeline flags to be run with only one pipeline')
+  
+  
+  ##--- Internal Script Options ---##
+  #Debug statement output
+  parser.add_argument('--debug', action='store_true', default=False,
+                      help='Print debug information to stdout')
+  
+  #Filesystem operations
+  parser.add_argument('--disable-file-ops', action='store_true', default=False,
+                      help='Disable filesystem operations - this renders the script inoperable. '
+                         + 'Used for debugging.')
   
   return parser.parse_args()
 
@@ -150,7 +157,10 @@ def main():
     sys.exit(1)
   
   args = parse_args()
+  
+  #Set internal flags
   DEBUG = args.debug
+  DISABLE_FILE_OPS = args.disable_file_ops
   
   if DEBUG:
     print("Registered args: " + args.__repr__())
@@ -159,7 +169,7 @@ def main():
   
   script_output_folder_name = "Output at " + datetime.now().strftime("%H-%M-%S on %d-%m-%Y")
   script_output_folder = os.path.join(args.output_dir, script_output_folder_name)
-  if FILE_OPS:
+  if not DISABLE_FILE_OPS:
     #Create output folder
     print('Creating output folder: ' + script_output_folder) 
     os.makedirs(script_output_folder)
@@ -178,34 +188,40 @@ def main():
   for pipename in args.pipelines:
     #Note the file limit in this loop - this is a user-controlled option
     for filename in os.listdir(args.input_dir)[:args.file_limit]:
-      affect_name = filename.split(('_'))[2].split('.')[0] #!!NOTE!!: This is 100% filename specific!
       
-      input_file_path = os.path.join(args.input_dir, filename)
-      curr_output_subdir = os.path.join(script_output_folder, affect_name) + "_" + pipename
-      
-      #Here's a goddamn hack to rule them all
-      command = ("java -jar " + shlex.quote(os.path.join(args.aloe_dir,"dist/aloe.jar")) + " " + pipename + " train " #ALOE call
-                 + shlex.quote(input_file_path) + " " #ALOE input CSV
-                 + shlex.quote(curr_output_subdir) #ALOE output directory
-                 + ''.join([' --' + flag if not flag.isnumeric() else ' ' + flag for flag in args.global_flags]) #Global test flags
-                )
-      
-      if DEBUG:
-        print(command)
-      
-      if FILE_OPS:
-        #Run ALOE
-        subprocess.call(command, shell=True)
+      #Work only on proper filetypes
+      if '.csv' in filename:
+        affect_name = filename.split(('_'))[2].split('.')[0] #!!NOTE!!: This is 100% filename specific!
         
-        #Do some directory building
-        gen_csv_script_path = shlex.quote(os.path.join(script_origin_dir, 'generate_csv_from_report.py'))
-        report_file_path = shlex.quote(os.path.join(curr_output_subdir, 'report.txt'))
-        output_csv_path = shlex.quote(os.path.join(script_output_folder, 'out.csv'))
+        input_file_path = os.path.join(args.input_dir, filename)
+        curr_output_subdir = os.path.join(script_output_folder, affect_name) + "_" + pipename
         
-        #Run the CSV-generator on the output
-        command = ('python3 ' + gen_csv_script_path + ' ' + report_file_path + ' ' 
-                   + affect_name + '_' + pipename + ' >> ' + output_csv_path)
-        subprocess.call(command, shell=True)
+        #Here's a goddamn hack to rule them all
+        command = ("java -jar " + shlex.quote(os.path.join(args.aloe_dir,"dist/aloe.jar")) + " " + pipename + " train " #ALOE call
+                   + shlex.quote(input_file_path) + " " #ALOE input CSV
+                   + shlex.quote(curr_output_subdir) #ALOE output directory
+                   + ''.join([' --' + flag if not flag.isnumeric() else ' ' + flag for flag in args.global_flags]) #Global test flags
+                  )
+        
+        if DEBUG:
+          print(command)
+        
+        if not DISABLE_FILE_OPS:
+          #Run ALOE
+          subprocess.call(command, shell=True)
+          
+          #Do some directory building
+          gen_csv_script_path = shlex.quote(os.path.join(script_origin_dir, 'generate_csv_from_report.py'))
+          report_file_path = shlex.quote(os.path.join(curr_output_subdir, 'report.txt'))
+          output_csv_path = shlex.quote(os.path.join(script_output_folder, 'out.csv'))
+          
+          #Run the CSV-generator on the output
+          command = ('python3 ' + gen_csv_script_path + ' ' + report_file_path + ' ' 
+                     + affect_name + '_' + pipename + ' >> ' + output_csv_path)
+          subprocess.call(command, shell=True)
+        
+      else:
+        print(filename + ' was not processed')
   
 
 if __name__ == "__main__":
