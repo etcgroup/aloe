@@ -44,7 +44,7 @@ def gen_csv():
     csv = [line.split(':')[1].strip() for line in file if ':' in line]
   
   #Return the list as a comma-separated string, optionally with the prefix from sys.argv[2]
-  return sys.argv[2] + "," + (",".join(csv)) if len(sys.argv) == 3 else (",".join(csv))
+  return (sys.argv[2] + ",") + (",".join(csv)) if len(sys.argv) == 3 else (",".join(csv))
 
 def main():
   if(len(sys.argv) not in (2, 3)):
