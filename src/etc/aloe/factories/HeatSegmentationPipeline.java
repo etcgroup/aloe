@@ -26,7 +26,13 @@ import etc.aloe.wt2013.HeatSegmentation;
 
 /**
  * An experimental pipeline that segments chat data based on the 
- * rate-of-change of the message flow over time, aka the 'heat'.
+ * change of message occurrences within a specified time window.
+ * 
+ * The basic concept revolves around the idea of a heatmap
+ *  - we segment when the heat function is zero, or when
+ *  the heat function crosses some occurrence threshold.
+ * 
+ * The user must specify a time window, and an optional occurrence threshold.
  * 
  * @author Dan Barella <dan.barella@gmail.com>
  */
@@ -35,28 +41,24 @@ public class HeatSegmentationPipeline extends CSCW2013 {
     /**
      * This method uses HeatSegmentation instead of ThresholdSegmenation.
      * 
-     * @return A Heatmap-based segmentation of the chatlog.
+     * @return A Occurrence-based segmentation of the chatlog.
      */
     @Override
     public Segmentation constructSegmentation() {
-        //PROTO 
         boolean disableSegmentation = false;
-        boolean inferOccurrences = false;
-        float timeWindow = 30.0f;
-        float occurrenceThreshold = -1;
+        float timeWindow = 0.0f;
+        Float occurrenceThreshold;
 
         if (options instanceof TrainOptionsImpl) {
             TrainOptionsImpl trainOpts = (TrainOptionsImpl) options;
             disableSegmentation = trainOpts.disableSegmentation;
             
-            inferOccurrences = trainOpts.inferOccurrences;
-            timeWindow = trainOpts.timeWindow;
+                timeWindow = trainOpts.timeWindow;
             occurrenceThreshold = trainOpts.occurrenceThreshold;
         } else if (options instanceof LabelOptionsImpl) {
             LabelOptionsImpl labelOpts = (LabelOptionsImpl) options;
             disableSegmentation = labelOpts.disableSegmentation;
             
-            inferOccurrences = labelOpts.inferOccurrences;
             timeWindow = labelOpts.timeWindow;
             occurrenceThreshold = labelOpts.occurrenceThreshold;
         } else {
@@ -65,11 +67,11 @@ public class HeatSegmentationPipeline extends CSCW2013 {
 
         if (disableSegmentation) {
             return new NullSegmentation();
-        } else if (inferOccurrences || occurrenceThreshold == -1) {
+        } else if (occurrenceThreshold == null) { //Use mean occurrence value as threshold
             Segmentation segmentation = new HeatSegmentation(timeWindow);
             segmentation.setSegmentResolution(new ResolutionImpl());
             return segmentation;
-        } else {
+        } else { //Use user-specified occurrence threshold
             Segmentation segmentation = new HeatSegmentation(timeWindow, occurrenceThreshold);
             segmentation.setSegmentResolution(new ResolutionImpl());
             return segmentation;

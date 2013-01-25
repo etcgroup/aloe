@@ -305,12 +305,10 @@ public class CSCW2013 implements PipelineFactory {
         public boolean disableSegmentation = false;
         
         //Heat Segmentation Options
-        @Option(name="--infer-occurrences", aliases={"-inf-occ"}, usage="Use the mean occurence for segmentation instead of a user-specified value.")
-        public boolean inferOccurrences = false;
-        @Option(name="--time-window", aliases={"-t-win"}, usage="Time window for segmentation in seconds (default = 30 seconds)")
-        public float timeWindow = 30.0f;
-        @Option(name="--occurrence-threshold", aliases={"-o-thr"}, usage="Message occurrence threshold for segmentation (default = 3 messages within the time window)")
-        public float occurrenceThreshold = -1;
+        @Option(name="--time-window", usage="Time window for segmentation in seconds (default = 60 seconds)")
+        public float timeWindow = 60.0f;
+        @Option(name="--occurrence-threshold", usage="Message occurrence threshold for segmentation (default = mean occurrence)")
+        public Float occurrenceThreshold;
     }
 
     static class TrainOptionsImpl extends TrainOptions {
@@ -341,11 +339,9 @@ public class CSCW2013 implements PipelineFactory {
         public File emoticonFile = new File("emoticons.txt");
         
         //Heat Segmentation Options
-        @Option(name="--infer-occurrences", aliases={"-inf-occ"}, usage="Use the mean occurence for segmentation instead of a user-specified value.")
-        public boolean inferOccurrences = false;
-        @Option(name="--time-window", aliases={"-t-win"}, usage="Time window for segmentation in seconds (default = 30 seconds)")
-        public float timeWindow = 30.0f;
-        @Option(name="--occurrence-threshold", aliases={"-o-thr"}, usage="Message occurrence threshold for segmentation (default = 3 messages within the time window)")
-        public float occurrenceThreshold = -1;
+        @Option(name="--time-window", usage="Time window for segmentation in seconds (default = 60 seconds)")
+        public float timeWindow = 60.0f;
+        @Option(name="--occurrence-threshold", usage="Message occurrence threshold for segmentation (default = mean occurrence")
+        public Float occurrenceThreshold;
     }
 }
