@@ -203,6 +203,27 @@ public class HeatSegmentation implements Segmentation {
         }
     }
     
+    
+    //HYPER PROTO!
+    /**
+     * Determines if a message is a local maximum.
+     * @return @true if the message is a local maximum, @false otherwise.
+     */
+    private boolean isLocalMax(Message m) {
+        int mRate = messageOccurrences.get(m.getId());
+        int lRate; int rRate;
+       
+        try {
+            lRate = messageOccurrences.get(m.getId()-1);
+            rRate = messageOccurrences.get(m.getId()+1);
+            
+            return mRate >= lRate && mRate >= rRate;
+        } catch(NullPointerException e) {
+            //This can only occur at the endpoints of the message set, so we ignore it.
+        }
+        return false;
+    }
+    
     @Override
     public SegmentSet segment(MessageSet messageSet) {
         
@@ -236,9 +257,11 @@ public class HeatSegmentation implements Segmentation {
         for(Message m : messages) {
             int currOccurrences = messageOccurrences.get(m.getId());
             
-            if(currOccurrences > occurrenceThreshold) { //Can't cut without crossing the threshold
-                wasAboveThresh = true;
-            }
+            wasAboveThresh = (currOccurrences > occurrenceThreshold);
+            
+            //if(currOccurrences > occurrenceThreshold) { //Can't cut without crossing the threshold
+            //    wasAboveThresh = true;
+            //}
             /*
              * It's important to note that the conditional below is not the same as writing
              *     if((currOccurrences == 0) || (currOccurrences == occurrenceThreshold))
@@ -248,12 +271,14 @@ public class HeatSegmentation implements Segmentation {
              */
             if(/**/currOccurrences == 0
                     || ((currOccurrences <= occurrenceThreshold && wasAboveThresh/**/) 
-                    || (currOccurrences >= occurrenceThreshold && !wasAboveThresh)/**/)) {
+                    || (currOccurrences >= occurrenceThreshold && !wasAboveThresh)/**/)
+                    /*|| isLocalMax(m)/**/) {
                 
-                if(currOccurrences != 0) { //Switch this variable only if we've actually crossed the threshold
+                //if(currOccurrences != 0) { //Switch this variable only if we've actually crossed the threshold
                     wasAboveThresh = !wasAboveThresh;
-                }
+                //}
                 
+                //wasAboveThresh = !wasAboveThresh;
                 newSegment = true;
                 
                 if(DEBUG) {
@@ -278,6 +303,8 @@ public class HeatSegmentation implements Segmentation {
                 current = new Segment();
                 newSegment = false;
             }
+            
+            //wasAboveThresh = (currOccurrences >= occurrenceThreshold);
             
             current.add(m);
         }
