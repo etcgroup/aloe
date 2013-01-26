@@ -257,7 +257,7 @@ public class HeatSegmentation implements Segmentation {
         for(Message m : messages) {
             int currOccurrences = messageOccurrences.get(m.getId());
             
-            wasAboveThresh = (currOccurrences > occurrenceThreshold);
+            //wasAboveThresh = (currOccurrences > occurrenceThreshold);
             
             //if(currOccurrences > occurrenceThreshold) { //Can't cut without crossing the threshold
             //    wasAboveThresh = true;
@@ -275,7 +275,7 @@ public class HeatSegmentation implements Segmentation {
                     /*|| isLocalMax(m)/**/) {
                 
                 //if(currOccurrences != 0) { //Switch this variable only if we've actually crossed the threshold
-                    wasAboveThresh = !wasAboveThresh;
+                //    wasAboveThresh = !wasAboveThresh;
                 //}
                 
                 //wasAboveThresh = !wasAboveThresh;
@@ -304,7 +304,7 @@ public class HeatSegmentation implements Segmentation {
                 newSegment = false;
             }
             
-            //wasAboveThresh = (currOccurrences >= occurrenceThreshold);
+            wasAboveThresh = (currOccurrences > occurrenceThreshold);
             
             current.add(m);
         }
