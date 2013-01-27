@@ -269,7 +269,7 @@ public class HeatSegmentation implements Segmentation {
              * This is because the message occurrence mapping is discrete, not continuous 
              * so there are cases where the change in occurrence will jump over the above conditional.
              */
-            if(/**/(currOccurrences - (occurrenceThreshold/4.0f) <= 0) //Lower Quartile
+            if(/**/(currOccurrences - (occurrenceThreshold/2.0f) <= 0) //Low cutoff threshold
                     || ((currOccurrences <= occurrenceThreshold && wasAboveThresh/**/) 
                     || (currOccurrences >= occurrenceThreshold && !wasAboveThresh)/**/)
                     /*|| isLocalMax(m)/**/) {
