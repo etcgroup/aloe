@@ -167,7 +167,7 @@ def main():
   
   script_origin_dir = os.getcwd()
   
-  script_output_folder_name = "Output at " + datetime.now().strftime("%H-%M-%S on %d-%m-%Y")
+  script_output_folder_name = datetime.now().strftime("%d-%m-%Y at %H-%M-%S")
   script_output_folder = os.path.join(args.output_dir, script_output_folder_name)
   if not DISABLE_FILE_OPS:
     #Create output folder
@@ -191,35 +191,44 @@ def main():
       
       #Work only on proper filetypes
       if '.csv' in filename:
-        affect_name = filename.split(('_'))[2].split('.')[0] #!!NOTE!!: This is 100% filename specific!
+        
+        try: 
+          affect_name = filename.split(('_'))[2].split('.')[0] #!!NOTE!!: This is 100% filename specific!
+        except IndexError:
+          affect_name = filename
         
         input_file_path = os.path.join(args.input_dir, filename)
         curr_output_subdir = os.path.join(script_output_folder, affect_name) + "_" + pipename
         
-        #Here's a goddamn hack to rule them all
-        command = ("java -jar " + shlex.quote(os.path.join(args.aloe_dir,"dist/aloe.jar")) + " " + pipename + " train " #ALOE call
-                   + shlex.quote(input_file_path) + " " #ALOE input CSV
-                   + shlex.quote(curr_output_subdir) #ALOE output directory
-                   + ''.join([' --' + flag if not flag.isnumeric() else ' ' + flag for flag in args.global_flags]) #Global test flags
-                  )
-        
+        command = [
+                   'java', '-jar',
+                   os.path.join(args.aloe_dir,"dist/aloe.jar"), pipename, "train", #ALOE call
+                   input_file_path, #ALOE input CSV
+                   curr_output_subdir #ALOE output directory
+                  ] + ['--' + flag if not flag.isnumeric() else flag for flag in args.global_flags] #Global test flags
         if DEBUG:
           print(command)
         
         if not DISABLE_FILE_OPS:
           #Run ALOE
-          subprocess.call(command, shell=True)
+          proc = subprocess.Popen(command)
+          proc.wait()
           
           #Do some directory building
-          gen_csv_script_path = shlex.quote(os.path.join(script_origin_dir, 'generate_csv_from_report.py'))
-          report_file_path = shlex.quote(os.path.join(curr_output_subdir, 'report.txt'))
-          output_csv_path = shlex.quote(os.path.join(script_output_folder, 'out.csv'))
+          gen_csv_script_path = os.path.join(script_origin_dir, 'generate_csv_from_report.py')
+          report_file_path = os.path.join(curr_output_subdir, 'report.txt')
+          output_csv_path = os.path.join(script_output_folder, 'out.csv')
           
-          #Run the CSV-generator on the output
-          command = ('python3 ' + gen_csv_script_path + ' ' + report_file_path + ' ' 
-                     + affect_name + '_' + pipename + ' >> ' + output_csv_path)
-          subprocess.call(command, shell=True)
-        
+          command = ['python3', gen_csv_script_path, report_file_path, affect_name]
+          
+          if DEBUG:
+            print(command)
+          
+          #Run the CSV-generator, append to output file
+          with open(output_csv_path, 'a') as output:
+            proc = subprocess.Popen(command, stdout=output)
+            proc.wait()
+      
       else:
         print(filename + ' was not processed')
   
