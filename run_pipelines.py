@@ -4,10 +4,11 @@
 This is a batch script that runs the ALOE classifier using a set of 
 user-specified pipelines on a set of data files.
 
-It then runs the report files through a separate python script to generate
-an output.csv data file, prepended with the affect code and pipeline name.
+It then parses the ALOE report files to generate an output.csv data file,
+prepended with the affect code and pipeline name.
+
 Note that this script is written in Python 3.3, which now supports
-non-destructive file creation.
+non-destructive file creation using open() with the 'x' flag.
 
 Incidentally,
 --- 
@@ -27,12 +28,12 @@ You should have received a copy of the GNU General Public License
 along with ALOE.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-__status__ = "Prototype"
+__status__ = "Beta"
 __author__ = "Daniel Barella"
 __email__ = "dan.barella@gmail.com"
 __copyright__ = "Copyright (c) 2013 SCCL, University of Washington (http://depts.washington.edu/sccl)"
 __license__ = "GPL"
-__version__ = "0.1"
+__version__ = "0.2"
 
 import os
 import sys
