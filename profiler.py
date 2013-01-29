@@ -2,10 +2,9 @@
 
 """ 
 This is a batch script that runs the ALOE classifier using a set of 
-user-specified pipelines on a set of data files.
-
+user-specified pipelines over a set of data files.
 It then parses the ALOE report files to generate an output.csv data file,
-prepended with the affect code and pipeline name.
+where each row is prepended with the affect code and pipeline name.
 
 Note that this script is written in Python 3.3, which now supports
 non-destructive file creation using open() with the 'x' flag.
