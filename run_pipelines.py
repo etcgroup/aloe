@@ -121,6 +121,20 @@ def make_file(name, directory):
   
   return path
 
+def gen_csv(report_file, csv_prefix=''):
+  """
+  Takes an ALOE report file and generates a CSV row of the statistics values. 
+  The user can specify an optional prefix string to be prepended to the CSV row.
+  
+  Copy/Pasta from generate_csv_from_report.py
+  """
+  #For each line, make a list of the data values following each semicolon (whitespace stripped)
+  with open(report_file) as file:
+    csv = [line.split(':')[1].strip() for line in file if ':' in line]
+  
+  #Return the list as a comma-separated string, optionally with the prefix from sys.argv[2]
+  return (csv_prefix + ",") + (",".join(csv))
+
 def escape_spaces(string):
   """
   Returns a pseudo shell-parseable string where all space characters are escaped by '\'.
@@ -219,19 +233,18 @@ def main():
           report_file_path = os.path.join(curr_output_subdir, 'report.txt')
           output_csv_path = os.path.join(script_output_folder, 'out.csv')
           
-          command = ['python3', gen_csv_script_path, report_file_path, affect_name]
+          command = ['python3', gen_csv_script_path, report_file_path, (affect_name + '_' + pipename)]
           
           if DEBUG:
             print(command)
           
           #Run the CSV-generator, append to output file
           with open(output_csv_path, 'a') as output:
-            proc = subprocess.Popen(command, stdout=output)
-            proc.wait()
+            output.write(gen_csv(report_file_path, affect_name + '_' + pipename) + '\n')
       
+      #If the file is not a .csv, we ignore it.
       else:
         print(filename + ' was not processed')
-  
 
 if __name__ == "__main__":
   main()
