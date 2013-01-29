@@ -306,7 +306,7 @@ public class CSCW2013 implements PipelineFactory {
         
         //Heat Segmentation Options
         @Option(name="--time-window", usage="Time window for segmentation in seconds (default = 60 seconds)")
-        public float timeWindow = 60.0f;
+        public float timeWindow = 90.0f;
         @Option(name="--occurrence-threshold", usage="Message occurrence threshold for segmentation (default = mean occurrence)")
         public Float occurrenceThreshold;
     }
@@ -340,7 +340,7 @@ public class CSCW2013 implements PipelineFactory {
         
         //Heat Segmentation Options
         @Option(name="--time-window", usage="Time window for segmentation in seconds (default = 60 seconds)")
-        public float timeWindow = 60.0f;
+        public float timeWindow = 90.0f;
         @Option(name="--occurrence-threshold", usage="Message occurrence threshold for segmentation (default = mean occurrence")
         public Float occurrenceThreshold;
     }
