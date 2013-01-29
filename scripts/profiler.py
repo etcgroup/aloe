@@ -132,7 +132,7 @@ def gen_csv(report_file, csv_prefix=''):
   with open(report_file) as file:
     csv = [line.split(':')[1].strip() for line in file if ':' in line]
   
-  #Return the list as a comma-separated string, optionally with the prefix from sys.argv[2]
+  #Return the list as a comma-separated string, optionally with row name prefix
   return (csv_prefix + ",") + (",".join(csv))
 
 def escape_spaces(string):
@@ -185,7 +185,7 @@ def main():
       if '.csv' in filename:
         
         try: 
-          affect_name = filename.split('.csv')[0].split(('_'))[1] #!!NOTE!!: This is 100% filename specific!
+          affect_name = filename.split('.csv')[0].split(('_'))[2] #!!NOTE!!: This is 100% filename specific!
         except IndexError:
           affect_name = filename.split('.csv')[0]
         

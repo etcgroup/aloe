@@ -3,7 +3,7 @@ Profiling Scripts
 Note that both scripts are written in Python 3; profiler.py requires Python 3.3 or above.
 
 ##profiler.py  
-The profiler.py script is used to run ALOE over a set of input files. As the script iterates, it incrementally parses each ALOE report file and appends the numeric results to an output csv file. Each row of the output file is prepended with an entry of the form `[affect code]_[pipeline name]`. The script attempts to parse the affect code from the filename - this assumes that the filename is of the form `export_[affect code]_[index].csv`. If the affect code cannot be parsed from the input CSV filename, the script will default to the filename itself. At this point in time it is up to the user to supply the proper column headings.
+The profiler.py script is used to run ALOE over a set of input files. As the script iterates, it incrementally parses each ALOE report file and appends the numeric results to an output csv file. Each row of the output file is prepended with an entry of the form `[affect code]_[pipeline name]`. The script attempts to parse the affect code from the filename - this assumes that the filename is of the form `export_[index]_[affect code].csv`. If the affect code cannot be parsed from the input CSV filename, the script will default to the filename itself. At this point in time it is up to the user to supply the proper column headings.
 
 To use the profiler script, run it as such:  
 
@@ -26,7 +26,7 @@ Options:
 * `--debug`: Print extraneous debug information to stdout.  
 * `--disable-file-ops`: Disable filesystem operations - *this renders the script inoperable.* Used purely for debugging.  
 
-Known Bugs: Parsing a filenames whose affect codes contain more than one word (e.g. `export_no_affect.csv`) does not use both words.  
+Known Bugs: Parsing a filenames whose affect codes contain more than one word (e.g. `export_no_affect.csv`) does not find the full affect code name.  
 
 ##gen_csv_from_report.py  
 *Copied from script docstring*  
