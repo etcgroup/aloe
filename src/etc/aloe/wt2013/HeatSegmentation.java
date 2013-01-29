@@ -138,14 +138,14 @@ public class HeatSegmentation implements Segmentation {
      * This data is contained within a hashmap @see messageOccurrences
      * @param messages messages sorted by time (ascending)
      */
-    private void calculateOccurrences(List<Message> messages) {
+    protected HashMap<Integer, Integer> calculateOccurrences(List<Message> messages) {
         messageOccurrences = new HashMap<Integer, Integer>();
         
         int rIndex = 0; //Index of the right message
         int lIndex = 0; //Index of the left message
         
         boolean stepping = false; //true if the window is currently being adjusted, false otherwise
-        int messageOccurrence = -1; //Current count of messages in the window, aka the occurrence within the time window.
+        int messageOccurrence = -1; 
         
         while(rIndex < messages.size()) {
             Message left = messages.get(lIndex); 
@@ -183,6 +183,7 @@ public class HeatSegmentation implements Segmentation {
                 messageOccurrences.put(right.getId(), messageOccurrence);
             }
         }
+        return messageOccurrences;
     }
     
     /**
@@ -203,27 +204,6 @@ public class HeatSegmentation implements Segmentation {
         }
     }
     
-    
-    //HYPER PROTO!
-    /**
-     * Determines if a message is a local maximum.
-     * @return @true if the message is a local maximum, @false otherwise.
-     */
-    private boolean isLocalMax(Message m) {
-        int mRate = messageOccurrences.get(m.getId());
-        int lRate; int rRate;
-       
-        try {
-            lRate = messageOccurrences.get(m.getId()-1);
-            rRate = messageOccurrences.get(m.getId()+1);
-            
-            return mRate >= lRate && mRate >= rRate;
-        } catch(NullPointerException e) {
-            //This can only occur at the endpoints of the message set, so we ignore it.
-        }
-        return false;
-    }
-    
     @Override
     public SegmentSet segment(MessageSet messageSet) {
         
@@ -231,7 +211,7 @@ public class HeatSegmentation implements Segmentation {
         
         //Build the occurence count hashmap, if it hasn't been done already
         if(messageOccurrences == null) {
-            calculateOccurrences(messages);
+            messageOccurrences = calculateOccurrences(messages);
         }
         
         calcMeanValues(messages);
@@ -239,7 +219,6 @@ public class HeatSegmentation implements Segmentation {
         //---
         //Begin segmentation
         System.out.println("HeatSegmentation:"
-        //        + "\nMean message rate over the entire time interval is " + meanMessageRate + " messages per second."
                 + "\nMean message occurrence within the set is " + meanMessageOccurrence 
                 + " messages within a " + timeWindow + " second window.");
         
@@ -257,11 +236,6 @@ public class HeatSegmentation implements Segmentation {
         for(Message m : messages) {
             int currOccurrences = messageOccurrences.get(m.getId());
             
-            //wasAboveThresh = (currOccurrences > occurrenceThreshold);
-            
-            //if(currOccurrences > occurrenceThreshold) { //Can't cut without crossing the threshold
-            //    wasAboveThresh = true;
-            //}
             /*
              * It's important to note that the conditional below is not the same as writing
              *     if((currOccurrences == 0) || (currOccurrences == occurrenceThreshold))
@@ -269,30 +243,18 @@ public class HeatSegmentation implements Segmentation {
              * This is because the message occurrence mapping is discrete, not continuous 
              * so there are cases where the change in occurrence will jump over the above conditional.
              */
-            if(/**/(currOccurrences - (occurrenceThreshold/2.0f) <= 0) //Low cutoff threshold
+            if((currOccurrences <= occurrenceThreshold/2.0f) //Low cutoff threshold
                     || ((currOccurrences <= occurrenceThreshold && wasAboveThresh/**/) 
-                    || (currOccurrences >= occurrenceThreshold && !wasAboveThresh)/**/)
-                    /*|| isLocalMax(m)/**/) {
-                
-                //if(currOccurrences != 0) { //Switch this variable only if we've actually crossed the threshold
-                //    wasAboveThresh = !wasAboveThresh;
-                //}
-                
-                //wasAboveThresh = !wasAboveThresh;
+                    || (currOccurrences >= occurrenceThreshold && !wasAboveThresh)/**/)) {
                 newSegment = true;
-                
-                if(DEBUG) {
-                    System.out.println("--- Begin new segment (timestamp: " + m.getTimestamp() + 
-                            ") | precalculated occurrences: " + currOccurrences + "\n" + m.getMessage());
-                }
-            }
-            
-            if(DEBUG && !newSegment) {
-                System.out.println(m.getTimestamp() + " | precalculated occurrences: " + currOccurrences + "\n" + m.getMessage());
             }
             
             //Begin blatant copy-paste (source = ThresholdSegmentation.segment())
             if (newSegment) {
+                if(DEBUG) {
+                    System.out.println("--- Begin new segment (timestamp: " + m.getTimestamp() + 
+                            ") | precalculated occurrences: " + currOccurrences + "\n" + m.getMessage());
+                }
                 if (this.resolution != null) {
                     current.setTrueLabel(this.resolution.resolveLabel(current));
                     if (current.hasTrueLabel()) {
@@ -302,10 +264,12 @@ public class HeatSegmentation implements Segmentation {
                 segments.add(current);
                 current = new Segment();
                 newSegment = false;
+            } else if(DEBUG) {
+                System.out.println(m.getTimestamp() 
+                                  + " | precalculated occurrences: " + currOccurrences 
+                                  + "\n" + m.getMessage());
             }
-            
             wasAboveThresh = (currOccurrences > occurrenceThreshold);
-            
             current.add(m);
         }
         
@@ -319,7 +283,8 @@ public class HeatSegmentation implements Segmentation {
             segments.add(current);
         } //End blatant copy-paste
         
-        System.out.println("Grouped messages into " + segments.size() + " segments (" + numLabeled + " labeled).");
+        System.out.println("Grouped messages into " + segments.size() 
+                          + " segments (" + numLabeled + " labeled).");
         
         return segments;
     }
