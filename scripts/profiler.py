@@ -77,7 +77,7 @@ def parse_args():
                       help='Name(s) of the pipelines to be run')
   
   #Global pipeline flags
-  parser.add_argument('-gf', '--global-flags', type=str, nargs='+', 
+  parser.add_argument('-gf', '--global-flags', type=str, default='', nargs='+', 
                       help='Global pipeline flags to be run with all specified pipelines. '
                          + 'Omit the leading \'--\'. Ex: \"downsample balance-test-set\"')
   
@@ -143,28 +143,6 @@ def escape_spaces(string):
   return r'\ '.join(shlex.split(string))
 
 def main():
-  """
-  Pseudocode runthrough:
-  
-  We'll need to have the aloe, input and output directories
-  From there, we need a list of the pipelines to run, and potentially the arguments to give as well
-  Make sure that there is no outfile already
-   Create a blank outfile with timestamp name - throw an error if there is
-  
-  For each affect dump:
-   Get the affect name
-   Make a subdir with that affect name
-   run the pipe in that subdir (separate method)
-   
-  Running a pipe:
-   make another subdir with the pipe's name, plus any non-global options given to the pipe
-    (i.e. running HeatSeg with a different time window)
-   
-   run the process, output to the subdir
-   call gen_csv on the generated report file, prepend the returned string with the affect, 
-    pipe and options
-  """
-  
   #Require Python 3.3 or above
   if sys.version_info[0] < 3 or sys.version_info[1] < 3:
     print('This script requires Python 3.3 or above.')
@@ -207,9 +185,9 @@ def main():
       if '.csv' in filename:
         
         try: 
-          affect_name = filename.split(('_'))[2].split('.')[0] #!!NOTE!!: This is 100% filename specific!
+          affect_name = filename.split('.csv')[0].split(('_'))[1] #!!NOTE!!: This is 100% filename specific!
         except IndexError:
-          affect_name = filename
+          affect_name = filename.split('.csv')[0]
         
         input_file_path = os.path.join(args.input_dir, filename)
         curr_output_subdir = os.path.join(script_output_folder, affect_name) + "_" + pipename
