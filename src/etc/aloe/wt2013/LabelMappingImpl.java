@@ -16,38 +16,38 @@
  *
  * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
  */
-package etc.aloe.cscw2013;
+package etc.aloe.wt2013;
 
 import etc.aloe.data.Message;
 import etc.aloe.data.Segment;
-import etc.aloe.processes.SegmentResolution;
+import etc.aloe.data.SegmentSet;
+import etc.aloe.processes.LabelMapping;
+import java.util.List;
+import etc.aloe.FileNames;
 
 /**
- * A basic disagreement resolution strategy for labeling segments.
- *
- * If any of the messages contained in the segment have a true label, the
- * segment is given a true label.
+ * Given predicted labels, applies them to the given segments and their
+ * messages.
  *
  * @author Michael Brooks <mjbrooks@uw.edu>
  */
-public class ResolutionImpl implements SegmentResolution {
+public class LabelMappingImpl implements LabelMapping {
 
     @Override
-    public Boolean resolveLabel(Segment segment) {
-        boolean labelSetBySomeone = false;
-        for (Message message : segment.getMessages()) {
-            if (message.hasTrueLabel()) {
-                labelSetBySomeone = true;
-                if (message.getTrueLabel() == true) {
-                    return true;
+    public void map(List<Boolean> predictedLabels, SegmentSet segments) {
+        
+        for (int i = 0; i < predictedLabels.size(); i++) {
+            
+            for (int s = i * FileNames.GLOBAL_CONSTANT; s < (i * FileNames.GLOBAL_CONSTANT) + FileNames.GLOBAL_CONSTANT; s++) {
+                Segment segment = segments.get(s);
+                Boolean predictedLabel = predictedLabels.get(i);
+
+                segment.setPredictedLabel(predictedLabel);
+                for (Message message : segment.getMessages()) {
+                    message.setPredictedLabel(predictedLabel);
                 }
             }
         }
-
-        if (labelSetBySomeone) {
-            return false;
-        } else {
-            return null;
-        }
+        
     }
 }

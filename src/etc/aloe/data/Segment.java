@@ -35,6 +35,7 @@ public class Segment implements LabelableItem {
     private List<Message> messages;
     private Boolean trueLabel;
     private Boolean predictedLabel;
+    private Double predictionConfidence;
 
     /**
      * Construct an empty, unlabeled segment.
@@ -149,5 +150,20 @@ public class Segment implements LabelableItem {
         Date stop = messages.get(messages.size() - 1).getTimestamp();
 
         return 1 + (stop.getTime() - start.getTime()) / 1000.0;
+    }
+
+    @Override
+    public Double getPredictionConfidence() {
+        return predictionConfidence;
+    }
+
+    @Override
+    public void setPredictionConfidence(Double predictionConfidence) {
+        this.predictionConfidence = predictionConfidence;
+    }
+
+    @Override
+    public boolean hasPredictionConfidence() {
+        return predictionConfidence != null;
     }
 }

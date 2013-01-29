@@ -26,9 +26,11 @@ import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.MessageSet;
 import etc.aloe.data.Model;
 import etc.aloe.data.SegmentSet;
+import etc.aloe.options.LabelOptions;
 import etc.aloe.options.ModeOptions;
 import etc.aloe.options.TrainOptions;
 import etc.aloe.processes.Segmentation;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -38,29 +40,20 @@ import java.util.Map;
  *
  * @author Michael Brooks <mjbrooks@uw.edu>
  */
-public class AloeTrain extends Aloe {
+public class AloeTrainOnSplitData extends Aloe {
 
     @Override
     public void run(ModeOptions modeOptions) {
         System.out.println("== Preparation ==");
 
         if (modeOptions instanceof TrainOptions) {
-            TrainOptions options = (TrainOptions) modeOptions;
+            TrainOptions trainOptions = (TrainOptions) modeOptions;
 
             //Get and preprocess the data
-            MessageSet messages = this.loadMessages(options.inputCSVFile);
+            MessageSet messages = this.loadMessages(trainOptions.inputCSVFile);
             Segmentation segmentation = factory.constructSegmentation();
             SegmentSet segments = segmentation.segment(messages);
 
-            //Set up a cross validation controller.
-            CrossValidationController crossValidationController = new CrossValidationController();
-            //Configure controller
-            factory.configureCrossValidation(crossValidationController);
-
-            //Run cross validation
-            crossValidationController.setSegmentSet(segments);
-            crossValidationController.run();
-            
             //Create a training controller for making the final model
             TrainingController trainingController = new TrainingController();
             //Configure the training controller
@@ -69,26 +62,55 @@ public class AloeTrain extends Aloe {
             //Run the full training
             trainingController.setSegmentSet(segments);
             trainingController.run();
-            
+
             //Get the fruits of our labors
             System.out.println("== Saving Output ==");
 
-            EvaluationReport evalReport = crossValidationController.getEvaluationReport();
+            //EvaluationReport evalReport = crossValidationController.getEvaluationReport();
             FeatureSpecification spec = trainingController.getFeatureSpecification();
             Model model = trainingController.getModel();
             List<String> topFeatures = trainingController.getTopFeatures();
             List<Map.Entry<String, Double>> featureWeights = trainingController.getFeatureWeights();
 
-            saveFeatureSpecification(spec, options.outputFeatureSpecFile);
-            saveModel(model, options.outputModelFile);
-            saveTopFeatures(topFeatures, options.outputTopFeaturesFile);
-            saveFeatureWeights(featureWeights, options.outputFeatureWeightsFile);
-            if (evalReport != null) {
-                saveEvaluationReport(evalReport, options.outputEvaluationReportFile);
-                System.out.println("Aggregated cross-validation report:");
-                System.out.println(evalReport);
-                System.out.println("---------");
-            }
+            saveFeatureSpecification(spec, trainOptions.outputFeatureSpecFile);
+            saveModel(model, trainOptions.outputModelFile);
+            saveTopFeatures(topFeatures, trainOptions.outputTopFeaturesFile);
+            saveFeatureWeights(featureWeights, trainOptions.outputFeatureWeightsFile);
+            
+            
+            //Do the labeling now
+            
+            //Set up the segmentation for labeling
+            segmentation = factory.constructSegmentation();
+
+            //Create a labeling controller
+            LabelingController labelingController = new LabelingController();
+
+            //Provide implementations of the needed processes for labeling
+            labelingController.setFeatureExtractionImpl(factory.constructFeatureExtraction());
+            labelingController.setEvaluationImpl(factory.constructEvaluation());
+            labelingController.setMappingImpl(factory.constructLabelMapping());
+
+            //Process the input messages for labeling
+            messages = this.loadMessages(new File("data_for_frustration_test.csv"));
+
+            segments = segmentation.segment(messages);
+
+            //Run the labeling process
+            labelingController.setModel(model);
+            labelingController.setSegmentSet(segments);
+            labelingController.setFeatureSpecification(spec);
+            labelingController.run();
+            
+            EvaluationReport evalReport = labelingController.getEvaluationReport();
+            System.out.println("== Saving Output ==");
+
+            saveEvaluationReport(evalReport, new File("dist/output/outputEvaluationReportFile"));
+            saveMessages(messages, new File("dist/output/outputCSVFile"));
+
+            System.out.println("Testing Report:");
+            System.out.println(evalReport);
+            System.out.println("---------");
 
         } else {
             throw new IllegalArgumentException("Options must be for Training");

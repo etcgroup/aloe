@@ -37,4 +37,6 @@ public abstract class FileNames {
     public final static String OUTPUT_MODEL_NAME = "model" + MODEL_SUFFIX;
     public final static String OUTPUT_TOP_FEATURES_NAME = "top_features" + TOP_FEATURES_SUFFIX;
     public final static String OUTPUT_FEATURE_WEIGHTS_NAME = "feature_weights" + FEATURE_WEIGHTS_SUFFIX;
+    
+    public final static int GLOBAL_CONSTANT = 4;
 }

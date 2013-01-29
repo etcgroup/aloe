@@ -1,11 +1,16 @@
 package etc.aloe.filters;
 
+import etc.aloe.data.ExampleSet;
+import etc.aloe.FileNames;
 import java.util.*;
+import java.util.regex.Pattern;
 import weka.core.*;
 import weka.filters.*;
+import weka.filters.unsupervised.attribute.Remove;
+import weka.filters.unsupervised.attribute.RemoveByName;
 
 public class AddRelationalAttributeFilter extends SimpleBatchFilter {
-    
+
     List<String> classNames = Arrays.asList("true", "false");
 
     @Override
@@ -23,79 +28,89 @@ public class AddRelationalAttributeFilter extends SimpleBatchFilter {
 
     @Override
     protected Instances determineOutputFormat(Instances inputFormat) {
-        
+
         ArrayList<Attribute> resultAttrs = new ArrayList<Attribute>();
         resultAttrs.add(new Attribute("seq-id"));
         resultAttrs.add(new Attribute("class", classNames));
         Instances seqHeader = new Instances(inputFormat, 0);
+
+        try {
+            Filter filter = getRemoveLabelFilter();
+            filter.setInputFormat(seqHeader);
+            seqHeader = Filter.useFilter(seqHeader, filter);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         resultAttrs.add(new Attribute("sequence", seqHeader));
         Instances returnable = new Instances("format", resultAttrs, 0);
         returnable.setClassIndex(1);
-        
+
         return returnable;
     }
-    
+
     @Override
     /**
-   * Signify that this batch of input to the filter is finished. If
-   * the filter requires all instances prior to filtering, output()
-   * may now be called to retrieve the filtered instances. Any
-   * subsequent instances filtered should be filtered based on setting
-   * obtained from the first batch (unless the setInputFormat has been
-   * re-assigned or new options have been set). Sets m_FirstBatchDone
-   * and m_NewBatch to true.
-   *
-   * @return 		true if there are instances pending output
-   * @throws IllegalStateException 	if no input format has been set. 
-   * @throws Exception	if something goes wrong
-   * @see    		#m_NewBatch
-   * @see    		#m_FirstBatchDone 
-   */
-  public boolean batchFinished() throws Exception {
-    int         i;
-    Instances   inst;
-    
-    if (getInputFormat() == null)
-      throw new IllegalStateException("No input instance format defined");
+     * Signify that this batch of input to the filter is finished. If the filter
+     * requires all instances prior to filtering, output() may now be called to
+     * retrieve the filtered instances. Any subsequent instances filtered should
+     * be filtered based on setting obtained from the first batch (unless the
+     * setInputFormat has been re-assigned or new options have been set). Sets
+     * m_FirstBatchDone and m_NewBatch to true.
+     *
+     * @return true if there are instances pending output
+     * @throws IllegalStateException if no input format has been set.
+     * @throws Exception	if something goes wrong
+     * @see #m_NewBatch
+     * @see #m_FirstBatchDone
+     */
+    public boolean batchFinished() throws Exception {
+        int i;
+        Instances inst;
 
-    // get data
-    inst = new Instances(getInputFormat());
+        if (getInputFormat() == null) {
+            throw new IllegalStateException("No input instance format defined");
+        }
 
-    // if output format hasn't been set yet, do it now
-    if (!hasImmediateOutputFormat() && !isFirstBatchDone())
-      setOutputFormat(determineOutputFormat(new Instances(inst, 0)));
+        // get data
+        inst = new Instances(getInputFormat());
 
-    // don't do anything in case there are no instances pending.
-    // in case of second batch, they may have already been processed
-    // directly by the input method and added to the output queue
-    if (inst.numInstances() > 0) {
-      // process data
-      inst = process(inst);
+        // if output format hasn't been set yet, do it now
+        if (!hasImmediateOutputFormat() && !isFirstBatchDone()) {
+            setOutputFormat(determineOutputFormat(new Instances(inst, 0)));
+        }
 
-      // clear input queue
-      flushInput();
+        // don't do anything in case there are no instances pending.
+        // in case of second batch, they may have already been processed
+        // directly by the input method and added to the output queue
+        if (inst.numInstances() > 0) {
+            // process data
+            inst = process(inst);
 
-      // move it to the output
-      for (i = 0; i < inst.numInstances(); i++)
-	push(inst.instance(i));
+            // clear input queue
+            flushInput();
+
+            // move it to the output
+            for (i = 0; i < inst.numInstances(); i++) {
+                push(inst.instance(i));
+            }
+        }
+
+        m_NewBatch = true;
+        //m_FirstBatchDone = true;
+
+        return (numPendingOutput() != 0);
     }
-    
-    m_NewBatch       = true;
-    //m_FirstBatchDone = true;
-    
-    return (numPendingOutput() != 0);
-  }
-    
 
     @Override
     protected Instances process(Instances inst) {
-        return addRelationalAttribute(inst, 2, inst.size()/4, 2);
+        return addRelationalAttribute(inst, inst.size() / FileNames.GLOBAL_CONSTANT, FileNames.GLOBAL_CONSTANT);
     }
 
-    public Instances addRelationalAttribute(Instances base, int numOutputs, int numseqs, int length) {
+    public Instances addRelationalAttribute(Instances base, int numseqs, int length) {
 
         Instances result = new Instances(determineOutputFormat(base), 0);
-        
+
         result.setClassIndex(1);
 
         for (int i = 0; i < numseqs; i++) {
@@ -107,16 +122,39 @@ public class AddRelationalAttributeFilter extends SimpleBatchFilter {
             Instances sequence = new Instances(base, length);
 
             for (int a = 0; a < length; a++) {
-                Instance toBeAddedInstance = base.get((i * length) + a );
+                Instance toBeAddedInstance = base.get((i * length) + a);
                 sequence.add(toBeAddedInstance);
-                if (a == length - 1){
+                if (a == length - 1) {
                     resultInstance.setClassValue(toBeAddedInstance.classValue());
                 }
             }
+            
+            try {
+                Filter filter = getRemoveLabelFilter();
+                filter.setInputFormat(sequence);
+                sequence = Filter.useFilter(sequence, filter);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             resultInstance.setValue(result.attribute(2), result.attribute(2).addRelation(sequence));
         }
 
         return result;
+    }
+
+    /**
+     * Get a filter that removes the label attribute from the data set
+     *
+     * @param examples
+     * @return
+     * @throws Exception
+     */
+    private Filter getRemoveLabelFilter() throws Exception {
+        Remove filter = new Remove();
+        int[] toRemove = {0};
+        filter.setAttributeIndicesArray(toRemove);
+        return filter;
     }
 
     public static void main(String[] args) {

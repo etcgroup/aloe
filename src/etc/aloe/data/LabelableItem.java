@@ -67,4 +67,25 @@ public interface LabelableItem {
      * @return
      */
     boolean hasPredictedLabel();
+
+    /**
+     * Get the confidence in the predicted label.
+     *
+     * @return
+     */
+    Double getPredictionConfidence();
+
+    /**
+     * Set the confidence in the predicted label;
+     *
+     * @param predictionConfidence
+     */
+    void setPredictionConfidence(Double predictionConfidence);
+
+    /**
+     * True if the item has prediction confidence.
+     *
+     * @return
+     */
+    boolean hasPredictionConfidence();
 }

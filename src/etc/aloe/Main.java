@@ -58,7 +58,7 @@ public class Main {
         ModeOptions options = null;
         switch (mode) {
             case train:
-                aloe = new AloeTrain();
+                aloe = new AloeTrainOnSplitData();
                 aloe.setPipeline(pipelineClassName);
                 options = aloe.factory.constructTrainOptions();
                 break;
@@ -114,7 +114,7 @@ public class Main {
         CmdLineParser parser = new CmdLineParser(main);
 
 
-        /*if (args.length < 1) {
+        if (args.length < 1) {
          System.err.println("PIPELINE_CLASS is required.");
          main.printUsage();
          return;
@@ -124,7 +124,7 @@ public class Main {
          System.err.println("MODE is required.");
          main.printUsage();
          return;
-         }*/
+         }
 
         //Separate the first argument from the rest of the arguments
         String[] restOfArgs = Arrays.copyOfRange(args, 2, args.length);

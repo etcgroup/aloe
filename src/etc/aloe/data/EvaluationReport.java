@@ -22,6 +22,8 @@ import etc.aloe.processes.Saving;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The EvaluationReport contains data about model performance as compared to a
@@ -31,13 +33,20 @@ import java.io.PrintStream;
  */
 public class EvaluationReport implements Saving {
 
-    double falsePositiveCost = 1;
-    double falseNegativeCost = 1;
+    private int truePositiveCount;
+    private int trueNegativeCount;
+    private int falsePositiveCount;
+    private int falseNegativeCount;
+    private double falsePositiveCost = 1;
+    private double falseNegativeCost = 1;
+    private List<ROC> rocs = new ArrayList<ROC>();
+    private final String name;
 
     /**
      * Construct an equal-cost evaluation report
      */
-    public EvaluationReport() {
+    public EvaluationReport(String name) {
+        this.name = name;
     }
 
     /**
@@ -46,14 +55,11 @@ public class EvaluationReport implements Saving {
      * @param falsePositiveCost
      * @param falseNegativeCost
      */
-    public EvaluationReport(double falsePositiveCost, double falseNegativeCost) {
+    public EvaluationReport(String name, double falsePositiveCost, double falseNegativeCost) {
+        this.name = name;
         this.falsePositiveCost = falsePositiveCost;
         this.falseNegativeCost = falseNegativeCost;
     }
-    private int truePositiveCount;
-    private int trueNegativeCount;
-    private int falsePositiveCount;
-    private int falseNegativeCount;
 
     /**
      * Get the number of examples with a positive prediction that was correct.
@@ -181,6 +187,75 @@ public class EvaluationReport implements Saving {
     }
 
     /**
+     * Get the number of positive examples in the truth data.
+     *
+     * @return
+     */
+    public int getNumTrulyPositive() {
+        return getTruePositiveCount() + getFalseNegativeCount();
+    }
+
+    /**
+     * Get the number of negative examples in the truth data.
+     *
+     * @return
+     */
+    public int getNumTrulyNegative() {
+        return getTrueNegativeCount() + getFalsePositiveCount();
+    }
+
+    /**
+     * Get the number of examples predicted to be positive.
+     *
+     * @return
+     */
+    public int getNumPredictedPositive() {
+        return getTruePositiveCount() + getFalsePositiveCount();
+    }
+
+    /**
+     * Get the number of examples predicted to be negative.
+     *
+     * @return
+     */
+    public int getNumPredictedNegative() {
+        return getTrueNegativeCount() + getFalseNegativeCount();
+    }
+
+    /**
+     * Get Cohen's kappa, the probability of agreement with the truth data,
+     * corrected by the probability of random agreement.
+     *
+     * See http://en.wikipedia.org/wiki/Cohen's_kappa
+     *
+     * @return
+     */
+    public double getCohensKappa() {
+        double probabilityAgreement = getPercentCorrect();
+
+        double numPositiveInTruth = getNumTrulyPositive();
+        double numPositiveInPrediction = getNumPredictedPositive();
+        double numNegativeInTruth = getNumTrulyNegative();
+        double numNegativeInPrediction = getNumPredictedNegative();
+
+        double probabilityRandomPositiveAgreement =
+                (numPositiveInTruth / getTotalExamples())
+                * (numPositiveInPrediction / getTotalExamples());
+        double probabilityRandomNegativeAgreement =
+                (numNegativeInTruth / getTotalExamples())
+                * (numNegativeInPrediction / getTotalExamples());
+
+        double probabilityRandomAgreement =
+                probabilityRandomPositiveAgreement
+                + probabilityRandomNegativeAgreement;
+
+        double kappa = (probabilityAgreement - probabilityRandomAgreement)
+                / (1 - probabilityRandomAgreement);
+
+        return kappa;
+    }
+
+    /**
      * Gets the total cost of all misclassified examples.
      *
      * @return
@@ -224,6 +299,8 @@ public class EvaluationReport implements Saving {
     @Override
     public String toString() {
         return "Examples: " + getTotalExamples() + "\n"
+                + "Positive: " + getNumTrulyPositive() + "\n"
+                + "Negative: " + getNumTrulyNegative() + "\n"
                 + "FP Cost: " + falsePositiveCost + "\n"
                 + "FN Cost: " + falseNegativeCost + "\n"
                 + "------------------\n"
@@ -232,12 +309,16 @@ public class EvaluationReport implements Saving {
                 + "TN: " + trueNegativeCount + "\n"
                 + "FN: " + falseNegativeCount + "\n"
                 + "------------------\n"
+                + "Positive Predictions: " + getNumPredictedPositive() + "\n"
+                + "Negative Predictions: " + getNumPredictedNegative() + "\n"
+                + "------------------\n"
                 + "Precision: " + getPrecision() + "\n"
                 + "Recall: " + getRecall() + "\n"
                 + "FMeasure: " + getFMeasure() + "\n"
                 + "------------------\n"
                 + "% Correct: " + getPercentCorrect() + "\n"
                 + "% Incorrect: " + getPercentIncorrect() + "\n"
+                + "Kappa: " + getCohensKappa() + "\n"
                 + "------------------\n"
                 + "Total Cost: " + getTotalCost() + "\n"
                 + "Avg Cost: " + getAverageCost();
@@ -254,27 +335,36 @@ public class EvaluationReport implements Saving {
         trueNegativeCount += report.trueNegativeCount;
         falsePositiveCount += report.falsePositiveCount;
         falseNegativeCount += report.falseNegativeCount;
+
+        this.rocs.addAll(report.getROCs());
     }
 
     /**
-     * Record an individual prediction.
+     * Evaluate the given predictions.
      *
-     * @param predictedLabel
-     * @param actualLabel
+     * @param predictions
      */
-    public void recordPrediction(Boolean predictedLabel, Boolean actualLabel) {
-        if (predictedLabel == true) {
-            if (predictedLabel == actualLabel) {
-                truePositiveCount++;
-            } else {
-                falsePositiveCount++;
-            }
-        } else {
-            if (predictedLabel == actualLabel) {
-                trueNegativeCount++;
-            } else {
-                falseNegativeCount++;
-            }
-        }
+    public void addPredictions(Predictions predictions) {
+        ROC roc = new ROC(this.getName());
+        roc.calculateCurve(predictions);
+        this.rocs.add(roc);
+
+        this.setTruePositiveCount(predictions.getTruePositiveCount());
+        this.setFalsePositiveCount(predictions.getFalsePositiveCount());
+        this.setTrueNegativeCount(predictions.getTrueNegativeCount());
+        this.setFalseNegativeCount(predictions.getFalseNegativeCount());
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Get a list of named ROC curves included in this report.
+     *
+     * @return
+     */
+    public List<ROC> getROCs() {
+        return rocs;
     }
 }

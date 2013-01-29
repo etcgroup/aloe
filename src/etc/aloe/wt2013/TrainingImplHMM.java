@@ -23,6 +23,7 @@ import etc.aloe.data.ExampleSet;
 import etc.aloe.processes.Training;
 import weka.classifiers.Classifier;
 import weka.classifiers.bayes.HMM;
+import weka.core.SelectedTag;
 import weka.core.Attribute;
 import weka.core.Utils;
 
@@ -40,6 +41,8 @@ public class TrainingImplHMM implements Training {
     @Override
     public WekaModel train(ExampleSet examples) {
         HMM hmm = new HMM();
+        hmm.setCovarianceType(new SelectedTag(2, HMM.TAGS_COVARIANCE_TYPE));
+        hmm.setNumStates(5);
         Classifier classifier = hmm;
 
         try {
@@ -50,6 +53,7 @@ public class TrainingImplHMM implements Training {
         } catch (Exception ex) {
             System.err.println("Unable to train HMM.");
             System.err.println("\t" + ex.getMessage());
+            ex.printStackTrace();
         }
 
         WekaModel model = new WekaModel(classifier);

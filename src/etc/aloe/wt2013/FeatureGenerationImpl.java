@@ -16,10 +16,11 @@
  *
  * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
  */
-package etc.aloe.cscw2013;
+package etc.aloe.wt2013;
 
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.FeatureSpecification;
+import etc.aloe.filters.AddRelationalAttributeFilter;
 import etc.aloe.filters.PronounRegexFilter;
 import etc.aloe.filters.PunctuationRegexFilter;
 import etc.aloe.filters.SimpleStringToWordVector;
@@ -28,13 +29,15 @@ import etc.aloe.filters.SpecialRegexFilter;
 import etc.aloe.filters.SpellingRegexFilter;
 import etc.aloe.filters.StringToDictionaryVector;
 import etc.aloe.processes.FeatureGeneration;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 import weka.core.Instances;
 import weka.core.SelectedTag;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.RemoveByName;
+import weka.filters.unsupervised.attribute.RemoveUseless;
 import weka.filters.unsupervised.attribute.StringToWordVector;
+import weka.filters.unsupervised.attribute.NumericTransform;
 
 /**
  * Generates a set of filters that extract the desired features from message
@@ -76,15 +79,22 @@ public class FeatureGenerationImpl implements FeatureGeneration {
             spec.addFilter(getSpellingFilter(examples));
 
             spec.addFilter(getEmoticonsFilter(examples));
-            spec.addFilter(getBagOfWordsFilter(examples));
-            Filter finalFilter = getRemoveIDFilter(examples);
+            //spec.addFilter(getBagOfWordsFilter(examples));
+            spec.addFilter(getRemoveMessageIDFilter(examples));
+            spec.addFilter(getRemoveIDFilter(examples));
+            spec.addFilter(getRemoveUselessFilter(examples));
+            spec.addFilter(getAddOneFilter(examples));
+            Filter finalFilter = getAddRelationalAttributeFilter(examples);
             spec.addFilter(finalFilter);
 
             Instances output = finalFilter.getOutputFormat();
             int numAttrs = output.numAttributes();
+            
             System.out.println("generated " + (numAttrs - 1) + " features.");
+
         } catch (Exception e) {
             System.err.println("Error generating features.");
+            e.printStackTrace();
             System.err.println("\t" + e.getMessage());
         }
 
@@ -107,6 +117,20 @@ public class FeatureGenerationImpl implements FeatureGeneration {
 
         return filter;
     }
+    
+    private Filter getAddOneFilter(ExampleSet examples) throws Exception {
+        NumericTransform filter = new NumericTransform();
+        filter.setMethodName("addOne");
+        filter.setClassName("etc.aloe.cscw2013.FeatureGenerationImpl");
+        filter.setAttributeIndicesArray(new int[] {0});
+        filter.setInvertSelection(true);
+        
+        filter.setInputFormat(examples.getInstances());
+        Instances filtered = Filter.useFilter(examples.getInstances(), filter);
+        examples.setInstances(filtered);
+        
+        return filter;
+    }
 
     /**
      * Configure the spelling filter to work with the provided data.
@@ -117,7 +141,7 @@ public class FeatureGenerationImpl implements FeatureGeneration {
      */
     private Filter getSpellingFilter(ExampleSet examples) throws Exception {
         SpellingRegexFilter filter = new SpellingRegexFilter(ExampleSet.MESSAGE_ATTR_NAME);
-        filter.setCountRegexLengths(COUNT_REGEX_LENGTHS);
+        //filter.setCountRegexLengths(COUNT_REGEX_LENGTHS);
 
         filter.setInputFormat(examples.getInstances());
         Instances filtered = Filter.useFilter(examples.getInstances(), filter);
@@ -135,7 +159,7 @@ public class FeatureGenerationImpl implements FeatureGeneration {
      */
     private Filter getPunctuationFilter(ExampleSet examples) throws Exception {
         PunctuationRegexFilter filter = new PunctuationRegexFilter(ExampleSet.MESSAGE_ATTR_NAME);
-        filter.setCountRegexLengths(COUNT_REGEX_LENGTHS);
+        //filter.setCountRegexLengths(COUNT_REGEX_LENGTHS);
 
         filter.setInputFormat(examples.getInstances());
         Instances filtered = Filter.useFilter(examples.getInstances(), filter);
@@ -153,6 +177,23 @@ public class FeatureGenerationImpl implements FeatureGeneration {
      */
     private Filter getPronounsFilter(ExampleSet examples) throws Exception {
         PronounRegexFilter filter = new PronounRegexFilter(ExampleSet.MESSAGE_ATTR_NAME);
+        filter.setCountRegexLengths(false);
+        filter.setInputFormat(examples.getInstances());
+        Instances filtered = Filter.useFilter(examples.getInstances(), filter);
+        examples.setInstances(filtered);
+
+        return filter;
+    }
+    
+        /**
+     * Configure the pronouns filter to work with the provided data.
+     *
+     * @param examples
+     * @return
+     * @throws Exception
+     */
+    private Filter getAddRelationalAttributeFilter(ExampleSet examples) throws Exception {
+        AddRelationalAttributeFilter filter = new AddRelationalAttributeFilter();
 
         filter.setInputFormat(examples.getInstances());
         Instances filtered = Filter.useFilter(examples.getInstances(), filter);
@@ -219,8 +260,8 @@ public class FeatureGenerationImpl implements FeatureGeneration {
 
         return filter;
     }
-
-    /**
+    
+        /**
      * Get a filter that removes the id attribute from the data set, necessary
      * before training.
      *
@@ -237,5 +278,43 @@ public class FeatureGenerationImpl implements FeatureGeneration {
         examples.setInstances(filtered);
 
         return filter;
+    }
+
+    /**
+     * Get a filter that removes the id attribute from the data set, necessary
+     * before training.
+     *
+     * @param examples
+     * @return
+     * @throws Exception
+     */
+    private Filter getRemoveMessageIDFilter(ExampleSet examples) throws Exception {
+        RemoveByName filter = new RemoveByName();
+        filter.setExpression(Pattern.quote(ExampleSet.MESSAGE_ATTR_NAME));
+
+        filter.setInputFormat(examples.getInstances());
+        Instances filtered = Filter.useFilter(examples.getInstances(), filter);
+        examples.setInstances(filtered);
+
+        return filter;
+    }
+    
+        /**
+     * Configure the pronouns filter to work with the provided data.
+     *
+     * @param examples
+     * @return
+     * @throws Exception
+     */
+    private Filter getRemoveUselessFilter(ExampleSet examples) throws Exception {
+        Filter filter = new RemoveUseless();
+        filter.setInputFormat(examples.getInstances());
+        Instances filtered = Filter.useFilter(examples.getInstances(), filter);
+        examples.setInstances(filtered);
+        return filter;
+    }
+    
+    public static double addOne(double d){
+        return d + 1.0;
     }
 }

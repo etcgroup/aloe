@@ -16,17 +16,18 @@
  *
  * Copyright (c) 2012 SCCL, University of Washington (http://depts.washington.edu/sccl)
  */
-package etc.aloe.cscw2013;
+package etc.aloe.wt2013;
 
 import etc.aloe.data.ExampleSet;
 import etc.aloe.data.Model;
-import etc.aloe.data.Predictions;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import weka.classifiers.Classifier;
 
 /**
@@ -75,26 +76,23 @@ public class WekaModel implements Model {
      * @return
      */
     @Override
-    public Predictions getPredictions(ExampleSet examples) {
-        Predictions predictions = new Predictions();
+    public List<Boolean> getPredictedLabels(ExampleSet examples) {
+        List<Boolean> results = new ArrayList<Boolean>();
 
         for (int i = 0; i < examples.size(); i++) {
             try {
-                Boolean trueLabel = examples.getTrueLabel(i);
-
                 double classValue = classifier.classifyInstance(examples.get(i));
-                Boolean predictedLabel = examples.getClassLabel(classValue);
-
-                double[] distribution = classifier.distributionForInstance(examples.get(i));
-                Double confidence = examples.getConfidence(distribution);
-                predictions.add(predictedLabel, confidence, trueLabel);
-
+                Boolean label = examples.getClassLabel(classValue);
+                if (label == null){
+                    label = false;
+                }
+                results.add(label);
             } catch (Exception ex) {
                 System.err.println("Classification error on instance " + i);
             }
         }
 
-        return predictions;
+        return results;
     }
 
     /**

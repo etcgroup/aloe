@@ -88,15 +88,16 @@ public class SegmentSet {
      */
     public ExampleSet getBasicExamples() {
         ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+        System.out.println("jfkdjfkdjfkdfd");
 
         attributes.add(new Attribute(ExampleSet.ID_ATTR_NAME));
         attributes.add(new Attribute(ExampleSet.MESSAGE_ATTR_NAME, (List<String>) null));
         attributes.add(new Attribute(ExampleSet.LABEL_ATTR_NAME, Arrays.asList(new String[]{"false", "true"})));
-        attributes.add(new Attribute(DURATION_ATTR_NAME));
+        /*attributes.add(new Attribute(DURATION_ATTR_NAME));
         attributes.add(new Attribute(LENGTH_ATTR_NAME));
         attributes.add(new Attribute(CPS_ATTR_NAME));
-        attributes.add(new Attribute(RATE_ATTR_NAME));
-        attributes.add(new Attribute(ORDER_ATTR_NAME));
+        attributes.add(new Attribute(RATE_ATTR_NAME));*/
+        //attributes.add(new Attribute(ORDER_ATTR_NAME));
 
         Instances instances = new Instances("BasicExamples", attributes, 0);
         instances.setClassIndex(2);
@@ -104,11 +105,11 @@ public class SegmentSet {
         Attribute idAttr = instances.attribute(ExampleSet.ID_ATTR_NAME);
         Attribute messageAttr = instances.attribute(ExampleSet.MESSAGE_ATTR_NAME);
         Attribute labelAttr = instances.attribute(ExampleSet.LABEL_ATTR_NAME);
-        Attribute durationAttr = instances.attribute(DURATION_ATTR_NAME);
+        /*Attribute durationAttr = instances.attribute(DURATION_ATTR_NAME);
         Attribute lengthAttr = instances.attribute(LENGTH_ATTR_NAME);
         Attribute cpsAttr = instances.attribute(CPS_ATTR_NAME);
         Attribute rateAttr = instances.attribute(RATE_ATTR_NAME);
-        Attribute orderAttr = instances.attribute(ORDER_ATTR_NAME);
+        Attribute orderAttr = instances.attribute(ORDER_ATTR_NAME);*/
         
 
         for (int i = 0; i < size(); i++) {
@@ -117,14 +118,14 @@ public class SegmentSet {
 
             String messageStr = segment.concatMessages();
 
-            instance.setValue(orderAttr, (double) i);
+            //instance.setValue(orderAttr, (double) i);
             instance.setValue(idAttr, segment.getId());
             instance.setValue(messageAttr, messageStr);
             if (segment.hasTrueLabel()) {
                 instance.setValue(labelAttr, segment.getTrueLabel() ? "true" : "false");
             }
 
-            computeRateValues(segment, instance, messageStr, durationAttr, lengthAttr, cpsAttr, rateAttr);
+            //computeRateValues(segment, instance, messageStr, durationAttr, lengthAttr, cpsAttr, rateAttr);
 
             instances.add(instance);
         }
