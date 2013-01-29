@@ -21,7 +21,7 @@ package etc.aloe.wt2013;
 /**
  * Filter that searches for occurrences of punctuation characters.
  *
- * @author Michael Brooks <mjbrooks@uw.edu>
+ * @author Michael Brooks <mjbrooks@uw.edu> 
  */
 public class FrPunctuationRegexFilter extends FrAbstractRegexFilter {
 

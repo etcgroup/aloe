@@ -24,13 +24,14 @@ import java.util.regex.Pattern;
  * A filter that searches for occurrences of known pronouns, in several
  * categories.
  *
- * @author Michael Brooks <mjbrooks@uw.edu>
+ * @author Sayer Rippey <srippey@oberlin.edu>
+ * original code by Michael Brooks <mjbrooks@uw.edu>
  */
 public class FrPronounRegexFilter extends FrAbstractRegexFilter {
 
     private NamedRegex[] regexFeatures = new NamedRegex[]{
         // first person singular pronouns
-        new NamedRegex("prn_first_sng", "(?<!\\w)(moi|je|j'?|mon|ma|mes|mien(ne)?(s)?|(moi\\s?-?(meme)|(m\u00EAme)))(?!\\w)", Pattern.CASE_INSENSITIVE),//self for all of these
+        new NamedRegex("prn_first_sng", "(?<!\\w)(moi|je|g|j'?|mon|ma|mes|mien(ne)?(s)?|(moi\\s?-?(meme)|(m\u00EAme)))(?!\\w)", Pattern.CASE_INSENSITIVE),//self for all of these
         // second person singular pronouns
         new NamedRegex("prn_second_sng", "(?<!\\w)(tu|toi|t'?|ton|ta|tes|tien(ne)?(s)?|(toi\\s?-?(meme)|(m\u00EAme)))(?!\\w)", Pattern.CASE_INSENSITIVE),
         // third person singular pronouns

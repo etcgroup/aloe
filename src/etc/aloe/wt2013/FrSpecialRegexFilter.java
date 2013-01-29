@@ -24,16 +24,17 @@ import java.util.regex.Pattern;
  * Filter that searches for occurrences of special strings (negations, names,
  * and swearing)
  *
- * @author Michael Brooks <mjbrooks@uw.edu>
+ * @author Sayer Rippey <srippey@oberlin.edu>
+ * original code by Michael Brooks <mjbrooks@uw.edu>
  */
 public class FrSpecialRegexFilter extends FrAbstractRegexFilter {
 
-    private final String[] contractedNegationForms = new String[]{ //these might not be necessary any more... check
-        "n'?importe",
-        "n'?est?",
-        "n'?ai",
-        "n'?as?",
-        "n'?y"
+    private final String[] contractedNegationForms = new String[]{ 
+        "n'?\\s*importe",
+        "n'?\\s*est?",
+        "n'?\\s*ai",
+        "n'?\\s*as?",
+        "n'?\\s*y"
         
     };
     private final String[] namesList = new String[]{
@@ -59,30 +60,36 @@ public class FrSpecialRegexFilter extends FrAbstractRegexFilter {
     };
     private NamedRegex[] regexFeatures = new NamedRegex[]{
         // French negation: non, ne, n', pas, and words that replace pas
-        // http://french.about.com/od/grammar/a/negation.htm
-        new NamedRegex("negation", "(?<!\\w)(non|ne|pas|n'?|jamais|nul|aucun|rien|personne" + toRegex(contractedNegationForms, false) + ")(?!\\w)", Pattern.CASE_INSENSITIVE),
-        // Matches many swearwords
+        // http://frencha.bout.com/od/grammar/a/negation.htm
+        new NamedRegex("negation", "(?<!\\w)(n+o+n*|ne|nan|p+a+s+|n'?|jamais|nul|aucun|rien|personne" + toRegex(contractedNegationForms, false) + ")(?!\\w)", Pattern.CASE_INSENSITIVE),
+        // Matches acceptance terms
+        new NamedRegex("accept", "(?<!\\w)(d'?ac+|d'?\\s?accord|ok|okay)(?!\\w)", Pattern.CASE_INSENSITIVE),
+        // Matches agreement terms
+        new NamedRegex("agree", "(?<!\\w)(d'?ac+|d'?\\s?accord|ok|okay|oui|yep|h?m?ouais?)(?!\\w)", Pattern.CASE_INSENSITIVE),
+        // Matches many swearwords (including the English ones)
+        // Plus signs and asterixes to allow for repeated letters/typos
         new NamedRegex("swear", "(?<!\\w)("
         + "((?=\\p{Punct}*[@#$%^&*]\\p{Punct}*[@#$%^&*])([\\p{Punct}&&[^.]]{4,}))"
-        + "|merde?s?(eux|euse)?"
-        + "|put(e|ain)?" 
-        + "|fou(s|tre|tu)"
-        + "|con(nerie?s?|(ne)?s?|n?arde?s?|n?asses?)?"
-        + "|foire?(s|ons|ez|\u00E9s?|ant|er)?"
-        + "|cul"
-        + "|salop(ard|e)?"
-        + "|chiotte"
-        + "|craint"
-        + "|casse-?\\s?toi|cassez-?\\s?vous"
-        + "|bordels?"
-        + "|mince"
-        + "|moche"
-        + "|crap(p?ed|s|p?ing|p?y)?"
-        + "|shit(s|t?ing|t?y)?"
-        + "|(god?)?dam(n|mit)?"
-        + "|(mother)?fuck(ed|ing|er)?"
-        + "|ass(hole)?"
-        + "|suck(y|s|ed)?"
+        + "|m+e+r+d+e*s?(e+u+x+|e+u+s+e+)?"
+        + "|p+u+t+(e+|a+i+n+)" 
+        + "|c+o+n+(nerie?s?|(ne)?s?|n?arde?s?|n?asses?)?"
+        + "|f+o+i+r+e*(s+|o+n+s+|e+z+|\u00E9+s*|a+n+t+|e+r+)?" 
+        + "|c+u+l+"
+        + "|b+r+o+n+x+"
+        + "|s+a+l+o+p+(a+r+d+|e+)?"
+        + "|c+h+i+o+t+te+"
+        + "|c+r+a+i+n+t"
+        + "|c+a+s+se-*\\s*to+i+"
+        + "|c+a+s+se+z+-*\\s*v+o+u+s+"
+        + "|b+o+r+d+e+l+s*"
+        + "|m+i+n+c+e+"
+        + "|m+o+c+h+e+"
+        + "|c+r+a+p+(p?e+d+|s+|p?i+n+g+|p?y+)?"
+        + "|s+h+i+t+(s+|t?i+n+g+|t?y+)?"
+        + "|(g+o+d?)?d+a+m+(n+|mi+t+)?"
+        + "|(m+o+t+h+e+r+)?f+u+c+k+(e+d+|i+n+g+|e+r+)?"
+        + "|a+s+s+(h+o+l+e+)?"
+        + "|s+u+c+k+(y+|s+|e+d+)?"
         + ")(?!\\w)", Pattern.CASE_INSENSITIVE),
         //Matches known named
         new NamedRegex("names", "(?<!\\w)(" + toRegex(namesList) + ")", Pattern.CASE_INSENSITIVE)

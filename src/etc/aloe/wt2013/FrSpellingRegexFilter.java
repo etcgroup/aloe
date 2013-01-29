@@ -23,7 +23,8 @@ import java.util.regex.Pattern;
 /**
  * Filter that looks for occurrences of certain words and spelling variations.
  *
- * @author Michael Brooks <mjbrooks@uw.edu>
+ * @author Sayer Rippey <srippey@oberlin.edu>
+ * original code by Michael Brooks <mjbrooks@uw.edu>
  */
 public class FrSpellingRegexFilter extends FrAbstractRegexFilter {
 
@@ -45,8 +46,8 @@ public class FrSpellingRegexFilter extends FrAbstractRegexFilter {
         this.setStringAttributeName(attributeName);
     }
 
-    @Override
-    protected NamedRegex[] getRegexFeatures() {
+    @Override 
+   protected NamedRegex[] getRegexFeatures() {
         return regexFeatures;
     }
 }

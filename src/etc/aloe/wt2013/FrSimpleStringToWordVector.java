@@ -29,7 +29,8 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
  * Extension of Weka's StringToWordVector filter that allows a string attribute
  * to be specified by name, and uses a special term filter (NoNonsenseStemmer).
  *
- * @author Michael Brooks <mjbrooks@uw.edu>
+ * @author Sayer Rippey <srippey@oberlin.edu>
+ * original code by Michael Brooks <mjbrooks@uw.edu>
  */
 public class FrSimpleStringToWordVector extends StringToWordVector {
 
