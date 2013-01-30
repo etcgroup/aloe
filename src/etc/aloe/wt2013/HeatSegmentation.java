@@ -204,6 +204,25 @@ public class HeatSegmentation implements Segmentation {
         }
     }
     
+    /**
+     * Determines if a message is a local maximum.
+     * @return @true if the message is a local maximum, @false otherwise.
+     */
+    private boolean isLocalMax(Message m) {
+        int mRate = messageOccurrences.get(m.getId());
+        int lRate; int rRate;
+       
+        try {
+            lRate = messageOccurrences.get(m.getId()-1);
+            rRate = messageOccurrences.get(m.getId()+1);
+            
+            return mRate >= lRate && mRate >= rRate;
+        } catch(NullPointerException e) {
+            //This can only occur at the endpoints of the message set, so we ignore it.
+        }
+        return false;
+    }
+    
     @Override
     public SegmentSet segment(MessageSet messageSet) {
         
@@ -245,7 +264,8 @@ public class HeatSegmentation implements Segmentation {
              */
             if((currOccurrences <= occurrenceThreshold/2.0f) //Low cutoff threshold
                     || ((currOccurrences <= occurrenceThreshold && wasAboveThresh/**/) 
-                    || (currOccurrences >= occurrenceThreshold && !wasAboveThresh)/**/)) {
+                    || (currOccurrences >= occurrenceThreshold && !wasAboveThresh)/**/)
+                    || isLocalMax(m)) {
                 newSegment = true;
             }
             
