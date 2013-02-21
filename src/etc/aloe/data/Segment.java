@@ -73,6 +73,10 @@ public class Segment implements LabelableItem {
      * @return
      */
     public String concatMessages() {
+        if (this.getMessages().size() == 1) {
+            return this.getMessages().get(0).getMessage();
+        }
+        
         StringBuilder sb = new StringBuilder();
         boolean first = true;
         for (Message item : getMessages()) {
