@@ -27,7 +27,7 @@ import java.util.Date;
  */
 public class Message implements Comparable<Message>, LabelableItem {
 
-    private final int id;
+    private final long id;
     private final Date timestamp;
     private final String participant;
     private final String message;
@@ -45,7 +45,7 @@ public class Message implements Comparable<Message>, LabelableItem {
      * @param message
      */
     public Message(
-            int id,
+            long id,
             Date timestamp,
             String participant,
             String message) {
@@ -62,7 +62,7 @@ public class Message implements Comparable<Message>, LabelableItem {
      * @param trueLabel
      */
     public Message(
-            int id,
+            long id,
             Date timestamp,
             String participant,
             String message,
@@ -82,7 +82,7 @@ public class Message implements Comparable<Message>, LabelableItem {
      * @param predictedLabel
      */
     public Message(
-            int id,
+            long id,
             Date timestamp,
             String participant,
             String message,
@@ -104,7 +104,7 @@ public class Message implements Comparable<Message>, LabelableItem {
      * @param segmentId
      */
     public Message(
-            int id,
+            long id,
             Date timestamp,
             String participant,
             String message,
@@ -126,7 +126,7 @@ public class Message implements Comparable<Message>, LabelableItem {
      *
      * @return
      */
-    public int getId() {
+    public long getId() {
         return id;
     }
 

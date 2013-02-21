@@ -147,9 +147,9 @@ public class MessageSet implements Loading, Saving {
                 String predictionText = csvReader.get(PREDICTION_COLUMN_NAME).toLowerCase();
                 String segmentIdText = csvReader.get(SEGMENT_COLUMN_NAME).toLowerCase();
 
-                int id = -1;
+                long id = -1;
                 try {
-                    id = Integer.parseInt(idText);
+                    id = Long.parseLong(idText);
                 } catch (NumberFormatException e) {
                     throw new InvalidObjectException("Invalid value '" + idText + "' for '" + ID_COLUMN_NAME + "' on line " + lineNumber);
                 }
@@ -229,7 +229,7 @@ public class MessageSet implements Loading, Saving {
         out.writeRecord(row);
 
         for (Message message : messages) {
-            row[ID_COLUMN] = Integer.toString(message.getId());
+            row[ID_COLUMN] = Long.toString(message.getId());
             row[PARTICIPANT_COLUMN] = message.getParticipant();
             row[TIME_COLUMN] = dateFormat.format(message.getTimestamp());
             row[MESSAGE_COLUMN] = message.getMessage();
