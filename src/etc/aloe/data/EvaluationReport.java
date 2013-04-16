@@ -309,8 +309,8 @@ public class EvaluationReport implements Saving {
                 + "TN: " + trueNegativeCount + "\n"
                 + "FN: " + falseNegativeCount + "\n"
                 + "------------------\n"
-                + "Positive Predictions: " + getNumPredictedPositive()
-                + "Negative Predictions: " + getNumPredictedNegative()
+                + "Positive Predictions: " + getNumPredictedPositive() + "\n"
+                + "Negative Predictions: " + getNumPredictedNegative() + "\n"
                 + "------------------\n"
                 + "Precision: " + getPrecision() + "\n"
                 + "Recall: " + getRecall() + "\n"
