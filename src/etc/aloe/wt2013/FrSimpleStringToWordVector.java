@@ -66,7 +66,7 @@ public class FrSimpleStringToWordVector extends StringToWordVector {
         private final Pattern nonsensePattern;
 
         public NoNonsenseStemmer(boolean useSnowball) {
-            if (useSnowball) {
+            if (false) {
                 this.snowball = new SnowballStemmer("french");//this is where I need to put in the name of a different stemmer
             }
 
