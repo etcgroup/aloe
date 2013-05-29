@@ -34,7 +34,29 @@ public class FrSpecialRegexFilter extends FrAbstractRegexFilter {
         "n'?\\s*est?",
         "n'?\\s*ai",
         "n'?\\s*as?",
-        "n'?\\s*y"
+        "n'?\\s*y",
+        "aren'?t",
+        "can'?t",
+        "couldn'?t",
+        "daren'?t",
+        "didn'?t",
+        "doesn'?t",
+        "don'?t",
+        "hasn'?t",
+        "haven'?t",
+        "hadn'?t",
+        "isn'?t",
+        "mayn'?t",
+        "mightn'?t",
+        "mustn'?t",
+        "needn'?t",
+        "oughtn'?t",
+        "shan'?t",
+        "shouldn'?t",
+        "wasn'?t",
+        "weren'?t",
+        "won'?t",
+        "wouldn'?t"
         
     };
     private final String[] namesList = new String[]{
@@ -61,7 +83,7 @@ public class FrSpecialRegexFilter extends FrAbstractRegexFilter {
     private NamedRegex[] regexFeatures = new NamedRegex[]{
         // French negation: non, ne, n', pas, and words that replace pas
         // http://frencha.bout.com/od/grammar/a/negation.htm
-        new NamedRegex("negation", "(?<!\\w)(n+o+n*|ne|nan|p+a+s+|n'?|jamais|nul|aucun|rien|personne" + toRegex(contractedNegationForms, false) + ")(?!\\w)", Pattern.CASE_INSENSITIVE),
+        new NamedRegex("negation", "(?<!\\w)(not?|cannot|n+o+n*|ne|nan|p+a+s+|n'?|jamais|nul|aucun|rien|personne" + toRegex(contractedNegationForms, false) + ")(?!\\w)", Pattern.CASE_INSENSITIVE),
         // Matches acceptance terms
         new NamedRegex("accept", "(?<!\\w)(d'?ac+|d'?\\s?accord|ok|okay)(?!\\w)", Pattern.CASE_INSENSITIVE),
         // Matches agreement terms
