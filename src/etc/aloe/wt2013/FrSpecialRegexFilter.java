@@ -90,7 +90,17 @@ public class FrSpecialRegexFilter extends FrAbstractRegexFilter {
         new NamedRegex("agree", "(?<!\\w)(d'?ac+|d'?\\s?accord|ok|okay|oui|yep|h?m?ouais?)(?!\\w)", Pattern.CASE_INSENSITIVE),
         // Matches many swearwords (including the English ones)
         // Plus signs and asterixes to allow for repeated letters/typos
-        new NamedRegex("swear", "(?<!\\w)("
+        new NamedRegex("eng_swear", "(?<!\\w)("
+        + "((?=\\p{Punct}*[@#$%^&*]\\p{Punct}*[@#$%^&*])([\\p{Punct}&&[^.]]{4,}))"
+        + "|c+r+a+p+(p?e+d+|s+|p?i+n+g+|p?y+)?"
+        + "|s+h+i+t+(s+|t?i+n+g+|t?y+)?"
+        + "|(g+o+d?)?d+a+m+(n+|mi+t+)?"
+        + "|(m+o+t+h+e+r+)?f+u+c+k+(e+d+|i+n+g+|e+r+)?"
+        + "|a+s+s+(h+o+l+e+)?"
+        + "|s+u+c+k+(y+|s+|e+d+)?"
+        + ")(?!\\w)", Pattern.CASE_INSENSITIVE),
+        
+        new NamedRegex("fr_swear", "(?<!\\w)("
         + "((?=\\p{Punct}*[@#$%^&*]\\p{Punct}*[@#$%^&*])([\\p{Punct}&&[^.]]{4,}))"
         + "|m+e+r+d+e*s?(e+u+x+|e+u+s+e+)?"
         + "|p+u+t+(e+|a+i+n+)" 
@@ -106,12 +116,6 @@ public class FrSpecialRegexFilter extends FrAbstractRegexFilter {
         + "|b+o+r+d+e+l+s*"
         + "|m+i+n+c+e+"
         + "|m+o+c+h+e+"
-        + "|c+r+a+p+(p?e+d+|s+|p?i+n+g+|p?y+)?"
-        + "|s+h+i+t+(s+|t?i+n+g+|t?y+)?"
-        + "|(g+o+d?)?d+a+m+(n+|mi+t+)?"
-        + "|(m+o+t+h+e+r+)?f+u+c+k+(e+d+|i+n+g+|e+r+)?"
-        + "|a+s+s+(h+o+l+e+)?"
-        + "|s+u+c+k+(y+|s+|e+d+)?"
         + ")(?!\\w)", Pattern.CASE_INSENSITIVE),
         //Matches known named
         new NamedRegex("names", "(?<!\\w)(" + toRegex(namesList) + ")", Pattern.CASE_INSENSITIVE)
