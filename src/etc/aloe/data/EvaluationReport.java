@@ -33,32 +33,74 @@ import java.util.List;
  */
 public class EvaluationReport implements Saving {
 
-    private int truePositiveCount;
-    private int trueNegativeCount;
-    private int falsePositiveCount;
-    private int falseNegativeCount;
-    private double falsePositiveCost = 1;
-    private double falseNegativeCost = 1;
     private List<ROC> rocs = new ArrayList<ROC>();
     private final String name;
+    private double[][] costMatrix;
+    private int[][] confusionMatrix;
+    private int totalExamples = 0;
 
     /**
      * Construct an equal-cost evaluation report
+     *
+     * @param name
      */
     public EvaluationReport(String name) {
         this.name = name;
+        this.confusionMatrix = new int[Label.getLabelCount()][Label.getLabelCount()];
     }
 
     /**
      * Construct a cost-sensitive evaluation report.
      *
-     * @param falsePositiveCost
-     * @param falseNegativeCost
+     * @param name
+     * @param costMatrix
      */
-    public EvaluationReport(String name, double falsePositiveCost, double falseNegativeCost) {
+    public EvaluationReport(String name, double[][] costMatrix) {
+        if (Label.getLabelCount() != costMatrix.length) {
+            throw new IllegalArgumentException("Cost matrix is not the right size!");
+        }
         this.name = name;
-        this.falsePositiveCost = falsePositiveCost;
-        this.falseNegativeCost = falseNegativeCost;
+        this.costMatrix = costMatrix;
+        this.confusionMatrix = new int[Label.getLabelCount()][Label.getLabelCount()];
+    }
+
+    /**
+     * Get the number of examples with a given true label where the prediction was another
+     * label (or the same label).
+     * @param trueLabel
+     * @param predictedLabel
+     * @return
+     */
+    public int getConfusionCount(Label trueLabel, Label predictedLabel) {
+        return this.confusionMatrix[trueLabel.getNumber()][predictedLabel.getNumber()];
+    }
+
+    /**
+     * Get the total number of examples truly labeled with the given label.
+     * @param label
+     * @return
+     */
+    public int getTrueCount(Label label) {
+        int labelN = label.getNumber();
+        int count = 0;
+        for (int j = 0; j < this.confusionMatrix[labelN].length; j++) {
+            count += this.confusionMatrix[labelN][j];
+        }
+        return count;
+    }
+
+    /**
+     * Get the total number of examples predicted to have the given label.
+     * @param label
+     * @return
+     */
+    public int getPredictedCount(Label label) {
+        int labelN = label.getNumber();
+        int count = 0;
+        for (int i = 0; i < this.confusionMatrix.length; i++) {
+            count += this.confusionMatrix[i][labelN];
+        }
+        return count;
     }
 
     /**
@@ -67,7 +109,11 @@ public class EvaluationReport implements Saving {
      * @return
      */
     public int getTruePositiveCount() {
-        return truePositiveCount;
+        if (!Label.isBinary()) {
+            throw new IllegalStateException("TP count only available in binary classification");
+        }
+
+        return this.getConfusionCount(Label.TRUE(), Label.TRUE());
     }
 
     /**
@@ -76,7 +122,11 @@ public class EvaluationReport implements Saving {
      * @return
      */
     public int getTrueNegativeCount() {
-        return trueNegativeCount;
+        if (!Label.isBinary()) {
+            throw new IllegalStateException("TN count only available in binary classification");
+        }
+
+        return this.getConfusionCount(Label.FALSE(), Label.FALSE());
     }
 
     /**
@@ -85,7 +135,11 @@ public class EvaluationReport implements Saving {
      * @return
      */
     public int getFalsePositiveCount() {
-        return falsePositiveCount;
+        if (!Label.isBinary()) {
+            throw new IllegalStateException("FP count only available in binary classification");
+        }
+
+        return this.getConfusionCount(Label.FALSE(), Label.TRUE());
     }
 
     /**
@@ -94,43 +148,11 @@ public class EvaluationReport implements Saving {
      * @return
      */
     public int getFalseNegativeCount() {
-        return falseNegativeCount;
-    }
+        if (!Label.isBinary()) {
+            throw new IllegalStateException("FN count only available in binary classification");
+        }
 
-    /**
-     * Set the number of examples with a positive prediction that was correct.
-     *
-     * @param truePositiveCount
-     */
-    public void setTruePositiveCount(int truePositiveCount) {
-        this.truePositiveCount = truePositiveCount;
-    }
-
-    /**
-     * Set the number of examples with a negative prediction that was correct.
-     *
-     * @param trueNegativeCount
-     */
-    public void setTrueNegativeCount(int trueNegativeCount) {
-        this.trueNegativeCount = trueNegativeCount;
-    }
-
-    /**
-     * Set the number of examples with a positive prediction that was incorrect.
-     *
-     * @param falsePositiveCount
-     */
-    public void setFalsePositiveCount(int falsePositiveCount) {
-        this.falsePositiveCount = falsePositiveCount;
-    }
-
-    /**
-     * Set the number of examples with a negative prediction that was incorrect.
-     *
-     * @param falseNegativeCount
-     */
-    public void setFalseNegativeCount(int falseNegativeCount) {
-        this.falseNegativeCount = falseNegativeCount;
+        return this.getConfusionCount(Label.TRUE(), Label.FALSE());
     }
 
     /**
@@ -138,8 +160,11 @@ public class EvaluationReport implements Saving {
      *
      * @return
      */
-    public double getRecall() {
-        return (double) truePositiveCount / (truePositiveCount + falseNegativeCount);
+    public double getRecall(Label label) {
+        int correctlyPredicted = getConfusionCount(label, label);
+        int allTrueLabeled = getTrueCount(label);
+
+        return (double) correctlyPredicted / allTrueLabeled;
     }
 
     /**
@@ -148,8 +173,11 @@ public class EvaluationReport implements Saving {
      *
      * @return
      */
-    public double getPrecision() {
-        return (double) truePositiveCount / (truePositiveCount + falsePositiveCount);
+    public double getPrecision(Label label) {
+        int correctlyPredicted = getConfusionCount(label, label);
+        int allPredictedLabeled = getPredictedCount(label);
+
+        return (double) correctlyPredicted / allPredictedLabeled;
     }
 
     /**
@@ -157,9 +185,9 @@ public class EvaluationReport implements Saving {
      *
      * @return
      */
-    public double getFMeasure() {
-        double precision = getPrecision();
-        double recall = getRecall();
+    public double getFMeasure(Label label) {
+        double precision = getPrecision(label);
+        double recall = getRecall(label);
         if ((precision + recall) == 0) {
             return 0;
         }
@@ -172,8 +200,12 @@ public class EvaluationReport implements Saving {
      * @return
      */
     public double getPercentCorrect() {
-        return (double) (truePositiveCount + trueNegativeCount)
-                / getTotalExamples();
+        int correct = 0;
+        for (int i = 0; i < this.confusionMatrix.length; i++) {
+            Label label = Label.get(i);
+            correct += getConfusionCount(label, label);
+        }
+        return (double) correct / getTotalExamples();
     }
 
     /**
@@ -182,44 +214,7 @@ public class EvaluationReport implements Saving {
      * @return
      */
     public double getPercentIncorrect() {
-        return (double) (falsePositiveCount + falseNegativeCount)
-                / getTotalExamples();
-    }
-
-    /**
-     * Get the number of positive examples in the truth data.
-     *
-     * @return
-     */
-    public int getNumTrulyPositive() {
-        return getTruePositiveCount() + getFalseNegativeCount();
-    }
-
-    /**
-     * Get the number of negative examples in the truth data.
-     *
-     * @return
-     */
-    public int getNumTrulyNegative() {
-        return getTrueNegativeCount() + getFalsePositiveCount();
-    }
-
-    /**
-     * Get the number of examples predicted to be positive.
-     *
-     * @return
-     */
-    public int getNumPredictedPositive() {
-        return getTruePositiveCount() + getFalsePositiveCount();
-    }
-
-    /**
-     * Get the number of examples predicted to be negative.
-     *
-     * @return
-     */
-    public int getNumPredictedNegative() {
-        return getTrueNegativeCount() + getFalseNegativeCount();
+        return 1 - getPercentCorrect();
     }
 
     /**
@@ -231,12 +226,16 @@ public class EvaluationReport implements Saving {
      * @return
      */
     public double getCohensKappa() {
+        if (Label.isBinary()) {
+            throw new IllegalStateException("Cohens kappa currently only available for binary classification");
+        }
+
         double probabilityAgreement = getPercentCorrect();
 
-        double numPositiveInTruth = getNumTrulyPositive();
-        double numPositiveInPrediction = getNumPredictedPositive();
-        double numNegativeInTruth = getNumTrulyNegative();
-        double numNegativeInPrediction = getNumPredictedNegative();
+        double numPositiveInTruth = getTrueCount(Label.TRUE());
+        double numPositiveInPrediction = getPredictedCount(Label.TRUE());
+        double numNegativeInTruth = getTrueCount(Label.FALSE());
+        double numNegativeInPrediction = getPredictedCount(Label.FALSE());
 
         double probabilityRandomPositiveAgreement =
                 (numPositiveInTruth / getTotalExamples())
@@ -261,7 +260,13 @@ public class EvaluationReport implements Saving {
      * @return
      */
     public double getTotalCost() {
-        return falsePositiveCount * falsePositiveCost + falseNegativeCount * falseNegativeCost;
+        double cost = 0;
+        for (int i = 0; i < confusionMatrix.length; i++) {
+            for (int j = 0; j < confusionMatrix[i].length; j++) {
+                cost += costMatrix[i][j] * confusionMatrix[i][j];
+            }
+        }
+        return cost;
     }
 
     /**
@@ -280,7 +285,7 @@ public class EvaluationReport implements Saving {
      * @return
      */
     public int getTotalExamples() {
-        return truePositiveCount + trueNegativeCount + falsePositiveCount + falseNegativeCount;
+        return totalExamples;
     }
 
     @Override
@@ -298,30 +303,69 @@ public class EvaluationReport implements Saving {
      */
     @Override
     public String toString() {
-        return "Examples: " + getTotalExamples() + "\n"
-                + "Positive: " + getNumTrulyPositive() + "\n"
-                + "Negative: " + getNumTrulyNegative() + "\n"
-                + "FP Cost: " + falsePositiveCost + "\n"
-                + "FN Cost: " + falseNegativeCost + "\n"
-                + "------------------\n"
-                + "TP: " + truePositiveCount + "\n"
-                + "FP: " + falsePositiveCount + "\n"
-                + "TN: " + trueNegativeCount + "\n"
-                + "FN: " + falseNegativeCount + "\n"
-                + "------------------\n"
-                + "Positive Predictions: " + getNumPredictedPositive() + "\n"
-                + "Negative Predictions: " + getNumPredictedNegative() + "\n"
-                + "------------------\n"
-                + "Precision: " + getPrecision() + "\n"
-                + "Recall: " + getRecall() + "\n"
-                + "FMeasure: " + getFMeasure() + "\n"
-                + "------------------\n"
-                + "% Correct: " + getPercentCorrect() + "\n"
-                + "% Incorrect: " + getPercentIncorrect() + "\n"
-                + "Kappa: " + getCohensKappa() + "\n"
-                + "------------------\n"
-                + "Total Cost: " + getTotalCost() + "\n"
-                + "Avg Cost: " + getAverageCost();
+        StringBuilder str = new StringBuilder();
+
+        //The label summary
+        str.append("== Label Distribution ==\n")
+                .append("  \tLabel \tTrue \tPredicted\n");
+        int numLabels = Label.getLabelCount();
+        for (int i = 0; i < numLabels; i++) {
+            Label label = Label.get(i);
+            str.append(label.getNumber()).append(".\t").append(label.getName())
+                    .append(": \t").append(getTrueCount(label))
+                    .append(" \t").append(getPredictedCount(label))
+                    .append("\n");
+        }
+
+        str.append("\n== Cost Matrix ==\n")
+                .append("true label\n");
+
+        for (int i = 0; i < numLabels; i++) {
+            Label trueLabel = Label.get(i);
+            str.append(trueLabel.getName()).append(" \t");
+
+            for (int j = 0; j < numLabels; j++) {
+                str.append(costMatrix[i][j]).append(" \t");
+            }
+
+            str.append("\n");
+        }
+
+        str.append("\n== Confusion Matrix ==\n")
+                .append("true label\n");
+
+        for (int i = 0; i < numLabels; i++) {
+            Label trueLabel = Label.get(i);
+            str.append(trueLabel.getName()).append(" \t");
+
+            for (int j = 0; j < numLabels; j++) {
+                str.append(confusionMatrix[i][j]).append(" \t");
+            }
+
+            str.append("\n");
+        }
+
+        str.append("\n== Performance Statistics ==\n")
+                .append("Label \tPrecision \tRecall \tF-Measure\n");
+
+        for (int i = 0; i < numLabels; i++) {
+            Label label = Label.get(i);
+            str.append(label.getName()).append(" \t")
+                    .append(getPrecision(label)).append(" \t")
+                    .append(getRecall(label)).append(" \t")
+                    .append(getFMeasure(label)).append("\n");
+        }
+
+        str.append("-- Overall Statistics --\n");
+        str.append("% Correct: ").append(getPercentCorrect()).append("\n");
+        str.append("% Incorrect: ").append(getPercentIncorrect()).append("\n");
+        if (Label.isBinary()) {
+            str.append("Kappa: ").append(getCohensKappa()).append("\n");
+        }
+        str.append("Total Cost: ").append(getTotalCost()).append("\n");
+        str.append("Avg Cost: ").append(getAverageCost()).append("\n");
+
+        return str.toString();
     }
 
     /**
@@ -331,12 +375,17 @@ public class EvaluationReport implements Saving {
      * @param report
      */
     public void addPartial(EvaluationReport report) {
-        truePositiveCount += report.truePositiveCount;
-        trueNegativeCount += report.trueNegativeCount;
-        falsePositiveCount += report.falsePositiveCount;
-        falseNegativeCount += report.falseNegativeCount;
+        for (int i = 0; i < report.confusionMatrix.length; i++) {
+            for (int j = 0; j < report.confusionMatrix[i].length; j++) {
+                this.confusionMatrix[i][j] += report.confusionMatrix[i][j];
+            }
+        }
 
-        this.rocs.addAll(report.getROCs());
+        if (this.rocs != null) {
+            this.rocs.addAll(report.getROCs());
+        }
+
+        this.totalExamples += report.totalExamples;
     }
 
     /**
@@ -345,14 +394,14 @@ public class EvaluationReport implements Saving {
      * @param predictions
      */
     public void addPredictions(Predictions predictions) {
-        ROC roc = new ROC(this.getName());
-        roc.calculateCurve(predictions);
-        this.rocs.add(roc);
+        if (this.rocs != null) {
+            ROC roc = new ROC(this.getName());
+            roc.calculateCurve(predictions);
+            this.rocs.add(roc);
+        }
 
-        this.setTruePositiveCount(predictions.getTruePositiveCount());
-        this.setFalsePositiveCount(predictions.getFalsePositiveCount());
-        this.setTrueNegativeCount(predictions.getTrueNegativeCount());
-        this.setFalseNegativeCount(predictions.getFalseNegativeCount());
+        this.confusionMatrix = predictions.getConfusionMatrix();
+        this.totalExamples += predictions.size();
     }
 
     public String getName() {

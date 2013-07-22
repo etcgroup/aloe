@@ -75,7 +75,11 @@ public class LabelingController {
         mapping.map(predictions, segmentSet);
 
         //Evaluate the model on labeled examples
-        this.evaluationReport = new EvaluationReport("Unlabeled Data", falsePositiveCost, falseNegativeCost);
+        double[][] costMatrix = {
+            {0, falsePositiveCost},
+            {falseNegativeCost, 0}
+        };
+        this.evaluationReport = new EvaluationReport("Unlabeled Data", costMatrix);
         this.evaluationReport.addPredictions(predictions);
     }
 

@@ -31,12 +31,13 @@ import java.util.List;
 public class Predictions {
 
     private List<Prediction> predictions = new ArrayList<Prediction>();
-    private int truePositiveCount = 0;
-    private int trueNegativeCount = 0;
-    private int falsePositiveCount = 0;
-    private int falseNegativeCount = 0;
+    private int[][] confusionMatrix;
+    private int labelCount;
 
     public Predictions() {
+        //Initialize the confusion matrix
+        this.labelCount = Label.getLabelCount();
+        confusionMatrix = new int[labelCount][labelCount];
     }
 
     /**
@@ -47,10 +48,7 @@ public class Predictions {
      */
     private Predictions(Predictions parent) {
         this.predictions = parent.predictions;
-        this.truePositiveCount = parent.truePositiveCount;
-        this.trueNegativeCount = parent.trueNegativeCount;
-        this.falsePositiveCount = parent.falsePositiveCount;
-        this.falseNegativeCount = parent.falseNegativeCount;
+        this.confusionMatrix = parent.confusionMatrix;
     }
 
     public Label getPredictedLabel(int index) {
@@ -69,20 +67,16 @@ public class Predictions {
         return predictions.size();
     }
 
-    public int getTruePositiveCount() {
-        return truePositiveCount;
+    public int getConfusionCount(Label trueLabel, Label predictedLabel) {
+        return this.confusionMatrix[trueLabel.getNumber()][predictedLabel.getNumber()];
     }
 
-    public int getTrueNegativeCount() {
-        return trueNegativeCount;
+    public int[][] getConfusionMatrix() {
+        return this.confusionMatrix;
     }
 
-    public int getFalsePositiveCount() {
-        return falsePositiveCount;
-    }
-
-    public int getFalseNegativeCount() {
-        return falseNegativeCount;
+    private void incrementConfusionCount(Label trueLabel, Label predictedLabel, int increment) {
+        this.confusionMatrix[trueLabel.getNumber()][predictedLabel.getNumber()] += increment;
     }
 
     /**
@@ -106,20 +100,8 @@ public class Predictions {
     public void add(Label predictedLabel, Double confidence, Label trueLabel) {
         this.predictions.add(new Prediction(predictedLabel, trueLabel, confidence));
 
-        if (trueLabel != null) {
-            if (predictedLabel == true) {
-                if (predictedLabel == trueLabel) {
-                    truePositiveCount++;
-                } else {
-                    falsePositiveCount++;
-                }
-            } else {
-                if (predictedLabel == trueLabel) {
-                    trueNegativeCount++;
-                } else {
-                    falseNegativeCount++;
-                }
-            }
+        if (trueLabel != null && predictedLabel != null) {
+            this.incrementConfusionCount(trueLabel, predictedLabel, 1);
         }
     }
 

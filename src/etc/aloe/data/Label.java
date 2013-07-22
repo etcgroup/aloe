@@ -31,6 +31,7 @@ public class Label {
     private final String name;
     private final int number;
     private static List<Label> values = new ArrayList<Label>();
+    private static boolean registrationEnabled = true;
 
     private Label(String name, int number) {
         this.name = name;
@@ -50,6 +51,10 @@ public class Label {
         return name;
     }
 
+    public static void closeRegistration() {
+        registrationEnabled = false;
+    }
+
     public static Label get(String name) {
         for (Label label : values) {
             if (label.getName().equals(name)) {
@@ -57,9 +62,13 @@ public class Label {
             }
         }
 
-        Label label = new Label(name, values.size());
-        values.add(label);
-        return label;
+        if (registrationEnabled) {
+            Label label = new Label(name, values.size());
+            values.add(label);
+            return label;
+        }
+
+        return null;
     }
 
     public static Label get(int number) {
@@ -67,9 +76,13 @@ public class Label {
             return values.get(number);
         }
 
-        Label label = new Label(number + "", values.size());
-        values.add(label);
-        return label;
+        if (registrationEnabled) {
+            Label label = new Label(number + "", values.size());
+            values.add(label);
+            return label;
+        }
+
+        return null;
     }
 
     public static boolean exists(String name) {
@@ -107,5 +120,9 @@ public class Label {
 
     public static Label FALSE() {
         return Label.get("false");
+    }
+
+    public static boolean isBinary() {
+        return Label.getLabelCount() == 2 && Label.TRUE() != null && Label.FALSE() != null;
     }
 }

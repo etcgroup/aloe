@@ -85,7 +85,11 @@ public class CrossValidationController {
             validationPrep.randomize(segmentSet.getSegments());
             segmentSet.setSegments(validationPrep.stratify(segmentSet.getSegments(), folds));
 
-            evaluationReport = new EvaluationReport(this.folds + " Cross Validation", falsePositiveCost, falseNegativeCost);
+            double[][] costMatrix = {
+                {0, falsePositiveCost},
+                {falseNegativeCost, 0}
+            };
+            evaluationReport = new EvaluationReport(this.folds + " Cross Validation", costMatrix);
             for (int foldIndex = 0; foldIndex < this.folds; foldIndex++) {
                 System.out.println("- Starting fold " + (foldIndex + 1));
                 //Split the data
@@ -114,7 +118,7 @@ public class CrossValidationController {
                 Training training = getTrainingImpl();
                 Model model = training.train(trainingSet);
                 trainingSet = null;
-                
+
                 System.out.println("- Splitting out test set");
                 SegmentSet testingSegments = new SegmentSet();
                 testingSegments.setSegments(split.getTestingForFold(segmentSet.getSegments(), foldIndex, this.folds));
@@ -131,7 +135,7 @@ public class CrossValidationController {
                 basicTestingExamples = null;
 
                 Predictions predictions = model.getPredictions(testingSet);
-                EvaluationReport report = new EvaluationReport("Fold " + (foldIndex + 1), falsePositiveCost, falseNegativeCost);
+                EvaluationReport report = new EvaluationReport("Fold " + (foldIndex + 1), costMatrix);
                 report.addPredictions(predictions);
 
                 evaluationReport.addPartial(report);

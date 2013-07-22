@@ -90,20 +90,28 @@ public class ROC implements Saving {
      * @param predictions
      */
     public void calculateCurve(Predictions predictions) {
+        if (!Label.isBinary()) {
+            throw new IllegalStateException("ROC curves can only be generated for binary classification!");
+        }
+
         clear();
         predictions = predictions.sortByConfidence();
 
+        Label pos = Label.TRUE();
+        Label neg = Label.FALSE();
+
         int truePositives = 0;
         int falsePositives = 0;
-        int totalPositives = predictions.getTruePositiveCount() + predictions.getFalseNegativeCount();
-        int totalNegatives = predictions.getTrueNegativeCount() + predictions.getFalsePositiveCount();
+
+        int totalPositives = predictions.getConfusionCount(pos, pos) + predictions.getConfusionCount(pos, neg);
+        int totalNegatives = predictions.getConfusionCount(neg, neg) + predictions.getConfusionCount(neg, pos);
         for (int i = 0; i < predictions.size(); i++) {
             Label trueLabel = predictions.getTrueLabel(i);
             Double confidence = predictions.getPredictionConfidence(i);
 
             if (trueLabel == null) {
                 continue;
-            } else if (trueLabel) {
+            } else if (trueLabel == pos) {
                 truePositives++;
             } else {
                 falsePositives++;

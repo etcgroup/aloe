@@ -61,7 +61,7 @@ public class DownsampleBalancing implements Balancing {
 
     @Override
     public SegmentSet balance(SegmentSet segmentSet) {
-        if (Label.getLabelCount() != 2) {
+        if (!Label.isBinary()) {
             throw new IllegalStateException("Too many labels. Balancing can only be done with binary classification.");
         }
 

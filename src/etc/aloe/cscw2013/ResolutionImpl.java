@@ -35,7 +35,7 @@ public class ResolutionImpl implements SegmentResolution {
 
     @Override
     public Label resolveLabel(Segment segment) {
-        if (Label.getLabelCount() != 2) {
+        if (!Label.isBinary()) {
             throw new IllegalStateException("This label resolution technique only works for binary classification!");
         }
 
