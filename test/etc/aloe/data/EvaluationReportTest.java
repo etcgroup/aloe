@@ -308,4 +308,89 @@ public class EvaluationReportTest {
         double result = instance.getTotalExamples();
         assertEquals(expResult, result, 0.0);
     }
+
+    /**
+     * Test of getNumTrulyPositive method, of class EvaluationReport.
+     */
+    @Test
+    public void testGetNumTrulyPositive() {
+        System.out.println("getNumTrulyPositive");
+        EvaluationReport instance = new EvaluationReport("test");
+        instance.setTrueNegativeCount(1);
+        instance.setTruePositiveCount(2);
+        instance.setFalseNegativeCount(3);
+        instance.setFalsePositiveCount(4);
+
+        double expResult = 5;
+        double result = instance.getNumTrulyPositive();
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of getNumTrulyNegative method, of class EvaluationReport.
+     */
+    @Test
+    public void testGetNumTrulyNegative() {
+        System.out.println("getNumTrulyNegative");
+        EvaluationReport instance = new EvaluationReport("test");
+        instance.setTrueNegativeCount(1);
+        instance.setTruePositiveCount(2);
+        instance.setFalseNegativeCount(3);
+        instance.setFalsePositiveCount(4);
+
+        double expResult = 5;
+        double result = instance.getNumTrulyNegative();
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of getNumPredictedPositive method, of class EvaluationReport.
+     */
+    @Test
+    public void testGetNumPredictedPositive() {
+        System.out.println("getNumPredictedPositive");
+        EvaluationReport instance = new EvaluationReport("test");
+        instance.setTrueNegativeCount(1);
+        instance.setTruePositiveCount(2);
+        instance.setFalseNegativeCount(3);
+        instance.setFalsePositiveCount(4);
+
+        double expResult = 6;
+        double result = instance.getNumPredictedPositive();
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of getNumPredictedNegative method, of class EvaluationReport.
+     */
+    @Test
+    public void testGetNumPredictedNegative() {
+        System.out.println("getNumPredictedNegative");
+        EvaluationReport instance = new EvaluationReport("test");
+        instance.setTrueNegativeCount(1);
+        instance.setTruePositiveCount(2);
+        instance.setFalseNegativeCount(3);
+        instance.setFalsePositiveCount(4);
+
+        double expResult = 4;
+        double result = instance.getNumPredictedNegative();
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of getCohensKappa method, of class EvaluationReport.
+     */
+    @Test
+    public void testGetCohensKappa() {
+        System.out.println("getCohensKappa");
+        EvaluationReport instance = new EvaluationReport("test");
+        instance.setTrueNegativeCount(15);
+        instance.setTruePositiveCount(20);
+        instance.setFalseNegativeCount(10);
+        instance.setFalsePositiveCount(5);
+
+        double expResult = 0.4;
+        double result = instance.getCohensKappa();
+        assertEquals(expResult, result, 0.001);
+    }
 }

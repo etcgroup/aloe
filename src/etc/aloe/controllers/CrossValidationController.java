@@ -91,30 +91,44 @@ public class CrossValidationController {
                 //Split the data
                 CrossValidationSplit<Segment> split = new CrossValidationSplit<Segment>();
 
+                System.out.println("- Splitting out training set");
                 SegmentSet trainingSegments = new SegmentSet();
                 trainingSegments.setSegments(split.getTrainingForFold(segmentSet.getSegments(), foldIndex, this.folds));
                 if (getBalancingImpl() != null) {
                     trainingSegments = getBalancingImpl().balance(trainingSegments);
                 }
 
+                System.out.println("- Extracting basic features from training set");
+                ExampleSet basicTrainingExamples = trainingSegments.getBasicExamples();
+                trainingSegments = null;
+
+                FeatureGeneration generation = getFeatureGenerationImpl();
+                System.out.println("- Generating features");
+                FeatureSpecification spec = generation.generateFeatures(basicTrainingExamples);
+
+                FeatureExtraction extraction = getFeatureExtractionImpl();
+                System.out.println("- Extracting features from training set");
+                ExampleSet trainingSet = extraction.extractFeatures(basicTrainingExamples, spec);
+                basicTrainingExamples = null;
+
+                Training training = getTrainingImpl();
+                Model model = training.train(trainingSet);
+                trainingSet = null;
+                
+                System.out.println("- Splitting out test set");
                 SegmentSet testingSegments = new SegmentSet();
                 testingSegments.setSegments(split.getTestingForFold(segmentSet.getSegments(), foldIndex, this.folds));
                 if (getBalancingImpl() != null && balanceTestSet) {
                     testingSegments = getBalancingImpl().balance(testingSegments);
                 }
 
-                ExampleSet basicTrainingExamples = trainingSegments.getBasicExamples();
+                System.out.println("- Extracting basic features from test set");
                 ExampleSet basicTestingExamples = testingSegments.getBasicExamples();
+                testingSegments = null;
 
-                FeatureGeneration generation = getFeatureGenerationImpl();
-                FeatureSpecification spec = generation.generateFeatures(basicTrainingExamples);
-
-                FeatureExtraction extraction = getFeatureExtractionImpl();
-                ExampleSet trainingSet = extraction.extractFeatures(basicTrainingExamples, spec);
+                System.out.println("- Extracting features from test set");
                 ExampleSet testingSet = extraction.extractFeatures(basicTestingExamples, spec);
-
-                Training training = getTrainingImpl();
-                Model model = training.train(trainingSet);
+                basicTestingExamples = null;
 
                 Predictions predictions = model.getPredictions(testingSet);
                 EvaluationReport report = new EvaluationReport("Fold " + (foldIndex + 1), falsePositiveCost, falseNegativeCost);
