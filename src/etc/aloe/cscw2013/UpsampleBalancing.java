@@ -19,6 +19,7 @@
 package etc.aloe.cscw2013;
 
 import etc.aloe.RandomProvider;
+import etc.aloe.data.Label;
 import etc.aloe.data.Segment;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.Balancing;
@@ -48,10 +49,18 @@ public class UpsampleBalancing implements Balancing {
 
     @Override
     public SegmentSet balance(SegmentSet segmentSet) {
+        if (Label.getLabelCount() != 2) {
+            throw new IllegalStateException("Too many labels. Balancing can only be done with binary classification.");
+        }
+
         SegmentSet balanced = new SegmentSet();
 
         List<Segment> allSegments = segmentSet.getSegments();
         List<Segment> resultSegments = new ArrayList<Segment>();
+
+        //Get the positive and negative labels
+        Label neg = Label.get(0);
+        Label pos = Label.get(1);
 
         List<Segment> positive = new ArrayList<Segment>();
         List<Segment> negative = new ArrayList<Segment>();
@@ -60,9 +69,9 @@ public class UpsampleBalancing implements Balancing {
         for (Segment segment : allSegments) {
             if (!segment.hasTrueLabel()) {
                 unlabeled.add(segment);
-            } else if (segment.getTrueLabel() == true) {
+            } else if (segment.getTrueLabel() == pos) {
                 positive.add(segment);
-            } else if (segment.getTrueLabel() == false) {
+            } else if (segment.getTrueLabel() == neg) {
                 negative.add(segment);
             }
         }
@@ -94,7 +103,7 @@ public class UpsampleBalancing implements Balancing {
         }
         balanced.setSegments(resultSegments);
 
-        System.out.println("Balanced (" + positive.size() + ", " + negative.size() + ") to (" + balanced.getCountWithTrueLabel(true) + ", " + balanced.getCountWithTrueLabel(false) + ")");
+        System.out.println("Balanced (" + positive.size() + ", " + negative.size() + ") to (" + balanced.getCountWithTrueLabel(pos) + ", " + balanced.getCountWithTrueLabel(neg) + ")");
 
         return balanced;
     }
