@@ -18,6 +18,7 @@
  */
 package etc.aloe.processes;
 
+import etc.aloe.data.Label;
 import etc.aloe.data.Segment;
 
 /**
@@ -34,5 +35,5 @@ public interface SegmentResolution {
      * @param segment
      * @return
      */
-    Boolean resolveLabel(Segment segment);
+    Label resolveLabel(Segment segment);
 }

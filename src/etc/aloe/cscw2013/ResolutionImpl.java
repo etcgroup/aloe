@@ -18,6 +18,7 @@
  */
 package etc.aloe.cscw2013;
 
+import etc.aloe.data.Label;
 import etc.aloe.data.Message;
 import etc.aloe.data.Segment;
 import etc.aloe.processes.SegmentResolution;
@@ -33,19 +34,25 @@ import etc.aloe.processes.SegmentResolution;
 public class ResolutionImpl implements SegmentResolution {
 
     @Override
-    public Boolean resolveLabel(Segment segment) {
+    public Label resolveLabel(Segment segment) {
+        if (Label.getLabelCount() != 2) {
+            throw new IllegalStateException("This label resolution technique only works for binary classification!");
+        }
+
+        Label pos = Label.TRUE();
+
         boolean labelSetBySomeone = false;
         for (Message message : segment.getMessages()) {
             if (message.hasTrueLabel()) {
                 labelSetBySomeone = true;
-                if (message.getTrueLabel() == true) {
-                    return true;
+                if (message.getTrueLabel() == pos) {
+                    return pos;
                 }
             }
         }
 
         if (labelSetBySomeone) {
-            return false;
+            return Label.FALSE();
         } else {
             return null;
         }
