@@ -19,6 +19,7 @@
 package etc.aloe.cscw2013;
 
 import etc.aloe.data.ExampleSet;
+import etc.aloe.data.Label;
 import etc.aloe.data.Predictions;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -60,6 +61,11 @@ public class WekaModelTest {
 
     @Before
     public void setUp() {
+        Label.startLabelSet();
+        Label.FALSE();
+        Label.TRUE();
+        Label.closeLabelSet();
+
         ArrayList<Attribute> attributes = new ArrayList<Attribute>();
 
         attributes.add(new Attribute("id"));
@@ -172,7 +178,7 @@ public class WekaModelTest {
 
         WekaModel instance = new WekaModel(classifier);
 
-        Boolean[] expResult = new Boolean[]{true, true, false, false};
+        Label[] expResult = new Label[]{Label.TRUE(), Label.TRUE(), Label.FALSE(), Label.FALSE()};
         Double[] expConfidence = new Double[]{1.0, 1.0, 0.0, 0.0};
 
         ExampleSet examples = new ExampleSet(testInstances);

@@ -51,6 +51,10 @@ public class DownsampleBalancingTest {
 
     @Before
     public void setUp() {
+        Label.startLabelSet();
+        Label.FALSE();
+        Label.TRUE();
+        Label.closeLabelSet();
     }
 
     private SegmentSet generateTestSegments(int numPositive, int numNegative) {

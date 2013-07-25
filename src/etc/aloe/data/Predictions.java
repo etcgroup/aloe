@@ -68,15 +68,68 @@ public class Predictions {
     }
 
     public int getConfusionCount(Label trueLabel, Label predictedLabel) {
-        return this.confusionMatrix[trueLabel.getNumber()][predictedLabel.getNumber()];
+        return this.confusionMatrix[predictedLabel.getNumber()][trueLabel.getNumber()];
     }
 
     public int[][] getConfusionMatrix() {
         return this.confusionMatrix;
     }
 
+    /**
+     * Get the number of examples with a positive prediction that was correct.
+     *
+     * @return
+     */
+    public int getTruePositiveCount() {
+        if (!Label.isBinary()) {
+            throw new IllegalStateException("TP count only available in binary classification");
+        }
+
+        return this.getConfusionCount(Label.TRUE(), Label.TRUE());
+    }
+
+    /**
+     * Get the number of examples with a negative prediction that was correct.
+     *
+     * @return
+     */
+    public int getTrueNegativeCount() {
+        if (!Label.isBinary()) {
+            throw new IllegalStateException("TN count only available in binary classification");
+        }
+
+        return this.getConfusionCount(Label.FALSE(), Label.FALSE());
+    }
+
+    /**
+     * Get the number of examples with a positive prediction that was incorrect.
+     *
+     * @return
+     */
+    public int getFalsePositiveCount() {
+        if (!Label.isBinary()) {
+            throw new IllegalStateException("FP count only available in binary classification");
+        }
+
+        return this.getConfusionCount(Label.FALSE(), Label.TRUE());
+    }
+
+    /**
+     * Get the number of examples with a negative prediction that was incorrect.
+     *
+     * @return
+     */
+    public int getFalseNegativeCount() {
+        if (!Label.isBinary()) {
+            throw new IllegalStateException("FN count only available in binary classification");
+        }
+
+        return this.getConfusionCount(Label.TRUE(), Label.FALSE());
+    }
+
+
     private void incrementConfusionCount(Label trueLabel, Label predictedLabel, int increment) {
-        this.confusionMatrix[trueLabel.getNumber()][predictedLabel.getNumber()] += increment;
+        this.confusionMatrix[predictedLabel.getNumber()][trueLabel.getNumber()] += increment;
     }
 
     /**

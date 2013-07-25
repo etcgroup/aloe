@@ -53,6 +53,11 @@ public class ExampleSetTest {
 
     @Before
     public void setUp() {
+        Label.startLabelSet();
+        Label.FALSE();
+        Label.TRUE();
+        Label.closeLabelSet();
+        
         ArrayList<Attribute> attributes = new ArrayList<Attribute>();
 
         attributes.add(new Attribute("id"));
@@ -164,8 +169,8 @@ public class ExampleSetTest {
         int i = 0;
         ExampleSet instance = new ExampleSet(instances);
 
-        assertEquals(true, instance.getTrueLabel(0));
-        assertEquals(false, instance.getTrueLabel(6));
+        assertEquals(Label.TRUE(), instance.getTrueLabel(0));
+        assertEquals(Label.FALSE(), instance.getTrueLabel(6));
         assertEquals(null, instance.getTrueLabel(11));
     }
 
@@ -178,8 +183,8 @@ public class ExampleSetTest {
 
         ExampleSet instance = new ExampleSet(instances);
 
-        assertEquals(true, instance.getClassLabel(1.0));
-        assertEquals(false, instance.getClassLabel(0.0));
+        assertEquals(Label.TRUE(), instance.getClassLabel(1.0));
+        assertEquals(Label.FALSE(), instance.getClassLabel(0.0));
         assertEquals(null, instance.getClassLabel(Utils.missingValue()));
     }
 

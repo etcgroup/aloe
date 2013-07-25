@@ -50,6 +50,10 @@ public class MessageSetTest {
 
     @Before
     public void setUp() {
+        Label.startLabelSet();
+        Label.FALSE();
+        Label.TRUE();
+        Label.closeLabelSet();
     }
 
     @After
@@ -145,12 +149,12 @@ public class MessageSetTest {
         assertEquals("BERT", messages.get(2).getParticipant());
         assertEquals("To make you suffer", messages.get(4).getMessage());
 
-        assertEquals(true, messages.get(0).getTrueLabel());
-        assertEquals(false, messages.get(0).getPredictedLabel());
+        assertEquals(Label.TRUE(), messages.get(0).getTrueLabel());
+        assertEquals(Label.FALSE(), messages.get(0).getPredictedLabel());
         assertEquals(3, messages.get(0).getSegmentId());
 
-        assertEquals(false, messages.get(1).getTrueLabel());
-        assertEquals(true, messages.get(1).getPredictedLabel());
+        assertEquals(Label.FALSE(), messages.get(1).getTrueLabel());
+        assertEquals(Label.TRUE(), messages.get(1).getPredictedLabel());
         assertEquals(5, messages.get(1).getSegmentId());
 
         assertEquals(null, messages.get(2).getTrueLabel());
@@ -158,10 +162,10 @@ public class MessageSetTest {
         assertEquals(-1, messages.get(2).getSegmentId());
 
         assertEquals(null, messages.get(3).getTrueLabel());
-        assertEquals(false, messages.get(3).getPredictedLabel());
+        assertEquals(Label.FALSE(), messages.get(3).getPredictedLabel());
         assertEquals(-1, messages.get(3).getSegmentId());
 
-        assertEquals(true, messages.get(4).getTrueLabel());
+        assertEquals(Label.TRUE(), messages.get(4).getTrueLabel());
         assertEquals(null, messages.get(4).getPredictedLabel());
         assertEquals(-1, messages.get(4).getSegmentId());
     }

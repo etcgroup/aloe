@@ -55,13 +55,18 @@ public class TrainingImplTest {
 
     @Before
     public void setUp() {
+        Label.startLabelSet();
+        Label.FALSE();
+        Label.TRUE();
+        Label.closeLabelSet();
+
         ArrayList<Attribute> attributes = new ArrayList<Attribute>();
 
         attributes.add(new Attribute("id"));
 
         ArrayList<String> classValues = new ArrayList<String>();
-        classValues.add("Label.FALSE()");
-        classValues.add("Label.TRUE()");
+        classValues.add("false");
+        classValues.add("true");
         attributes.add(new Attribute("class", classValues));
 
         this.instances = new Instances("TrainInstances", attributes, 12);

@@ -51,7 +51,12 @@ public class Label {
         return name;
     }
 
-    public static void closeRegistration() {
+    public static void startLabelSet() {
+        values = new ArrayList<Label>();
+        registrationEnabled = true;
+    }
+
+    public static void closeLabelSet() {
         registrationEnabled = false;
     }
 

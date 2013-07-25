@@ -19,6 +19,7 @@
 package etc.aloe.data;
 
 import java.io.ByteArrayOutputStream;
+import java.util.regex.Pattern;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -45,6 +46,10 @@ public class EvaluationReportTest {
 
     @Before
     public void setUp() {
+        Label.startLabelSet();
+        Label.FALSE();
+        Label.TRUE();
+        Label.closeLabelSet();
     }
 
     @After
@@ -68,15 +73,14 @@ public class EvaluationReportTest {
         assertTrue(eval.save(out));
         out.close();
 
-        String nl = "\n";
-        String expectedReport = "TP: 1" + nl
-                + "FP: 4" + nl
-                + "TN: 2" + nl
-                + "FN: 3";
+        // expected:
+        // false TN(2) FN(3)
+        // true  FP(4) TP(1)
+        Pattern expectedReport = Pattern.compile("false\\s+2\\s+3\\s+true\\s+4\\s+1", Pattern.MULTILINE);
 
         String report = out.toString();
 
-        assertTrue(report.contains(expectedReport));
+        assertTrue(expectedReport.matcher(report).find());
     }
 
     /**
@@ -85,6 +89,10 @@ public class EvaluationReportTest {
     @Test
     public void testAddPartial() {
         System.out.println("addPartial");
+
+        Label pos = Label.TRUE();
+        Label neg = Label.FALSE();
+
         EvaluationReport partial = new EvaluationReport("report 1");
         partial.setTrueNegativeCount(1);
         partial.setTruePositiveCount(2);
@@ -152,7 +160,7 @@ public class EvaluationReportTest {
         instance.setFalsePositiveCount(4);
 
         double expResult = (2.0) / (2 + 3);
-        double result = instance.getRecall();
+        double result = instance.getRecall(Label.TRUE());
         assertEquals(expResult, result, 0.0);
     }
 
@@ -169,7 +177,7 @@ public class EvaluationReportTest {
         instance.setFalsePositiveCount(4);
 
         double expResult = (2.0) / (2 + 4);
-        double result = instance.getPrecision();
+        double result = instance.getPrecision(Label.TRUE());
         assertEquals(expResult, result, 0.0);
     }
 
@@ -185,8 +193,10 @@ public class EvaluationReportTest {
         instance.setFalseNegativeCount(3);
         instance.setFalsePositiveCount(4);
 
-        double expResult = (2.0 * instance.getPrecision() * instance.getRecall()) / (instance.getPrecision() + instance.getRecall());
-        double result = instance.getFMeasure();
+        Label pos = Label.TRUE();
+        double expResult = (2.0 * instance.getPrecision(pos) * instance.getRecall(pos)) /
+                (instance.getPrecision(pos) + instance.getRecall(pos));
+        double result = instance.getFMeasure(pos);
         assertEquals(expResult, result, 0.0);
     }
 
@@ -247,7 +257,11 @@ public class EvaluationReportTest {
     @Test
     public void testGetTotalCost_unequalCost() {
         System.out.println("getTotalCost with unequal cost");
-        EvaluationReport instance = new EvaluationReport("test", 1, 2);
+        double[][] costMatrix = {
+            {0, 2},
+            {1, 0}
+        };
+        EvaluationReport instance = new EvaluationReport("test", costMatrix);
         instance.setTrueNegativeCount(1);
         instance.setTruePositiveCount(2);
         instance.setFalseNegativeCount(3);
@@ -281,7 +295,11 @@ public class EvaluationReportTest {
     @Test
     public void testGetAverageCost_unequalCost() {
         System.out.println("getAverageCost with unequal cost");
-        EvaluationReport instance = new EvaluationReport("test", 1, 2);
+        double[][] costMatrix = {
+            {0, 1},
+            {2, 0}
+        };
+        EvaluationReport instance = new EvaluationReport("test", costMatrix);
         instance.setTrueNegativeCount(1);
         instance.setTruePositiveCount(2);
         instance.setFalseNegativeCount(3);
@@ -322,7 +340,7 @@ public class EvaluationReportTest {
         instance.setFalsePositiveCount(4);
 
         double expResult = 5;
-        double result = instance.getNumTrulyPositive();
+        double result = instance.getTrueCount(Label.TRUE());
         assertEquals(expResult, result, 0.0);
     }
 
@@ -339,7 +357,7 @@ public class EvaluationReportTest {
         instance.setFalsePositiveCount(4);
 
         double expResult = 5;
-        double result = instance.getNumTrulyNegative();
+        double result = instance.getTrueCount(Label.FALSE());
         assertEquals(expResult, result, 0.0);
     }
 
@@ -356,7 +374,7 @@ public class EvaluationReportTest {
         instance.setFalsePositiveCount(4);
 
         double expResult = 6;
-        double result = instance.getNumPredictedPositive();
+        double result = instance.getPredictedCount(Label.TRUE());
         assertEquals(expResult, result, 0.0);
     }
 
@@ -373,7 +391,7 @@ public class EvaluationReportTest {
         instance.setFalsePositiveCount(4);
 
         double expResult = 4;
-        double result = instance.getNumPredictedNegative();
+        double result = instance.getPredictedCount(Label.FALSE());
         assertEquals(expResult, result, 0.0);
     }
 

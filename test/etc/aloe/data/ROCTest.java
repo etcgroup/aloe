@@ -44,6 +44,10 @@ public class ROCTest {
 
     @Before
     public void setUp() {
+        Label.startLabelSet();
+        Label.FALSE();
+        Label.TRUE();
+        Label.closeLabelSet();
     }
 
     @After

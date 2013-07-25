@@ -71,8 +71,8 @@ public class DownsampleBalancing implements Balancing {
         List<Segment> resultSegments = new ArrayList<Segment>();
 
         //Get the positive and negative labels
-        Label neg = Label.get(0);
-        Label pos = Label.get(1);
+        Label neg = Label.FALSE();
+        Label pos = Label.TRUE();
 
         List<Segment> positive = new ArrayList<Segment>();
         List<Segment> negative = new ArrayList<Segment>();

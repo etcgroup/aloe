@@ -48,6 +48,10 @@ public class ResolutionImplTest {
 
     @Before
     public void setUp() {
+        Label.startLabelSet();
+        Label.FALSE();
+        Label.TRUE();
+        Label.closeLabelSet();
     }
 
     @After
@@ -68,8 +72,8 @@ public class ResolutionImplTest {
         segment.add(new Message(5, new Date(), "Alice", "Yay", Label.FALSE()));
 
         ResolutionImpl instance = new ResolutionImpl();
-        Boolean expResult = Label.FALSE();
-        Boolean result = instance.resolveLabel(segment);
+        Label expResult = Label.FALSE();
+        Label result = instance.resolveLabel(segment);
         assertEquals(expResult, result);
     }
 
@@ -87,8 +91,8 @@ public class ResolutionImplTest {
         segment.add(new Message(5, new Date(), "Alice", "Yay", Label.TRUE()));
 
         ResolutionImpl instance = new ResolutionImpl();
-        Boolean expResult = Label.TRUE();
-        Boolean result = instance.resolveLabel(segment);
+        Label expResult = Label.TRUE();
+        Label result = instance.resolveLabel(segment);
         assertEquals(expResult, result);
     }
 
