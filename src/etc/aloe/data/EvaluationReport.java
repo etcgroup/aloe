@@ -467,7 +467,7 @@ public class EvaluationReport implements Saving {
         }
 
         str.append("\n== Cost Matrix ==\n");
-        fmt.format("%12s ", "\u25BE Predicted");
+        fmt.format("%12s ", "\u25BC Predicted");
         fmt.format(columnFormatter, labelNames);
 
         for (int i = 0; i < numLabels; i++) {
@@ -484,7 +484,7 @@ public class EvaluationReport implements Saving {
 
         str.append("\n== Confusion Matrix (num instances) ==\n");
 
-        fmt.format("%12s ", "\u25BE Predicted");
+        fmt.format("%12s ", "\u25BC Predicted");
         fmt.format(columnFormatter, labelNames);
 
         for (int i = 0; i < numLabels; i++) {
