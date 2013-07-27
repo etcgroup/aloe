@@ -467,12 +467,12 @@ public class EvaluationReport implements Saving {
         }
 
         str.append("\n== Cost Matrix ==\n");
-        fmt.format("%10s ", "Truth");
+        fmt.format("%12s ", "\u25BE Predicted");
         fmt.format(columnFormatter, labelNames);
 
         for (int i = 0; i < numLabels; i++) {
             Label trueLabel = Label.get(i);
-            fmt.format("%10s ", trueLabel.getName());
+            fmt.format("%12s ", trueLabel.getName());
 
             Object[] matrixRow = new Object[costMatrix[i].length];
             for (int j = 0; j < matrixRow.length; j++) {
@@ -484,12 +484,12 @@ public class EvaluationReport implements Saving {
 
         str.append("\n== Confusion Matrix (num instances) ==\n");
 
-        fmt.format("%10s ", "Truth");
+        fmt.format("%12s ", "\u25BE Predicted");
         fmt.format(columnFormatter, labelNames);
 
         for (int i = 0; i < numLabels; i++) {
             Label trueLabel = Label.get(i);
-            fmt.format("%10s ", trueLabel.getName());
+            fmt.format("%12s ", trueLabel.getName());
 
             Object[] matrixRow = new Object[confusionMatrix[i].length];
             for (int j = 0; j < matrixRow.length; j++) {
