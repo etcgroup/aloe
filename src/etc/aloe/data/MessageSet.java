@@ -131,6 +131,9 @@ public class MessageSet implements Loading, Saving {
 
         CsvReader csvReader = new CsvReader(source, charset);
 
+        //Start recording labels
+        Label.startLabelSet();
+
         try {
             validateCSVHeaders(csvReader);
 
@@ -192,6 +195,9 @@ public class MessageSet implements Loading, Saving {
         } catch (IOException ex) {
             throw new InvalidObjectException(ex.getMessage());
         }
+
+        //No more new labels can be registered now
+        Label.closeLabelSet();
 
         return true;
     }
