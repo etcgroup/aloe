@@ -29,36 +29,23 @@ import java.util.regex.Pattern;
  */
 public class FrPronounRegexFilter extends FrAbstractRegexFilter {
 
-    private NamedRegex[] regexFeatures = new NamedRegex[]{
+private NamedRegex[] regexFeatures = new NamedRegex[]{
         // first person singular pronouns
-        new NamedRegex("eng_prn_first_sng", "(?<!\\w)(me|i|my|mine|myself)(?!\\w)", Pattern.CASE_INSENSITIVE),
+        new NamedRegex("prn_first_sng", "(?<!\\w)(me|i|my|mine|myself|moi|je|g|j\\'?|mon|ma|mes|mien(ne)?(s)?|(moi\\s?-?(meme)|(m\u00EAme)))(?!\\w)", Pattern.CASE_INSENSITIVE),//self for all of these
         // second person singular pronouns
-        new NamedRegex("eng_prn_second_sng", "(?<!\\w)(you|your|yours|yourself|y\\'?all)(?!\\w)", Pattern.CASE_INSENSITIVE),
+        new NamedRegex("prn_second_sng", "(?<!\\w)(you|your|yours|yourself|y\\'?all|tu|toi|t\\'?|ton|ta|tes|tien(ne)?(s)?|(toi\\s?-?(meme)|(m\u00EAme)))(?!\\w)", Pattern.CASE_INSENSITIVE),
         // third person singular pronouns
-        new NamedRegex("eng_prn_third_sng", "(?<!\\w)(he|him|his|himself|she|her|hers|herself|it|itself|its|one|oneself)(?!\\w)", Pattern.CASE_INSENSITIVE),
+        new NamedRegex("prn_third_sng", "(?<!\\w)(he|him|his|himself|she|her|hers|herself|it|itself|its|one|oneself|il|lui|sien(ne)?(s)?|elle)(?!\\w|(soi\\s?-?(meme)|(m\u00EAme)))", Pattern.CASE_INSENSITIVE),//how to handle le/la as pronouns? how to handle on?
         // first person plural pronouns
-        new NamedRegex("eng_prn_first_pl", "(?<!\\w)(we|us|ourself|ourselves|our|ours)(?!\\w)", Pattern.CASE_INSENSITIVE),
+        new NamedRegex("prn_first_pl", "(?<!\\w)(we|us|ourself|ourselves|our|ours|nous|notre|nos|(nous\\s?-?(meme)|(m\u00EAmes)))(?!\\w)", Pattern.CASE_INSENSITIVE),
         // second person plural pronouns
-        new NamedRegex("eng_prn_second_pl", "(?<!\\w)(you all|yourselves)(?!\\w)", Pattern.CASE_INSENSITIVE),
+        new NamedRegex("prn_second_pl", "(?<!\\w)(you all|yourselves|vous|votre|vos|(vous\\s?-?(meme)|(m\u00EAmes)))(?!\\w)", Pattern.CASE_INSENSITIVE),
         // third person plural pronouns
-        new NamedRegex("eng_prn_third_pl", "(?<!\\w)(they|them|themself|themselves|theirself|theirselves|theirs|their)(?!\\w)", Pattern.CASE_INSENSITIVE),
+        new NamedRegex("prn_third_pl", "(?<!\\w)(they|them|themself|themselves|theirself|theirselves|theirs|their|ils|elles|leur|leurs|eux|(eux\\s?-?(meme)|(m\u00EAmes)))(?!\\w)", Pattern.CASE_INSENSITIVE),
         // interrogative pronouns
-        new NamedRegex("eng_prn_interrogative", "(?<!\\w)(who(m|se|\\'s)?)(?!\\w)", Pattern.CASE_INSENSITIVE),
-        // first person singular pronouns
-        new NamedRegex("fr_prn_first_sng", "(?<!\\w)(moi|je|g|j'?|mon|ma|mes|mien(ne)?(s)?|(moi\\s?-?(meme)|(m\u00EAme)))(?!\\w)", Pattern.CASE_INSENSITIVE),//self for all of these
-        // second person singular pronouns
-        new NamedRegex("fr_prn_second_sng", "(?<!\\w)(tu|toi|t'?|ton|ta|tes|tien(ne)?(s)?|(toi\\s?-?(meme)|(m\u00EAme)))(?!\\w)", Pattern.CASE_INSENSITIVE),
-        // third person singular pronouns
-        new NamedRegex("fr_prn_third_sng", "(?<!\\w)(il|lui|sien(ne)?(s)?|elle)(?!\\w|(soi\\s?-?(meme)|(m\u00EAme)))", Pattern.CASE_INSENSITIVE),//how to handle le/la as pronouns? how to handle on?
-        // first person plural pronouns
-        new NamedRegex("fr_prn_first_pl", "(?<!\\w)(nous|notre|nos|(nous\\s?-?(meme)|(m\u00EAmes)))(?!\\w)", Pattern.CASE_INSENSITIVE),
-        // second person plural pronouns
-        new NamedRegex("fr_prn_second_pl", "(?<!\\w)(vous|votre|vos|(vous\\s?-?(meme)|(m\u00EAmes)))(?!\\w)", Pattern.CASE_INSENSITIVE),
-        // third person plural pronouns
-        new NamedRegex("fr_prn_third_pl", "(?<!\\w)(ils|elles|leur|leurs|eux|(eux\\s?-?(meme)|(m\u00EAmes)))(?!\\w)", Pattern.CASE_INSENSITIVE),
-        // interrogative pronouns
-        new NamedRegex("fr_prn_interrogative", "(?<!\\w)(qui|ki)(?!\\w)", Pattern.CASE_INSENSITIVE)
+        new NamedRegex("prn_interrogative", "(?<!\\w)((who(m|se|\\'s)?)|qui|ki)(?!\\w)", Pattern.CASE_INSENSITIVE)
     };
+
 
     public FrPronounRegexFilter() {
     }
