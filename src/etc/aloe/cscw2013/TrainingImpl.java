@@ -19,6 +19,7 @@
 package etc.aloe.cscw2013;
 
 import etc.aloe.data.ExampleSet;
+import etc.aloe.data.Label;
 import etc.aloe.processes.Training;
 import weka.classifiers.Classifier;
 import weka.classifiers.CostMatrix;
@@ -35,17 +36,15 @@ public class TrainingImpl implements Training {
 
     private static final String SMO_OPTIONS = "-C 1.0 -L 0.0010 -P 1.0E-12 -N 0 -V -1 -W 1 -K \"weka.classifiers.functions.supportVector.PolyKernel -C 250007 -E 1.0\"";
     private boolean buildLogisticModel = false;
-    private double falsePositiveCost = 1;
-    private double falseNegativeCost = 1;
+    private double[][] costMatrix;
     private boolean useReweighting = false;
     private boolean useCostTraining = false;
 
     public TrainingImpl() {
     }
 
-    public TrainingImpl(double falsePositiveCost, double falseNegativeCost, boolean useReweighting) {
-        this.falsePositiveCost = falsePositiveCost;
-        this.falseNegativeCost = falseNegativeCost;
+    public TrainingImpl(double[][] costMatrix, boolean useReweighting) {
+        this.costMatrix = costMatrix;
         this.useReweighting = useReweighting;
         this.useCostTraining = true;
     }
@@ -58,20 +57,12 @@ public class TrainingImpl implements Training {
         this.buildLogisticModel = buildLogisticModel;
     }
 
-    public double getFalsePositiveCost() {
-        return falsePositiveCost;
+    public double[][] getCostMatrix() {
+        return costMatrix;
     }
 
-    public void setFalsePositiveCost(double falsePositiveCost) {
-        this.falsePositiveCost = falsePositiveCost;
-    }
-
-    public double getFalseNegativeCost() {
-        return falseNegativeCost;
-    }
-
-    public void setFalseNegativeCost(double falseNegativeCost) {
-        this.falseNegativeCost = falseNegativeCost;
+    public void setCostMatrix(double[][] costMatrix) {
+        this.costMatrix = costMatrix;
     }
 
     public boolean isUseReweighting() {
@@ -110,11 +101,17 @@ public class TrainingImpl implements Training {
         if (useCostTraining) {
             CostSensitiveClassifier cost = new CostSensitiveClassifier();
             cost.setClassifier(smo);
-            CostMatrix matrix = new CostMatrix(2);
-            matrix.setElement(0, 0, 0);
-            matrix.setElement(0, 1, falsePositiveCost);
-            matrix.setElement(1, 0, falseNegativeCost);
-            matrix.setElement(1, 1, 0);
+            CostMatrix matrix = new CostMatrix(Label.getLabelCount());
+            for (int i = 0; i < costMatrix.length; i++) {
+                for (int j = 0; j < costMatrix[i].length; j++) {
+                    //The Weka cost matrix seems to be backwards from our cost matrix
+                    matrix.setElement(j, i, costMatrix[i][j]);
+                }
+            }
+//            matrix.setElement(0, 0, 0);
+//            matrix.setElement(0, 1, falsePositiveCost);
+//            matrix.setElement(1, 0, falseNegativeCost);
+//            matrix.setElement(1, 1, 0);
             cost.setCostMatrix(matrix);
 
             classifier = cost;

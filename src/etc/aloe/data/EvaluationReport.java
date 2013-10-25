@@ -331,6 +331,27 @@ public class EvaluationReport implements Saving {
     }
 
     /**
+     * Get the percent correct that a naive guessing algorithm would achieve.
+     * It guesses based on the observed class percentages, but ignores all features.
+     * 
+     * @return
+     */
+    public double getBaselinePercentCorrect() {
+        double baselineCorrect = 0;
+
+        int numLabels = Label.getLabelCount();
+        int examples = this.getTotalExamples();
+        for (int i = 0; i < numLabels; i++) {
+            Label label = Label.get(i);
+            double percent = (double) this.getTrueCount(label) / examples;
+            //"percent" of the examples are truly this label, and it gets "percent" of them correct
+            baselineCorrect += percent * percent;
+        }
+
+        return baselineCorrect;
+    }
+
+    /**
      * PercentIncorrect = (FP + FN) / (TP + TN + FP + FN)
      *
      * @return
@@ -517,7 +538,7 @@ public class EvaluationReport implements Saving {
                 getAverageFMeasure());
 
         str.append("\n-- Overall Statistics --\n");
-        fmt.format("%11s: %10f%n", "% Correct", getPercentCorrect());
+        fmt.format("%11s: %10f (baseline %f) %n", "% Correct", getPercentCorrect(), getBaselinePercentCorrect());
         fmt.format("%11s: %10f%n", "% Incorrect", getPercentIncorrect());
         if (Label.isBinary()) {
             fmt.format("%11s: %10f%n", "Kappa", getCohensKappa());

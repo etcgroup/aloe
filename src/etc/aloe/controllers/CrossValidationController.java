@@ -47,9 +47,8 @@ public class CrossValidationController {
     private FeatureExtraction featureExtractionImpl;
     private Training trainingImpl;
     private Balancing balancingImpl;
-    private double falsePositiveCost = 1;
-    private double falseNegativeCost = 1;
     private boolean balanceTestSet;
+    private double[][] costMatrix;
 
     public EvaluationReport getEvaluationReport() {
         return evaluationReport;
@@ -66,9 +65,8 @@ public class CrossValidationController {
         this.folds = folds;
     }
 
-    public void setCosts(double falsePositiveCost, double falseNegativeCost) {
-        this.falsePositiveCost = falsePositiveCost;
-        this.falseNegativeCost = falseNegativeCost;
+    public void setCostMatrix(double[][] costMatrix) {
+        this.costMatrix = costMatrix;
     }
 
     public void run() {
@@ -85,11 +83,7 @@ public class CrossValidationController {
             validationPrep.randomize(segmentSet.getSegments());
             segmentSet.setSegments(validationPrep.stratify(segmentSet.getSegments(), folds));
 
-            double[][] costMatrix = {
-                {0, falsePositiveCost},
-                {falseNegativeCost, 0}
-            };
-            evaluationReport = new EvaluationReport(this.folds + " Cross Validation", costMatrix);
+            evaluationReport = new EvaluationReport(this.folds + " Cross Validation", this.costMatrix);
             for (int foldIndex = 0; foldIndex < this.folds; foldIndex++) {
                 System.out.println("- Starting fold " + (foldIndex + 1));
                 //Split the data
@@ -139,8 +133,8 @@ public class CrossValidationController {
                 report.addPredictions(predictions);
 
                 evaluationReport.addPartial(report);
-                int numCorrect = report.getTrueNegativeCount() + report.getTruePositiveCount();
-                System.out.println("- Fold " + (foldIndex + 1) + " completed (" + numCorrect + "/" + testingSet.size() + " correct).");
+                double percentCorrect = report.getPercentCorrect();
+                System.out.println("- Fold " + (foldIndex + 1) + " completed (" + percentCorrect + "% correct).");
                 System.out.println();
             }
         } else {

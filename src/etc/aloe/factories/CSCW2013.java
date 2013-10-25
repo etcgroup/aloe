@@ -185,8 +185,7 @@ public class CSCW2013 implements PipelineFactory {
 
             if (trainOpts.useMinCost || trainOpts.useReweighting) {
                 trainingImpl.setUseCostTraining(true);
-                trainingImpl.setFalsePositiveCost(trainOpts.falsePositiveCost);
-                trainingImpl.setFalseNegativeCost(trainOpts.falseNegativeCost);
+                trainingImpl.setCostMatrix(trainOpts.getCostMatrix());
                 trainingImpl.setUseReweighting(trainOpts.useReweighting);
             }
 
@@ -239,7 +238,7 @@ public class CSCW2013 implements PipelineFactory {
 
             //Options
             crossValidationController.setFolds(trainOpts.crossValidationFolds);
-            crossValidationController.setCosts(trainOpts.falsePositiveCost, trainOpts.falseNegativeCost);
+            crossValidationController.setCostMatrix(trainOpts.getCostMatrix());
             crossValidationController.setBalanceTestSet(trainOpts.balanceTestSet);
         } else {
             throw new IllegalArgumentException("Options must be for Training");
@@ -331,5 +330,13 @@ public class CSCW2013 implements PipelineFactory {
         public boolean balanceTestSet = false;
         @Option(name = "--emoticons", aliases = {"-e"}, usage = "emoticon dictionary file (default emoticons.txt)")
         public File emoticonFile = new File("emoticons.txt");
+
+        public double[][] getCostMatrix() {
+            return new double[][] {
+                {0, 2 * falsePositiveCost, 4 * falsePositiveCost},
+                {falseNegativeCost, 0, 2 * falsePositiveCost},
+                {2 * falseNegativeCost, falseNegativeCost, 0}
+            };
+        }
     }
 }
