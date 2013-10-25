@@ -1,3 +1,8 @@
+```
+Version: v1.0
+Revision: b913bc18cd0a25c95a15f45ad41b0eb3f699b4f1
+Build Time: 2013-10-25T14:10:06.449-0700
+```
 ALOE
 ====
 
@@ -23,8 +28,8 @@ to predict the label for messages that you type while the program runs.
 
 These three modes are explained in detail below.
 
-**[Download the binary distribution of ALOE](https://github.com/downloads/etcgroup/aloe/aloe-v1.0.zip)**
-
+**[Download ALOE 1.0 (Fall 2012)](https://github.com/downloads/etcgroup/aloe/aloe-v1.0.zip)**
+**[Download ALOE 1.1 (Fall 2013)](https://github.com/etcgroup/aloe/releases/v1.1)**
 **[Visit the Javadocs](http://etcgroup.github.com/aloe/javadoc-v1.0)**
 
 
