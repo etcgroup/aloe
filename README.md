@@ -28,11 +28,11 @@ to predict the label for messages that you type while the program runs.
 
 These three modes are explained in detail below.
 
-**[Download ALOE 1.0 (Fall 2012)](https://github.com/downloads/etcgroup/aloe/aloe-v1.0.zip)**
-**[Javadocs](http://etcgroup.github.io/aloe/javadoc-v1.0/)**
+**[Download ALOE 1.0 (Fall 2012)](https://github.com/downloads/etcgroup/aloe/aloe-v1.0.zip)** -- 
+**[View Javadocs](http://etcgroup.github.io/aloe/javadoc-v1.0/)**
 
-**[Download ALOE 1.1 (Fall 2013)](https://github.com/etcgroup/aloe/releases/v1.1)**
-**[Javadocs](http://etcgroup.github.io/aloe/javadoc-v1.1/)**
+**[Download ALOE 1.1 (Fall 2013)](https://github.com/etcgroup/aloe/releases/v1.1)** -- 
+**[View Javadocs](http://etcgroup.github.io/aloe/javadoc-v1.1/)**
 
 
 ## Running ALOE
