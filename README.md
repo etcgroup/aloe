@@ -31,7 +31,7 @@ These three modes are explained in detail below.
 **[Download ALOE 1.0 (Fall 2012)](https://github.com/downloads/etcgroup/aloe/aloe-v1.0.zip)** -- 
 **[View Javadocs](http://etcgroup.github.io/aloe/javadoc-v1.0/)**
 
-**[Download ALOE 1.1 (Fall 2013)](https://github.com/etcgroup/aloe/releases/v1.1)** -- 
+**[Download ALOE 1.1 (Fall 2013)](https://github.com/etcgroup/aloe/releases/tag/1.1)** -- 
 **[View Javadocs](http://etcgroup.github.io/aloe/javadoc-v1.1/)**
 
 
