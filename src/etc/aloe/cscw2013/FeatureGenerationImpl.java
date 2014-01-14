@@ -200,8 +200,9 @@ public class FeatureGenerationImpl implements FeatureGeneration {
 
         //This is stupid because it depends on how much data you use
         //bagger.setMinTermFreq(20);
-
-        filter.setWordsToKeep(600);
+        
+        filter.setDoNotOperateOnPerClassBasis(true);
+        filter.setWordsToKeep(800);
         filter.setLowerCaseTokens(true);
 
         //use stemming and remove "nonsense"
