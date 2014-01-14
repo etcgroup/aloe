@@ -32,6 +32,7 @@ import etc.aloe.processes.Segmentation;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import weka.core.Instances;
 
 /**
  * Class that takes input training data, uses cross validation to evaluate the
@@ -84,6 +85,12 @@ public class AloeTrain extends Aloe {
             saveModel(model, options.outputModelFile);
             saveTopFeatures(topFeatures, options.outputTopFeaturesFile);
             saveFeatureWeights(featureWeights, options.outputFeatureWeightsFile);
+            
+            if (options.outputFeatureValues) {
+                Instances featureValues = trainingController.getFeatureValues();
+                saveInstances(featureValues, options.outputFeatureValuesFile);
+            }
+            
             if (evalReport != null) {
                 saveEvaluationReport(evalReport, options.outputEvaluationReportFile);
                 System.out.println("Aggregated cross-validation report:");
@@ -106,4 +113,5 @@ public class AloeTrain extends Aloe {
             throw new IllegalArgumentException("Options must be for Training");
         }
     }
+    
 }

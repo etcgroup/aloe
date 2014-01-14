@@ -42,11 +42,14 @@ public class LabelOptions extends ModeOptions {
         outputCSVFile = new File(dir, FileNames.OUTPUT_CSV_NAME);
         outputEvaluationReportFile = new File(dir, FileNames.OUTPUT_EVALUTION_REPORT_NAME);
         outputROCFile = new File(dir, "roc" + FileNames.ROC_SUFFIX);
+        outputFeatureValuesFile = new File(dir, FileNames.OUTPUT_FEATURE_VALUES_NAME);
     }
     public File outputDir;
     public File outputCSVFile;
     public File outputEvaluationReportFile;
     public File outputROCFile;
+    public File outputFeatureValuesFile;
+    
     @Option(name = "--model", aliases = {"-m"}, usage = "use an existing model file", required = true, metaVar = "MODEL_FILE")
     public File inputModelFile;
     @Option(name = "--features", aliases = {"-f"}, usage = "use an existing feature specification file", required = true, metaVar = "FEATURES_FILE")
@@ -55,6 +58,9 @@ public class LabelOptions extends ModeOptions {
     @Option(name = "--roc", usage = "Export data for ROC curves")
     public boolean makeROC;
 
+    @Option(name="--feature-values", usage="output a csv file with feature values for each entity")
+    public boolean outputFeatureValues = false;
+    
     @Override
     public void printUsage() {
         System.err.println("java -jar aloe.jar PIPELINE_CLASS label INPUT_CSV OUTPUT_DIR -m MODEL_FILE -f FEATURES_FILE [options...]");

@@ -44,6 +44,7 @@ public class TrainOptions extends ModeOptions {
         outputModelFile = new File(dir, FileNames.OUTPUT_MODEL_NAME);
         outputTopFeaturesFile = new File(dir, FileNames.OUTPUT_TOP_FEATURES_NAME);
         outputFeatureWeightsFile = new File(dir, FileNames.OUTPUT_FEATURE_WEIGHTS_NAME);
+        outputFeatureValuesFile = new File(dir, FileNames.OUTPUT_FEATURE_VALUES_NAME);
     }
     public File outputDir;
     public File outputROCDir;
@@ -52,10 +53,14 @@ public class TrainOptions extends ModeOptions {
     public File outputModelFile;
     public File outputTopFeaturesFile;
     public File outputFeatureWeightsFile;
-
+    public File outputFeatureValuesFile;
+    
     @Option(name="--roc", usage="Export data for ROC curves")
     public boolean makeROC;
 
+    @Option(name="--feature-values", usage="output a csv file with feature values for each entity")
+    public boolean outputFeatureValues = false;
+    
     @Override
     public void printUsage() {
         System.err.println("java -jar aloe.jar PIPELINE_CLASS train INPUT_CSV OUTPUT_DIR [options...]");

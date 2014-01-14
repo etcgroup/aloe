@@ -38,6 +38,8 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
+import weka.core.Instances;
+import weka.core.converters.CSVSaver;
 
 /**
  * Main Aloe controller superclass. Provides many useful IO methods used by the
@@ -236,5 +238,18 @@ public abstract class Aloe {
         }
     }
 
+    protected void saveInstances(Instances instances, File outputFile) {
+        try {
+            CSVSaver saver = new CSVSaver();
+            saver.setFile(outputFile);
+            saver.setInstances(instances);
+            saver.writeBatch();
+            System.out.println("Saved instances to " + outputFile);
+        } catch (IOException e) {
+            System.err.println("Error writing instances to " + outputFile);
+            System.err.println("\t" + e.getMessage());
+        }
+    }
+    
     public abstract void run(ModeOptions options);
 }

@@ -26,6 +26,7 @@ import etc.aloe.data.Predictions;
 import etc.aloe.data.SegmentSet;
 import etc.aloe.processes.FeatureExtraction;
 import etc.aloe.processes.LabelMapping;
+import weka.core.Instances;
 
 /**
  * Class for using an existing model to label unlabeled data.
@@ -42,6 +43,7 @@ public class LabelingController {
     private LabelMapping mappingImpl;
     private double falsePositiveCost = 1;
     private double falseNegativeCost = 1;
+    private Instances featureValues;
 
     public void setSegmentSet(SegmentSet segments) {
         this.segmentSet = segments;
@@ -67,6 +69,8 @@ public class LabelingController {
         FeatureExtraction extraction = getFeatureExtractionImpl();
         ExampleSet examples = extraction.extractFeatures(segmentSet.getBasicExamples(), featureSpecification);
 
+        this.featureValues = examples.getInstances();
+        
         //Predict the labels
         Predictions predictions = this.model.getPredictions(examples);
 
@@ -98,5 +102,9 @@ public class LabelingController {
 
     public void setMappingImpl(LabelMapping mapping) {
         this.mappingImpl = mapping;
+    }
+
+    public Instances getFeatureValues() {
+        return this.featureValues;
     }
 }

@@ -39,4 +39,5 @@ public abstract class FileNames {
     public final static String OUTPUT_TOP_FEATURES_NAME = "top_features" + TOP_FEATURES_SUFFIX;
     public final static String OUTPUT_FEATURE_WEIGHTS_NAME = "feature_weights" + FEATURE_WEIGHTS_SUFFIX;
     public final static String OUTPUT_ROC_DIR_NAME = "rocs";
+    public static String OUTPUT_FEATURE_VALUES_NAME = "feature_values.csv";
 }
