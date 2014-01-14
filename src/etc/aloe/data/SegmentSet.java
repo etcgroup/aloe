@@ -66,6 +66,15 @@ public class SegmentSet {
     public List<Segment> getSegments() {
         return segments;
     }
+    
+    /**
+     * Add a bunch of segments to the set.
+     * 
+     * @param segments 
+     */
+    public void addAll(List<Segment> segments) {
+        this.segments.addAll(segments);
+    }
 
     /**
      * Set the underlying list of segments.
@@ -204,5 +213,19 @@ public class SegmentSet {
             }
         }
         return count;
+    }
+    
+    /**
+     * Get all the messages in the segments in this segment set.
+     * @return 
+     */
+    public MessageSet getMessages(MessageSet template) {
+        MessageSet messages = new MessageSet();
+        messages.setDateFormat(template.getDateFormat());
+        
+        for (Segment s : segments) {
+            messages.addAll(s.getMessages());
+        }
+        return messages;
     }
 }

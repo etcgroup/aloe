@@ -30,6 +30,7 @@ import etc.aloe.processes.CrossValidationPrep;
 import etc.aloe.processes.CrossValidationSplit;
 import etc.aloe.processes.FeatureExtraction;
 import etc.aloe.processes.FeatureGeneration;
+import etc.aloe.processes.LabelMapping;
 import etc.aloe.processes.Training;
 
 /**
@@ -50,6 +51,7 @@ public class CrossValidationController {
     private double falsePositiveCost = 1;
     private double falseNegativeCost = 1;
     private boolean balanceTestSet;
+    private LabelMapping mappingImpl;
 
     public EvaluationReport getEvaluationReport() {
         return evaluationReport;
@@ -124,7 +126,6 @@ public class CrossValidationController {
 
                 System.out.println("- Extracting basic features from test set");
                 ExampleSet basicTestingExamples = testingSegments.getBasicExamples();
-                testingSegments = null;
 
                 System.out.println("- Extracting features from test set");
                 ExampleSet testingSet = extraction.extractFeatures(basicTestingExamples, spec);
@@ -133,7 +134,11 @@ public class CrossValidationController {
                 Predictions predictions = model.getPredictions(testingSet);
                 EvaluationReport report = new EvaluationReport("Fold " + (foldIndex + 1), falsePositiveCost, falseNegativeCost);
                 report.addPredictions(predictions);
-
+                
+                LabelMapping mapping = getMappingImpl();
+                mapping.map(predictions, testingSegments);
+                report.addLabeledTestData(testingSegments);
+                
                 evaluationReport.addPartial(report);
                 int numCorrect = report.getTrueNegativeCount() + report.getTruePositiveCount();
                 System.out.println("- Fold " + (foldIndex + 1) + " completed (" + numCorrect + "/" + testingSet.size() + " correct).");
@@ -179,4 +184,13 @@ public class CrossValidationController {
     public void setBalanceTestSet(boolean balanceTestSet) {
         this.balanceTestSet = balanceTestSet;
     }
+    
+    public LabelMapping getMappingImpl() {
+        return this.mappingImpl;
+    }
+
+    public void setMappingImpl(LabelMapping mapping) {
+        this.mappingImpl = mapping;
+    }
+
 }

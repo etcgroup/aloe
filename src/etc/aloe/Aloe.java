@@ -24,6 +24,7 @@ import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.MessageSet;
 import etc.aloe.data.Model;
 import etc.aloe.data.ROC;
+import etc.aloe.data.SegmentSet;
 import etc.aloe.factories.PipelineFactory;
 import etc.aloe.options.ModeOptions;
 import java.io.File;

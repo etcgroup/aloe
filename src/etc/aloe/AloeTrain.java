@@ -93,6 +93,7 @@ public class AloeTrain extends Aloe {
             
             if (evalReport != null) {
                 saveEvaluationReport(evalReport, options.outputEvaluationReportFile);
+                
                 System.out.println("Aggregated cross-validation report:");
                 System.out.println(evalReport);
                 System.out.println("---------");
@@ -107,11 +108,33 @@ public class AloeTrain extends Aloe {
                         saveROC(roc, outputFile);
                     }
                 }
+                
+                if (options.outputTests) {
+                    options.outputTestsDir.mkdirs();
+                    List<SegmentSet> testSets = evalReport.getTestSets();
+                    List<String> testSetNames = evalReport.getTestSetNames();
+                    
+                    SegmentSet combined = new SegmentSet();
+                    
+                    for (int i = 0; i < testSets.size(); i++) {
+                        String fileName = testSetNames.get(i) + FileNames.TEST_DATA_SUFFIX;
+                        SegmentSet testSet = testSets.get(i);
+                        combined.addAll(testSet.getSegments());
+                        
+                        File outputFile = new File(options.outputTestsDir, fileName);
+                        
+                        saveMessages(testSet.getMessages(messages), outputFile);
+                    }
+                    
+                    String fileName = FileNames.OUTPUT_TEST_DATA_COMBINED_NAME;
+                    File outputFile = new File(options.outputTestsDir, fileName);
+                    saveMessages(combined.getMessages(messages), outputFile);
+
+                }
             }
 
         } else {
             throw new IllegalArgumentException("Options must be for Training");
         }
     }
-    
 }

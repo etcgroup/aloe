@@ -32,12 +32,17 @@ public abstract class FileNames {
     public final static String FEATURE_WEIGHTS_SUFFIX = ".csv";
     public final static String TOP_FEATURES_SUFFIX = ".txt";
     public final static String ROC_SUFFIX = ".csv";
+    public final static String TEST_DATA_SUFFIX = ".csv";
     public final static String OUTPUT_CSV_NAME = "labeled" + DATA_SUFFIX;
     public final static String OUTPUT_EVALUTION_REPORT_NAME = "report" + EVALUATION_REPORT_SUFFIX;
     public final static String OUTPUT_FEATURE_SPEC_NAME = "features" + FEATURE_SPEC_SUFFIX;
     public final static String OUTPUT_MODEL_NAME = "model" + MODEL_SUFFIX;
     public final static String OUTPUT_TOP_FEATURES_NAME = "top_features" + TOP_FEATURES_SUFFIX;
     public final static String OUTPUT_FEATURE_WEIGHTS_NAME = "feature_weights" + FEATURE_WEIGHTS_SUFFIX;
+    public final static String OUTPUT_TEST_DATA_COMBINED_NAME = "combined" + TEST_DATA_SUFFIX;
     public final static String OUTPUT_ROC_DIR_NAME = "rocs";
-    public static String OUTPUT_FEATURE_VALUES_NAME = "feature_values.csv";
+    public final static String OUTPUT_TESTS_DIR_NAME = "test_sets";
+    public final static String OUTPUT_FEATURE_VALUES_NAME = "feature_values.csv";
+    
+    
 }

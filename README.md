@@ -137,6 +137,7 @@ in "train" mode are described below. **Files in this directory may be overwritte
 Optional: Use the `--roc` option to generate a ROC curve for each fold of cross validation.
 You can also use the `--feature-values` flag to output "feature_values.csv", a dump of the training data
 after feature extraction.
+The `--test-sets` flag will cause each cross-validation test set to be dumped, with labels, as CSV files.
 
 #### Output
 
@@ -152,6 +153,7 @@ Within the provided `OUTPUT_DIR`, ALOE will create the following files:
    by the classifier.
 * *feature_values.csv*: A CSV spreadsheet with the features extracted from every training instance, if the `--feature-values` flag was used.
 * *rocs/Fold N.csv*: If `--roc` was used, CSV spreadsheets containing the ROC curves for each fold of cross validation.
+* *test_sets/Fold N.csv*: If `--test-sets` was used, CSV files containing labeled test data will be exported for each round of cross validation.
 
 **Files in the output directory may be overwritten.**
 
