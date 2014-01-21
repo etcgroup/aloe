@@ -77,6 +77,7 @@ public class SpecialRegexFilter extends AbstractRegexFilter {
         // Negation: no, not, cannot, can't/won't/whatever, cant/wont/whatever
         // See http://www.englishclub.com/vocabulary/contractions-negative.htm
         new NamedRegex("negation", "(?<!\\w)(not?|cannot|" + toRegex(contractedNegationForms, false) + ")(?!\\w)", Pattern.CASE_INSENSITIVE),
+        
         // Matches many swearwords
         new NamedRegex("swear", "(?<!\\w)("
         + "((?=\\p{Punct}*[@#$%^&*]\\p{Punct}*[@#$%^&*])([\\p{Punct}&&[^.]]{4,}))"
@@ -87,8 +88,15 @@ public class SpecialRegexFilter extends AbstractRegexFilter {
         + "|ass(hole)?"
         + "|suck(y|s|ed)?"
         + ")(?!\\w)", Pattern.CASE_INSENSITIVE),
+        
         // Matches lols, hehes, heehees, hahaas, and hohos (plus many others)
-        new NamedRegex("names", "(?<!\\w)(" + toRegex(namesList) + ")", Pattern.CASE_INSENSITIVE)
+        new NamedRegex("names", "(?<!\\w)(" + toRegex(namesList) + ")", Pattern.CASE_INSENSITIVE),
+            
+        // Matches hashtags
+        new NamedRegex("hashtags", "(?<!\\w)(#[a-z]+)(?!\\w)", Pattern.CASE_INSENSITIVE),
+        
+        // Matches urls
+        new NamedRegex("urls", "(^|\\s)((https?:\\/\\/)?[\\w-]+(\\.[\\w-]+)+\\.?(:\\d+)?(\\/\\S*)?)")
     };
 
     public SpecialRegexFilter() {
