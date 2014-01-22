@@ -93,7 +93,10 @@ public class SpecialRegexFilter extends AbstractRegexFilter {
         new NamedRegex("names", "(?<!\\w)(" + toRegex(namesList) + ")", Pattern.CASE_INSENSITIVE),
             
         // Matches hashtags
-        new NamedRegex("hashtags", "(?<!\\w)(#[a-z]+)(?!\\w)", Pattern.CASE_INSENSITIVE),
+        new NamedRegex("hashtags", "(?<!\\w)(#[a-z]\\w*)(?!\\w)", Pattern.CASE_INSENSITIVE),
+        
+        // Matches mentions
+        new NamedRegex("mentions", "(?<!\\w)(@[a-z]\\w*)(?!\\w)", Pattern.CASE_INSENSITIVE),
         
         // Matches urls
         new NamedRegex("urls", "(^|\\s)((https?:\\/\\/)?[\\w-]+(\\.[\\w-]+)+\\.?(:\\d+)?(\\/\\S*)?)")
