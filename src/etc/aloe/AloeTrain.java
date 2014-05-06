@@ -32,6 +32,7 @@ import etc.aloe.processes.Segmentation;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import weka.core.Instances;
 
 /**
  * Class that takes input training data, uses cross validation to evaluate the
@@ -84,8 +85,15 @@ public class AloeTrain extends Aloe {
             saveModel(model, options.outputModelFile);
             saveTopFeatures(topFeatures, options.outputTopFeaturesFile);
             saveFeatureWeights(featureWeights, options.outputFeatureWeightsFile);
+            
+            if (options.outputFeatureValues) {
+                Instances featureValues = trainingController.getFeatureValues();
+                saveInstances(featureValues, options.outputFeatureValuesFile);
+            }
+            
             if (evalReport != null) {
                 saveEvaluationReport(evalReport, options.outputEvaluationReportFile);
+                
                 System.out.println("Aggregated cross-validation report:");
                 System.out.println(evalReport);
                 System.out.println("---------");
@@ -99,6 +107,29 @@ public class AloeTrain extends Aloe {
 
                         saveROC(roc, outputFile);
                     }
+                }
+                
+                if (options.outputTests) {
+                    options.outputTestsDir.mkdirs();
+                    List<SegmentSet> testSets = evalReport.getTestSets();
+                    List<String> testSetNames = evalReport.getTestSetNames();
+                    
+                    SegmentSet combined = new SegmentSet();
+                    
+                    for (int i = 0; i < testSets.size(); i++) {
+                        String fileName = testSetNames.get(i) + FileNames.TEST_DATA_SUFFIX;
+                        SegmentSet testSet = testSets.get(i);
+                        combined.addAll(testSet.getSegments());
+                        
+                        File outputFile = new File(options.outputTestsDir, fileName);
+                        
+                        saveMessages(testSet.getMessages(messages), outputFile);
+                    }
+                    
+                    String fileName = FileNames.OUTPUT_TEST_DATA_COMBINED_NAME;
+                    File outputFile = new File(options.outputTestsDir, fileName);
+                    saveMessages(combined.getMessages(messages), outputFile);
+
                 }
             }
 

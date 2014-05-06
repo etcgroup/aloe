@@ -32,30 +32,40 @@ public class TrainOptions extends ModeOptions {
 
     @Argument(index = 0, usage = "input CSV file containing messages", required = true, metaVar = "INPUT_CSV")
     public File inputCSVFile;
-
+    
     @Argument(index = 1, usage = "output directory (contents may be overwritten)", required = true, metaVar = "OUTPUT_DIR")
     private void setOutputDir(File dir) {
         this.outputDir = dir;
         dir.mkdirs();
 
         outputROCDir = new File(dir, FileNames.OUTPUT_ROC_DIR_NAME);
+        outputTestsDir = new File(dir, FileNames.OUTPUT_TESTS_DIR_NAME);
         outputEvaluationReportFile = new File(dir, FileNames.OUTPUT_EVALUTION_REPORT_NAME);
         outputFeatureSpecFile = new File(dir, FileNames.OUTPUT_FEATURE_SPEC_NAME);
         outputModelFile = new File(dir, FileNames.OUTPUT_MODEL_NAME);
         outputTopFeaturesFile = new File(dir, FileNames.OUTPUT_TOP_FEATURES_NAME);
         outputFeatureWeightsFile = new File(dir, FileNames.OUTPUT_FEATURE_WEIGHTS_NAME);
+        outputFeatureValuesFile = new File(dir, FileNames.OUTPUT_FEATURE_VALUES_NAME);
     }
     public File outputDir;
     public File outputROCDir;
+    public File outputTestsDir;
     public File outputEvaluationReportFile;
     public File outputFeatureSpecFile;
     public File outputModelFile;
     public File outputTopFeaturesFile;
     public File outputFeatureWeightsFile;
-
+    public File outputFeatureValuesFile;
+    
     @Option(name="--roc", usage="Export data for ROC curves")
     public boolean makeROC;
 
+    @Option(name="--test-sets", usage="Dump each labeled test set to files")
+    public boolean outputTests;
+    
+    @Option(name="--feature-values", usage="output a csv file with feature values for each entity")
+    public boolean outputFeatureValues = false;
+    
     @Override
     public void printUsage() {
         System.err.println("java -jar aloe.jar PIPELINE_CLASS train INPUT_CSV OUTPUT_DIR [options...]");

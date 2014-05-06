@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -40,8 +41,11 @@ public class EvaluationReport implements Saving {
     private double falsePositiveCost = 1;
     private double falseNegativeCost = 1;
     private List<ROC> rocs = new ArrayList<ROC>();
+    private List<SegmentSet> testSets = new ArrayList<SegmentSet>();
+    private List<String> testSetNames = new ArrayList<String>();
+    
     private final String name;
-
+    
     /**
      * Construct an equal-cost evaluation report
      */
@@ -337,6 +341,18 @@ public class EvaluationReport implements Saving {
         falseNegativeCount += report.falseNegativeCount;
 
         this.rocs.addAll(report.getROCs());
+        this.testSets.addAll(report.getTestSets());
+        this.testSetNames.addAll(report.getTestSetNames());
+    }
+    
+    /**
+     * Add some test data with labels to the report, for later export.
+     * 
+     * @param testingSegments 
+     */
+    public void addLabeledTestData(SegmentSet testingSegments) {
+        this.testSets.add(testingSegments);
+        this.testSetNames.add(this.getName());
     }
 
     /**
@@ -360,11 +376,23 @@ public class EvaluationReport implements Saving {
     }
 
     /**
+     * Get the labeled test sets from cross validation.
+     * @return 
+     */
+    public List<SegmentSet> getTestSets() {
+        return testSets;
+    }
+    
+    /**
      * Get a list of named ROC curves included in this report.
      *
      * @return
      */
     public List<ROC> getROCs() {
         return rocs;
+    }
+
+    public List<String> getTestSetNames() {
+        return this.testSetNames;
     }
 }

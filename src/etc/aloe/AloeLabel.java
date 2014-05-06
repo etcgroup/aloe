@@ -28,6 +28,7 @@ import etc.aloe.data.SegmentSet;
 import etc.aloe.options.LabelOptions;
 import etc.aloe.options.ModeOptions;
 import etc.aloe.processes.Segmentation;
+import weka.core.Instances;
 
 /**
  * Class that takes input data (may be labeled, unlabeled, or mixed) and applies
@@ -80,8 +81,13 @@ public class AloeLabel extends Aloe {
                 saveROC(roc, options.outputROCFile);
             }
             
+            if (options.outputFeatureValues) {
+                Instances featureValues = labelingController.getFeatureValues();
+                saveInstances(featureValues, options.outputFeatureValuesFile);
+            }
+            
             saveMessages(messages, options.outputCSVFile);
-
+            
             System.out.println("Testing Report:");
             System.out.println(evalReport);
             System.out.println("---------");

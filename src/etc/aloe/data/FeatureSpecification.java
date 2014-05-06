@@ -28,6 +28,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import weka.core.Instances;
 import weka.filters.Filter;
 
 /**
@@ -76,5 +77,13 @@ public class FeatureSpecification implements Loading, Saving {
      */
     public List<Filter> getFilters() {
         return filters;
+    }
+
+    /**
+     * Get the output format for this specification.
+     * @return 
+     */
+    public Instances getOutputFormat() {
+        return filters.get(filters.size() - 1).getOutputFormat();
     }
 }

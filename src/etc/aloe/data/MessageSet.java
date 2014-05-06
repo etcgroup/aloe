@@ -69,6 +69,14 @@ public class MessageSet implements Loading, Saving {
     public void add(Message message) {
         messages.add(message);
     }
+    
+    /**
+     * Add a bunch of messages to the message set.
+     * @param messages 
+     */
+    public void addAll(List<Message> messages) {
+        this.messages.addAll(messages);
+    }
 
     /**
      * Get the underlying list of messages.

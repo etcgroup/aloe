@@ -85,6 +85,25 @@ public class Segment implements LabelableItem {
         }
         return sb.toString();
     }
+    
+    /**
+     * Concatenate the participant strings with a space separator.
+     *
+     * @return
+     */
+    public String concatParticipants() {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (Message item : getMessages()) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append(" ");
+            }
+            sb.append(item.getParticipant());
+        }
+        return sb.toString();
+    }
 
     /**
      * Add a message to the segment.

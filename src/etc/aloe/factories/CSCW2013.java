@@ -236,7 +236,8 @@ public class CSCW2013 implements PipelineFactory {
             crossValidationController.setFeatureExtractionImpl(this.constructFeatureExtraction());
             crossValidationController.setTrainingImpl(this.constructTraining());
             crossValidationController.setBalancingImpl(this.constructBalancing());
-
+            crossValidationController.setMappingImpl(this.constructLabelMapping());
+            
             //Options
             crossValidationController.setFolds(trainOpts.crossValidationFolds);
             crossValidationController.setCosts(trainOpts.falsePositiveCost, trainOpts.falseNegativeCost);

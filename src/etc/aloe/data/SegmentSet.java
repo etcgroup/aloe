@@ -66,6 +66,15 @@ public class SegmentSet {
     public List<Segment> getSegments() {
         return segments;
     }
+    
+    /**
+     * Add a bunch of segments to the set.
+     * 
+     * @param segments 
+     */
+    public void addAll(List<Segment> segments) {
+        this.segments.addAll(segments);
+    }
 
     /**
      * Set the underlying list of segments.
@@ -90,6 +99,7 @@ public class SegmentSet {
         attributes.add(new Attribute(ExampleSet.ID_ATTR_NAME));
         attributes.add(new Attribute(ExampleSet.MESSAGE_ATTR_NAME, (List<String>) null));
         attributes.add(new Attribute(ExampleSet.LABEL_ATTR_NAME, Arrays.asList(new String[]{"false", "true"})));
+        attributes.add(new Attribute(ExampleSet.PARTICIPANT_ATTR_NAME, (List<String>) null));
         attributes.add(new Attribute(DURATION_ATTR_NAME));
         attributes.add(new Attribute(LENGTH_ATTR_NAME));
         attributes.add(new Attribute(CPS_ATTR_NAME));
@@ -101,6 +111,7 @@ public class SegmentSet {
         Attribute idAttr = instances.attribute(ExampleSet.ID_ATTR_NAME);
         Attribute messageAttr = instances.attribute(ExampleSet.MESSAGE_ATTR_NAME);
         Attribute labelAttr = instances.attribute(ExampleSet.LABEL_ATTR_NAME);
+        Attribute participantAttr = instances.attribute(ExampleSet.PARTICIPANT_ATTR_NAME);
         Attribute durationAttr = instances.attribute(DURATION_ATTR_NAME);
         Attribute lengthAttr = instances.attribute(LENGTH_ATTR_NAME);
         Attribute cpsAttr = instances.attribute(CPS_ATTR_NAME);
@@ -112,9 +123,12 @@ public class SegmentSet {
             Instance instance = new DenseInstance(instances.numAttributes());
 
             String messageStr = segment.concatMessages();
-
+            String participantStr = segment.concatParticipants();
+            
             instance.setValue(idAttr, segment.getId());
             instance.setValue(messageAttr, messageStr);
+            instance.setValue(participantAttr, participantStr);
+            
             if (segment.hasTrueLabel()) {
                 instance.setValue(labelAttr, segment.getTrueLabel() ? "true" : "false");
             }
@@ -204,5 +218,19 @@ public class SegmentSet {
             }
         }
         return count;
+    }
+    
+    /**
+     * Get all the messages in the segments in this segment set.
+     * @return 
+     */
+    public MessageSet getMessages(MessageSet template) {
+        MessageSet messages = new MessageSet();
+        messages.setDateFormat(template.getDateFormat());
+        
+        for (Segment s : segments) {
+            messages.addAll(s.getMessages());
+        }
+        return messages;
     }
 }

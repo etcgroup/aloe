@@ -36,6 +36,6 @@ public abstract class ModeOptions {
     void setRandomSeed(int randomSeed) {
         RandomProvider.setRandom(new Random(randomSeed));
     }
-
+    
     public abstract void printUsage();
 }

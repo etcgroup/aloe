@@ -40,6 +40,8 @@ public class ExampleSet {
     public final static String ID_ATTR_NAME = "*id";
     public final static String MESSAGE_ATTR_NAME = "message";
     public final static String LABEL_ATTR_NAME = "label";
+    public final static String PARTICIPANT_ATTR_NAME = "participant";
+    
     private Instances instances;
 
     /**

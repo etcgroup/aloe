@@ -29,6 +29,7 @@ import etc.aloe.processes.FeatureWeighting;
 import etc.aloe.processes.Training;
 import java.util.List;
 import java.util.Map;
+import weka.core.Instances;
 
 /**
  * Class that trains a model on some segmented data.
@@ -48,6 +49,7 @@ public class TrainingController {
     private static final int NUM_TOP_FEATURES = 10;
     private List<String> topFeatures;
     private List<Map.Entry<String, Double>> featureWeights;
+    private Instances featureValues;
 
     public List<String> getTopFeatures() {
         return topFeatures;
@@ -98,6 +100,7 @@ public class TrainingController {
 
         //Train the model
         Training training = getTrainingImpl();
+        this.featureValues = examples.getInstances();
         this.model = training.train(examples);
 
         //Get the top features
@@ -135,5 +138,9 @@ public class TrainingController {
 
     public Balancing getBalancingImpl() {
         return balancingImpl;
+    }
+    
+    public Instances getFeatureValues() {
+        return this.featureValues;
     }
 }
