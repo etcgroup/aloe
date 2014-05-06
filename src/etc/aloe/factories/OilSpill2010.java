@@ -18,6 +18,7 @@
  */
 package etc.aloe.factories;
 
+import etc.aloe.oilspill2010.BigramFeatureGenerationImpl;
 import etc.aloe.oilspill2010.TrainingImpl;
 import etc.aloe.oilspill2010.FeatureGenerationImpl;
 import etc.aloe.oilspill2010.NullFeatureWeighting;
@@ -39,7 +40,8 @@ public class OilSpill2010 extends CSCW2013 {
             TrainOptionsImpl trainOpts = (TrainOptionsImpl) options;
             //Read the emoticons
             List<String> termList = loadTermList(trainOpts.emoticonFile);
-            return new FeatureGenerationImpl(termList);
+            //return new FeatureGenerationImpl(termList);
+            return new BigramFeatureGenerationImpl(termList);
         } else {
             throw new IllegalArgumentException("Options not for Training");
         }
