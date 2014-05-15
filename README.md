@@ -82,9 +82,10 @@ Input files must minimally have `id`, `time`, `participant`, and `message` colum
 
 A `truth` column may be provided if the data is labeled. Its values should be `true`, `false`, or empty.
 
-Output CSV files will have a similar format, but with added `predicted` and `segment` columns.
+Output CSV files will have a similar format, but with added `predicted`, `segment`, and `confidence` columns.
 The `predicted` column indicates the predicted label for the message, `true` or `false`. The
 `segment` column contains an integer id of the segment to which the message was assigned.
+The `confidence` column gives the estimated probability for the predicted label.
 
 Sample messages with ground truth labels (i.e. data for "train" mode):
 ```
@@ -143,6 +144,7 @@ The `--test-sets` flag will cause each cross-validation test set to be dumped, w
 
 Within the provided `OUTPUT_DIR`, ALOE will create the following files:
 
+* *command.txt*: A text file containing the command-line arguments for ALOE and the time of the run.
 * *features.spec*: A binary file containing the fully configured filters used to extract features
    from the message data.
 * *model.model*: A binary file containing the trained model. This file should always be paired with
@@ -193,9 +195,10 @@ after feature extraction.
 
 Within the provided `OUTPUT_DIR`, ALOE will create the following files:
 
+* *command.txt*: A text file containing the command-line arguments for ALOE and the time of the run.
 * *report.txt*: A human-readable report about cross-validation results. This is only produced if some of the input
    data had ground-truth labels provided.
-* *labeled.csv*: A CSV spreadsheet containing the input data, with new `predicted` and `segment` columns.
+* *labeled.csv*: A CSV spreadsheet containing the input data, with new `predicted`, `segment`, and `confidence` columns.
 * *feature_values.csv*: A CSV spreadsheet with the features extracted from every training instance, if the `--feature-values` flag was used.
 * *roc.csv*: A CSV spreadsheet containing the ROC curve, if `--roc` was used.
 
