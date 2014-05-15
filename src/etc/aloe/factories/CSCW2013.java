@@ -179,10 +179,9 @@ public class CSCW2013 implements PipelineFactory {
             TrainOptionsImpl trainOpts = (TrainOptionsImpl) options;
 
             TrainingImpl trainingImpl = new TrainingImpl();
-            if (trainOpts.makeROC) {
-                trainingImpl.setBuildLogisticModel(true);
-            }
-
+            
+            trainingImpl.setBuildLogisticModel(true);
+            
             if (trainOpts.useMinCost || trainOpts.useReweighting) {
                 trainingImpl.setUseCostTraining(true);
                 trainingImpl.setFalsePositiveCost(trainOpts.falsePositiveCost);

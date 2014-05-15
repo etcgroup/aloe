@@ -46,31 +46,6 @@ public class OilSpill2010 extends CSCW2013 {
             throw new IllegalArgumentException("Options not for Training");
         }
     }
-
-    @Override
-    public Training constructTraining() {
-        if (options instanceof TrainOptionsImpl) {
-            TrainOptionsImpl trainOpts = (TrainOptionsImpl) options;
-
-            etc.aloe.cscw2013.TrainingImpl trainingImpl = new etc.aloe.cscw2013.TrainingImpl();
-            if (trainOpts.makeROC) {
-                trainingImpl.setBuildLogisticModel(true);
-            }
-
-            if (trainOpts.useMinCost || trainOpts.useReweighting) {
-                trainingImpl.setUseCostTraining(true);
-                trainingImpl.setFalsePositiveCost(trainOpts.falsePositiveCost);
-                trainingImpl.setFalseNegativeCost(trainOpts.falseNegativeCost);
-                trainingImpl.setUseReweighting(trainOpts.useReweighting);
-            }
-
-            return trainingImpl;
-        } else {
-            throw new IllegalArgumentException("Options must be for Training");
-        }
-        //return new TrainingImpl();
-    }
-
     
     
     @Override
