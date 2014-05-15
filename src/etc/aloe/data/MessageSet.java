@@ -49,8 +49,9 @@ public class MessageSet implements Loading, Saving {
     private static final int TRUTH_COLUMN = 4;
     private static final int PREDICTION_COLUMN = 5;
     private static final int SEGMENT_COLUMN = 6;
+    private static final int CONFIDENCE_COLUMN = 7;
     private static final int MIN_INPUT_COLUMNS = 4;
-    private static final int NUM_OUTPUT_COLUMNS = 7;
+    private static final int NUM_OUTPUT_COLUMNS = 8;
     private static final String ID_COLUMN_NAME = "id";
     private static final String TIME_COLUMN_NAME = "time";
     private static final String PARTICIPANT_COLUMN_NAME = "participant";
@@ -58,6 +59,8 @@ public class MessageSet implements Loading, Saving {
     private static final String TRUTH_COLUMN_NAME = "truth";
     private static final String PREDICTION_COLUMN_NAME = "predicted";
     private static final String SEGMENT_COLUMN_NAME = "segment";
+    private static final String CONFIDENCE_COLUMN_NAME = "confidence";
+    
     private DateFormat dateFormat;
     private Charset charset = Charset.forName("UTF-8");
 
@@ -232,6 +235,7 @@ public class MessageSet implements Loading, Saving {
         row[MESSAGE_COLUMN] = MESSAGE_COLUMN_NAME;
         row[TRUTH_COLUMN] = TRUTH_COLUMN_NAME;
         row[PREDICTION_COLUMN] = PREDICTION_COLUMN_NAME;
+        row[CONFIDENCE_COLUMN] = CONFIDENCE_COLUMN_NAME;
         row[SEGMENT_COLUMN] = SEGMENT_COLUMN_NAME;
 
         out.writeRecord(row);
@@ -243,6 +247,7 @@ public class MessageSet implements Loading, Saving {
             row[MESSAGE_COLUMN] = message.getMessage();
             row[TRUTH_COLUMN] = message.hasTrueLabel() ? message.getTrueLabel().toString() : null;
             row[PREDICTION_COLUMN] = message.hasPredictedLabel() ? message.getPredictedLabel().toString() : null;
+            row[CONFIDENCE_COLUMN] = message.hasPredictionConfidence() ? message.getPredictionConfidence().toString() : null;
             row[SEGMENT_COLUMN] = message.hasSegmentId() ? Integer.toString(message.getSegmentId()) : null;
 
             out.writeRecord(row);

@@ -86,7 +86,7 @@ public class WekaModel implements Model {
                 Boolean predictedLabel = examples.getClassLabel(classValue);
 
                 double[] distribution = classifier.distributionForInstance(examples.get(i));
-                Double confidence = examples.getConfidence(distribution);
+                Double confidence = examples.getConfidence(distribution, classValue);
                 predictions.add(predictedLabel, confidence, trueLabel);
 
             } catch (Exception ex) {

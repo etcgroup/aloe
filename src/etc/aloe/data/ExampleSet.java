@@ -145,10 +145,15 @@ public class ExampleSet {
     /**
      * Gets the confidence in the positive class.
      * @param classDistribution
+     * @param classValue
      * @return
      */
-    public Double getConfidence(double[] classDistribution) {
-        return classDistribution[1];
+    public Double getConfidence(double[] classDistribution, double classValue) {
+        if (Double.isNaN(classValue)) {
+            return null;
+        }
+        
+        return classDistribution[(int) classValue];
     }
 
     /**
