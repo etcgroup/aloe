@@ -19,8 +19,10 @@
 package etc.aloe.filters;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -74,7 +76,7 @@ public class WordFeaturesExtractor extends SimpleStreamFilter {
     //Calculated from the above
     private double bigramMinimumInformationGain;
 
-    private Stopwords stopwords;
+    private HashSet<String> stopwords;
     private List<String> unigrams = new ArrayList<String>();
     private List<Bigram> bigrams = new ArrayList<Bigram>();
     private int selectedAttributeIndex;
@@ -156,19 +158,25 @@ public class WordFeaturesExtractor extends SimpleStreamFilter {
         this.selectedAttributeName = selectedAttributeName;
     }
 
-    private Stopwords prepareStopwords() {
+    private HashSet<String> prepareStopwords() {
         // initialize stopwords
-        Stopwords stopwords = new Stopwords();
+        Stopwords stops = new Stopwords();
         if (getStopList() != null) {
             try {
                 if (getStopList().exists() && !getStopList().isDirectory()) {
-                    stopwords.read(getStopList());
+                    stops.read(getStopList());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return stopwords;
+        
+        HashSet<String> result = new HashSet<String>();
+        Enumeration<String> words = (Enumeration<String>)stops.elements();
+        while (words.hasMoreElements()) {
+            result.add(words.nextElement());
+        }
+        return result;
     }
 
     @Override
@@ -219,7 +227,7 @@ public class WordFeaturesExtractor extends SimpleStreamFilter {
 
             word = stemmer.stem(word);
 
-            if (stopwords.is(word)) {
+            if (stopwords.contains(word.toLowerCase())) {
                 continue;
             }
 
@@ -506,7 +514,7 @@ public class WordFeaturesExtractor extends SimpleStreamFilter {
         }
     }
 
-    private final class Bigram {
+    private final class Bigram implements Serializable {
 
         final String first;
         final String second;
