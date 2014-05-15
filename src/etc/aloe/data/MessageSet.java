@@ -225,9 +225,12 @@ public class MessageSet implements Loading, Saving {
         if (dateFormat == null) {
             throw new IllegalStateException("No date format provided.");
         }
-
+        
+        //Add a BOM for Excel
+        destination.write(charset.encode("\ufeff").array());
+        
         CsvWriter out = new CsvWriter(destination, ',', charset);
-
+        
         String[] row = new String[NUM_OUTPUT_COLUMNS];
         row[ID_COLUMN] = ID_COLUMN_NAME;
         row[PARTICIPANT_COLUMN] = PARTICIPANT_COLUMN_NAME;
