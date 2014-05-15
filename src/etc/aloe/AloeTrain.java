@@ -49,6 +49,8 @@ public class AloeTrain extends Aloe {
         if (modeOptions instanceof TrainOptions) {
             TrainOptions options = (TrainOptions) modeOptions;
 
+            saveCommand(options.outputCommandFile);
+            
             //Get and preprocess the data
             MessageSet messages = this.loadMessages(options.inputCSVFile);
             Segmentation segmentation = factory.constructSegmentation();
@@ -63,35 +65,10 @@ public class AloeTrain extends Aloe {
             crossValidationController.setSegmentSet(segments);
             crossValidationController.run();
 
-            //Create a training controller for making the final model
-            TrainingController trainingController = new TrainingController();
-            //Configure the training controller
-            factory.configureTraining(trainingController);
-
-            //Run the full training
-            trainingController.setSegmentSet(segments);
-            trainingController.run();
-
-            //Get the fruits of our labors
-            System.out.println("== Saving Output ==");
-
             EvaluationReport evalReport = crossValidationController.getEvaluationReport();
-            FeatureSpecification spec = trainingController.getFeatureSpecification();
-            Model model = trainingController.getModel();
-            List<String> topFeatures = trainingController.getTopFeatures();
-            List<Map.Entry<String, Double>> featureWeights = trainingController.getFeatureWeights();
-
-            saveFeatureSpecification(spec, options.outputFeatureSpecFile);
-            saveModel(model, options.outputModelFile);
-            saveTopFeatures(topFeatures, options.outputTopFeaturesFile);
-            saveFeatureWeights(featureWeights, options.outputFeatureWeightsFile);
-            
-            if (options.outputFeatureValues) {
-                Instances featureValues = trainingController.getFeatureValues();
-                saveInstances(featureValues, options.outputFeatureValuesFile);
-            }
-            
             if (evalReport != null) {
+                System.out.println("== Saving Results of Cross Validation ==");
+                
                 saveEvaluationReport(evalReport, options.outputEvaluationReportFile);
                 
                 System.out.println("Aggregated cross-validation report:");
@@ -132,7 +109,34 @@ public class AloeTrain extends Aloe {
 
                 }
             }
+            
+            
+            //Create a training controller for making the final model
+            TrainingController trainingController = new TrainingController();
+            //Configure the training controller
+            factory.configureTraining(trainingController);
 
+            //Run the full training
+            trainingController.setSegmentSet(segments);
+            trainingController.run();
+
+            //Get the fruits of our labors
+            System.out.println("== Saving Output ==");
+
+            FeatureSpecification spec = trainingController.getFeatureSpecification();
+            Model model = trainingController.getModel();
+            List<String> topFeatures = trainingController.getTopFeatures();
+            List<Map.Entry<String, Double>> featureWeights = trainingController.getFeatureWeights();
+
+            saveFeatureSpecification(spec, options.outputFeatureSpecFile);
+            saveModel(model, options.outputModelFile);
+            saveTopFeatures(topFeatures, options.outputTopFeaturesFile);
+            saveFeatureWeights(featureWeights, options.outputFeatureWeightsFile);
+            
+            if (options.outputFeatureValues) {
+                Instances featureValues = trainingController.getFeatureValues();
+                saveInstances(featureValues, options.outputFeatureValuesFile);
+            }
         } else {
             throw new IllegalArgumentException("Options must be for Training");
         }

@@ -43,6 +43,7 @@ public abstract class FileNames {
     public final static String OUTPUT_ROC_DIR_NAME = "rocs";
     public final static String OUTPUT_TESTS_DIR_NAME = "test_sets";
     public final static String OUTPUT_FEATURE_VALUES_NAME = "feature_values.csv";
+    public final static String OUTPUT_COMMAND_FILE_NAME = "command.txt";
     
     
 }

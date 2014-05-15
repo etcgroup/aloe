@@ -48,6 +48,8 @@ public class AloeLabel extends Aloe {
         if (modeOptions instanceof LabelOptions) {
             LabelOptions options = (LabelOptions) modeOptions;
 
+            saveCommand(options.outputCommandFile);
+            
             //Set up the segmentation
             Segmentation segmentation = factory.constructSegmentation();
 

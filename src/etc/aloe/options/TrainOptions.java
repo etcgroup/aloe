@@ -46,6 +46,7 @@ public class TrainOptions extends ModeOptions {
         outputTopFeaturesFile = new File(dir, FileNames.OUTPUT_TOP_FEATURES_NAME);
         outputFeatureWeightsFile = new File(dir, FileNames.OUTPUT_FEATURE_WEIGHTS_NAME);
         outputFeatureValuesFile = new File(dir, FileNames.OUTPUT_FEATURE_VALUES_NAME);
+        outputCommandFile = new File(dir, FileNames.OUTPUT_COMMAND_FILE_NAME);
     }
     public File outputDir;
     public File outputROCDir;
@@ -56,6 +57,7 @@ public class TrainOptions extends ModeOptions {
     public File outputTopFeaturesFile;
     public File outputFeatureWeightsFile;
     public File outputFeatureValuesFile;
+    public File outputCommandFile;
     
     @Option(name="--roc", usage="Export data for ROC curves")
     public boolean makeROC;

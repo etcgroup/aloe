@@ -33,6 +33,11 @@ import org.kohsuke.args4j.CmdLineParser;
  */
 public class Main {
 
+    final String[] cmdLineArgs;
+    public Main(String[] cmdLineArgs) {
+        this.cmdLineArgs = cmdLineArgs;
+    }
+    
     private void printUsage() {
         System.err.println("For specific usage: java -jar aloe.jar PIPELINE_CLASS MODE");
         System.err.println("List of modes: ");
@@ -68,6 +73,7 @@ public class Main {
                 break;
         }
 
+        aloe.setCmdLineArgs(cmdLineArgs);
         CmdLineParser parser = new CmdLineParser(options);
 
         try {
@@ -99,7 +105,7 @@ public class Main {
     public static void main(String[] args) {
 
         //Parse the command line arguments
-        Main main = new Main();
+        Main main = new Main(args);
         CmdLineParser parser = new CmdLineParser(main);
 
 

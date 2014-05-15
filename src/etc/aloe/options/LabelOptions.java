@@ -43,12 +43,14 @@ public class LabelOptions extends ModeOptions {
         outputEvaluationReportFile = new File(dir, FileNames.OUTPUT_EVALUTION_REPORT_NAME);
         outputROCFile = new File(dir, "roc" + FileNames.ROC_SUFFIX);
         outputFeatureValuesFile = new File(dir, FileNames.OUTPUT_FEATURE_VALUES_NAME);
+        outputCommandFile = new File(dir, FileNames.OUTPUT_COMMAND_FILE_NAME);
     }
     public File outputDir;
     public File outputCSVFile;
     public File outputEvaluationReportFile;
     public File outputROCFile;
     public File outputFeatureValuesFile;
+    public File outputCommandFile;
     
     @Option(name = "--model", aliases = {"-m"}, usage = "use an existing model file", required = true, metaVar = "MODEL_FILE")
     public File inputModelFile;

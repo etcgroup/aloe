@@ -24,7 +24,6 @@ import etc.aloe.data.FeatureSpecification;
 import etc.aloe.data.MessageSet;
 import etc.aloe.data.Model;
 import etc.aloe.data.ROC;
-import etc.aloe.data.SegmentSet;
 import etc.aloe.factories.PipelineFactory;
 import etc.aloe.options.ModeOptions;
 import java.io.File;
@@ -37,6 +36,11 @@ import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import weka.core.Instances;
@@ -49,7 +53,13 @@ import weka.core.converters.CSVSaver;
  * @author Michael Brooks <mjbrooks@uw.edu>
  */
 public abstract class Aloe {
+    
+    private String[] cmdLineArgs = new String[0];
 
+    public void setCmdLineArgs(String[] cmdLineArgs) {
+        this.cmdLineArgs = cmdLineArgs;
+    }
+    
     protected PipelineFactory factory = null;
 
     protected void setPipeline(String className) {
@@ -251,6 +261,85 @@ public abstract class Aloe {
             System.err.println("\t" + e.getMessage());
         }
     }
-    
+
+    protected void saveCommand(File outputFile) {
+        try {
+            PrintStream output = new PrintStream(outputFile);
+
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm z");
+            String now = df.format(new Date());
+            output.println("# ALOE arguments (" + now + ")");
+
+            //Based on http://java.dzone.com/articles/programmatically-restart-java
+            //Based on http://stackoverflow.com/questions/13958318/is-it-possible-to-get-the-command-used-to-launch-the-jvm-in-java
+//            RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
+//            List<String> args = bean.getInputArguments();
+//
+//            for (int i = 0; i < args.size(); i++) {
+//                output.print(args.get(i) + " ");
+//            }
+            // print the non-JVM command line arguments using args
+            // name of the main class
+//            output.println("java " + System.getProperty("sun.java.command"));
+            output.println(getJavaCommand());
+            output.close();
+
+            System.out.println("Saved command to " + outputFile);
+        } catch (IOException e) {
+            System.err.println("Error writing command to " + outputFile);
+            System.err.println("\t" + e.getMessage());
+        }
+    }
+
+    private String getJavaCommand() {
+        // java binary
+        String java = "java";
+
+        // vm arguments
+        List<String> vmArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+        StringBuffer vmArgsOneLine = new StringBuffer();
+        for (String arg : vmArguments) {
+                // if it's the agent argument : we ignore it otherwise the
+            // address of the old application and the new one will be in conflict
+            if (!arg.contains("-agentlib")) {
+                vmArgsOneLine.append(arg);
+                vmArgsOneLine.append(" ");
+            }
+        }
+        // init the command to execute, add the vm args
+        final StringBuffer cmd = new StringBuffer(java + " " + vmArgsOneLine);
+
+        // program main and program arguments
+        String[] mainCommand = System.getProperty("sun.java.command").split(" ");
+        // program main is a jar
+        if (mainCommand[0].endsWith(".jar")) {
+            // if it's a jar, add -jar mainJar
+            cmd.append("-jar ")
+                    .append(new File(mainCommand[0]).getPath());
+        } else {
+            // else it's a .class, add the classpath and mainClass
+            cmd.append("-cp \"")
+                    .append(System.getProperty("java.class.path"))
+                    .append("\" ")
+                    .append(mainCommand[0]);
+        }
+        // finally add program arguments
+        for (int i = 0; i < cmdLineArgs.length; i++) {
+            cmd.append(" ");
+
+            cmdLineArgs[i] = cmdLineArgs[i].replaceAll("\"", "\\\"");
+            
+            if (cmdLineArgs[i].contains(" ")) {
+                cmd.append("\"")
+                        .append(cmdLineArgs[i])
+                        .append("\"");
+            } else {
+                cmd.append(cmdLineArgs[i]);
+            }
+        }
+
+        return cmd.toString();
+    }
+
     public abstract void run(ModeOptions options);
 }
