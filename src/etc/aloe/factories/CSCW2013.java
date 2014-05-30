@@ -122,7 +122,9 @@ public class CSCW2013 implements PipelineFactory {
             TrainOptionsImpl trainOpts = (TrainOptionsImpl) options;
             //Read the emoticons
             List<String> termList = loadTermList(trainOpts.emoticonFile);
-            return new FeatureGenerationImpl(termList);
+            FeatureGenerationImpl featureGen = new FeatureGenerationImpl(termList);
+            featureGen.setParticipantFeatureCount(trainOpts.participantFeatures);
+            return featureGen;
         } else {
             throw new IllegalArgumentException("Options not for Training");
         }
@@ -306,7 +308,8 @@ public class CSCW2013 implements PipelineFactory {
     }
 
     static class TrainOptionsImpl extends TrainOptions {
-
+        @Option(name="--participant-features", usage="use up to this many participant names as features")
+        public int participantFeatures = 0;
         @Option(name = "--fp-cost", usage = "the cost of a false positive (default 1)", metaVar = "COST")
         public double falsePositiveCost = 1;
         @Option(name = "--fn-cost", usage = "the cost of a false negative (default 1)", metaVar = "COST")
