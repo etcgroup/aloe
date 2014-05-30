@@ -49,8 +49,12 @@ public class FeatureGenerationImpl implements FeatureGeneration {
     protected static final boolean COUNT_REGEX_LENGTHS = true;
     protected static final String EMOTICON_FEATURE_PREFIX = "#";
     protected static final String BAG_OF_WORDS_FEATURE_PREFIX = "_";
+    protected static final String PARTICIPANT_FEATURE_PREFIX = ".";
     protected final List<String> emoticonDictionary;
 
+    protected int participantFeatures = 0;
+
+    
     /**
      * Construct a new FeatureGeneration implementation.
      *
@@ -61,6 +65,20 @@ public class FeatureGenerationImpl implements FeatureGeneration {
         this.emoticonDictionary = emoticonDictionary;
     }
 
+    public int getParticipantFeatureCount() {
+        return participantFeatures;
+    }
+
+    /**
+     * Set whether the number of different participants to convert into unigram features.
+     * If set to 0 (the default), no participant features will be used.
+     * 
+     * @param participantFeatures 
+     */
+    public void setParticipantFeatureCount(int participantFeatures) {
+        this.participantFeatures = participantFeatures;
+    }
+    
     @Override
     public FeatureSpecification generateFeatures(ExampleSet basicExamples) {
 
@@ -78,10 +96,14 @@ public class FeatureGenerationImpl implements FeatureGeneration {
             spec.addFilter(getEmoticonsFilter(examples));
             spec.addFilter(getBagOfWordsFilter(examples));
             spec.addFilter(getRemoveIDFilter(examples));
-            Filter finalFilter = getRemoveParticipantFilter(examples);
-            spec.addFilter(finalFilter);
-
-            Instances output = finalFilter.getOutputFormat();
+            
+            if (this.getParticipantFeatureCount() > 0) {
+                spec.addFilter(getParticipantsFilter(examples));
+            } else {
+                spec.addFilter(getRemoveParticipantFilter(examples));
+            }
+            
+            Instances output = spec.getOutputFormat();
             int numAttrs = output.numAttributes();
             System.out.println("generated " + (numAttrs - 1) + " features.");
         } catch (Exception e) {
@@ -252,6 +274,34 @@ public class FeatureGenerationImpl implements FeatureGeneration {
     protected Filter getRemoveParticipantFilter(ExampleSet examples) throws Exception {
         RemoveByName filter = new RemoveByName();
         filter.setExpression(Pattern.quote(ExampleSet.PARTICIPANT_ATTR_NAME));
+
+        filter.setInputFormat(examples.getInstances());
+        Instances filtered = Filter.useFilter(examples.getInstances(), filter);
+        examples.setInstances(filtered);
+
+        return filter;
+    }
+    
+    /**
+     * Get a bag of words filter for participants based on the provided examples.
+     *
+     * @param examples
+     * @return
+     * @throws Exception
+     */
+    protected Filter getParticipantsFilter(ExampleSet examples) throws Exception {
+        SimpleStringToWordVector filter = new SimpleStringToWordVector();
+        filter.setAttributeNamePrefix(PARTICIPANT_FEATURE_PREFIX);
+        filter.setStringAttributeName(ExampleSet.PARTICIPANT_ATTR_NAME);
+
+        filter.setDoNotOperateOnPerClassBasis(true);
+        filter.setWordsToKeep(getParticipantFeatureCount());
+        filter.setLowerCaseTokens(true);
+
+        //use stemming and remove "nonsense"
+        filter.setStemmer(null);
+        
+        filter.setOutputWordCounts(false);
 
         filter.setInputFormat(examples.getInstances());
         Instances filtered = Filter.useFilter(examples.getInstances(), filter);

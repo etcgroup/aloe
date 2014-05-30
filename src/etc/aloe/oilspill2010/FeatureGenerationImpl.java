@@ -42,9 +42,7 @@ import weka.filters.unsupervised.instance.SparseToNonSparse;
  * @author Michael Brooks <mjbrooks@uw.edu>
  */
 public class FeatureGenerationImpl extends etc.aloe.cscw2013.FeatureGenerationImpl {
-
-    private static final String PARTICIPANT_FEATURE_PREFIX = ".";
-
+    
     /**
      * Construct a new FeatureGeneration implementation.
      *
@@ -53,6 +51,9 @@ public class FeatureGenerationImpl extends etc.aloe.cscw2013.FeatureGenerationIm
      */
     public FeatureGenerationImpl(List<String> emoticonDictionary) {
         super(emoticonDictionary);
+        
+        //Change the default number of participant features
+        this.participantFeatures = 20;
     }
     
     @Override
@@ -71,7 +72,13 @@ public class FeatureGenerationImpl extends etc.aloe.cscw2013.FeatureGenerationIm
 
             spec.addFilter(getEmoticonsFilter(examples));
             spec.addFilter(getBagOfWordsFilter(examples));
-            spec.addFilter(getParticipantsFilter(examples));
+            
+            if (this.getParticipantFeatureCount() > 0) {
+                spec.addFilter(getParticipantsFilter(examples));
+            } else {
+                spec.addFilter(getRemoveParticipantFilter(examples));
+            }
+            
             spec.addFilter(getRemoveIDFilter(examples));
             //spec.addFilter(getSparseToNonsparseFilter(examples));
             //spec.addFilter(getFeatureSelectionFilter(examples));
@@ -171,35 +178,4 @@ public class FeatureGenerationImpl extends etc.aloe.cscw2013.FeatureGenerationIm
         return filter;
     }
     
-    /**
-     * Get a bag of words filter for participants based on the provided examples.
-     *
-     * @param examples
-     * @return
-     * @throws Exception
-     */
-    protected Filter getParticipantsFilter(ExampleSet examples) throws Exception {
-        SimpleStringToWordVector filter = new SimpleStringToWordVector();
-        filter.setAttributeNamePrefix(PARTICIPANT_FEATURE_PREFIX);
-        filter.setStringAttributeName(ExampleSet.PARTICIPANT_ATTR_NAME);
-
-        //This is stupid because it depends on how much data you use
-        //bagger.setMinTermFreq(20);
-        
-        filter.setDoNotOperateOnPerClassBasis(true);
-        filter.setWordsToKeep(20);
-        filter.setLowerCaseTokens(true);
-
-        //use stemming and remove "nonsense"
-        filter.setStemmer(null);
-        
-        filter.setOutputWordCounts(false);
-
-        filter.setInputFormat(examples.getInstances());
-        Instances filtered = Filter.useFilter(examples.getInstances(), filter);
-        examples.setInstances(filtered);
-
-        return filter;
-    }
-
 }
